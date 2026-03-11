@@ -3,6 +3,7 @@ package org.example.exceptionhandlerexample.controller;
 import jakarta.validation.Valid;
 import org.example.exceptionhandlerexample.model.User;
 import org.example.exceptionhandlerexample.reuqest.user.UserRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
