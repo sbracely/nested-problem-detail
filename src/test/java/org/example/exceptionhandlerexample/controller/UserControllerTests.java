@@ -24,14 +24,11 @@ class UserControllerTests {
 
     @Test
     void httpRequestMethodNotSupportedExceptionTest() throws Exception {
-        String url = "/user/path-variable/1";
+        String url = "/user/get-by-id";
         mockMvc.perform(MockMvcRequestBuilders.post(url))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(header().string("Allow", allOf(
-                        containsString(HttpMethod.GET.name()),
-                        containsString(HttpMethod.DELETE.name())
-                )))
+                .andExpect(header().string("Allow", containsString(HttpMethod.GET.name())))
                 .andExpect(jsonPath("$.detail").value(allOf(
                         containsString(HttpMethod.POST.name()),
                         containsString("not supported")
@@ -78,7 +75,7 @@ class UserControllerTests {
 
     @Test
     void missingPathVariableExceptionTest() throws Exception {
-        String url = "/user/v2/path-variable/1";
+        String url = "/user/path-variable/1";
         mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -90,7 +87,7 @@ class UserControllerTests {
     }
 
     @Test
-    void missingServletRequestParameterException() throws Exception {
+    void missingServletRequestParameterExceptionTest() throws Exception {
         String url = "/user/get-by-id";
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isBadRequest())
@@ -98,6 +95,23 @@ class UserControllerTests {
                 .andExpect(jsonPath("$.detail").value(Matchers.allOf(
                         Matchers.containsString("id"),
                         Matchers.containsString("is not present")
+                )))
+                .andExpect(jsonPath("$.errorCode").value("A00400"))
+                .andExpect(jsonPath("$.instance").value(url))
+                .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.title").value(BAD_REQUEST.getReasonPhrase()));
+    }
+
+    @Test
+    void missingServletRequestPartExceptionTest() throws Exception {
+        String url = "/user/file";
+        mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PUT, url)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value(Matchers.allOf(
+                        Matchers.containsString("file"),
+                        Matchers.containsString("not present")
                 )))
                 .andExpect(jsonPath("$.errorCode").value("A00400"))
                 .andExpect(jsonPath("$.instance").value(url))
