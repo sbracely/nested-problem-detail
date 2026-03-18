@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -24,7 +24,7 @@ class UserControllerTests {
 
     @Test
     void httpRequestMethodNotSupportedExceptionTest() throws Exception {
-        String url = "/user/1";
+        String url = "/user/path-variable/1";
         mockMvc.perform(MockMvcRequestBuilders.post(url))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -38,8 +38,8 @@ class UserControllerTests {
                 )))
                 .andExpect(jsonPath("$.errorCode").value("A00405"))
                 .andExpect(jsonPath("$.instance").value(url))
-                .andExpect(jsonPath("$.status").value(HttpStatus.METHOD_NOT_ALLOWED.value()))
-                .andExpect(jsonPath("$.title").value(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase()));
+                .andExpect(jsonPath("$.status").value(METHOD_NOT_ALLOWED.value()))
+                .andExpect(jsonPath("$.title").value(METHOD_NOT_ALLOWED.getReasonPhrase()));
     }
 
     @Test
@@ -55,8 +55,8 @@ class UserControllerTests {
                 )))
                 .andExpect(jsonPath("$.errorCode").value("A00415"))
                 .andExpect(jsonPath("$.instance").value(url))
-                .andExpect(jsonPath("$.status").value(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()))
-                .andExpect(jsonPath("$.title").value(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase()));
+                .andExpect(jsonPath("$.status").value(UNSUPPORTED_MEDIA_TYPE.value()))
+                .andExpect(jsonPath("$.title").value(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase()));
     }
 
     @Test
@@ -72,21 +72,36 @@ class UserControllerTests {
                 )))
                 .andExpect(jsonPath("$.errorCode").value("A00406"))
                 .andExpect(jsonPath("$.instance").value(url))
-                .andExpect(jsonPath("$.status").value(HttpStatus.NOT_ACCEPTABLE.value()))
-                .andExpect(jsonPath("$.title").value(HttpStatus.NOT_ACCEPTABLE.getReasonPhrase()));
+                .andExpect(jsonPath("$.status").value(NOT_ACCEPTABLE.value()))
+                .andExpect(jsonPath("$.title").value(NOT_ACCEPTABLE.getReasonPhrase()));
     }
 
     @Test
-    void MissingPathVariableExceptionTest() throws Exception {
-        String url = "/user/v2/1";
+    void missingPathVariableExceptionTest() throws Exception {
+        String url = "/user/v2/path-variable/1";
         mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.detail").value(Matchers.containsString("path variable")))
                 .andExpect(jsonPath("$.errorCode").value("A00500"))
                 .andExpect(jsonPath("$.instance").value(url))
-                .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                .andExpect(jsonPath("$.title").value(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
+                .andExpect(jsonPath("$.status").value(INTERNAL_SERVER_ERROR.value()))
+                .andExpect(jsonPath("$.title").value(INTERNAL_SERVER_ERROR.getReasonPhrase()));
     }
 
+    @Test
+    void missingServletRequestParameterException() throws Exception {
+        String url = "/user/get-by-id";
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value(Matchers.allOf(
+                        Matchers.containsString("id"),
+                        Matchers.containsString("is not present")
+                )))
+                .andExpect(jsonPath("$.errorCode").value("A00400"))
+                .andExpect(jsonPath("$.instance").value(url))
+                .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.title").value(BAD_REQUEST.getReasonPhrase()));
+    }
 }

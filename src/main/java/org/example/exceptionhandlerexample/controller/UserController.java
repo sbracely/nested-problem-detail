@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    @GetMapping("/{id}")
+    @GetMapping("/path-variable/{id}")
     public User get(@PathVariable Integer id) {
         log.info("get id = {}", id);
         User user = new User();
@@ -19,12 +19,12 @@ public class UserController {
         return user;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/path-variable/{id}")
     public void delete(@PathVariable Integer id) {
         log.info("delete id = {}", id);
     }
 
-    @DeleteMapping("/v2/{id}")
+    @DeleteMapping("/v2/path-variable/{id}")
     public void deleteV2(@PathVariable Integer iid) {
         log.info("delete iid = {}", iid);
     }
@@ -39,6 +39,14 @@ public class UserController {
     public UserRequest putV2(UserRequest userRequest) {
         log.info("put userRequest = {}", userRequest);
         return userRequest;
+    }
+
+    @GetMapping("/get-by-id")
+    public User getById(@RequestParam Integer id) {
+        log.info("getById id = {}", id);
+        User user = new User();
+        user.setId(id);
+        return user;
     }
 
 }
