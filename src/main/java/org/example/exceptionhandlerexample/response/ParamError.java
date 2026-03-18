@@ -2,14 +2,11 @@ package org.example.exceptionhandlerexample.response;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.MessageSourceResolvable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.validation.method.ParameterValidationResult;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+@Slf4j
 @Getter
 @Setter
 public class ParamError {
@@ -26,14 +23,5 @@ public class ParamError {
     public ParamError(String field, String message) {
         this.field = field;
         this.message = message;
-    }
-
-    public static List<ParamError> processParameterValidationResult(ParameterValidationResult parameterValidationResult) {
-        String parameterName = parameterValidationResult.getMethodParameter().getParameterName();
-        return parameterValidationResult.getResolvableErrors()
-                .stream()
-                .map(MessageSourceResolvable::getDefaultMessage)
-                .map(message -> new ParamError(parameterName, message))
-                .collect(Collectors.toList());
     }
 }
