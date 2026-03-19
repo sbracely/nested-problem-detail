@@ -29,9 +29,9 @@ public class ProblemController {
         log.info("problemRequest = {}", problemRequest);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer iid) {
-        log.info("iid = {}", iid);
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable Integer id) {
+        log.info("id = {}", id);
     }
 
     @PutMapping("/file")

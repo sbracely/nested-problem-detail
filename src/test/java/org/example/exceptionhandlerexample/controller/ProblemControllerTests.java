@@ -4,13 +4,14 @@ import org.example.exceptionhandlerexample.response.ProblemDetails;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.net.URI;
@@ -21,8 +22,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(ProblemController.class)
 class ProblemControllerTests {
 
     @Autowired
@@ -34,12 +34,13 @@ class ProblemControllerTests {
     @Test
     void httpRequestMethodNotSupportedExceptionTest() {
         String url = "/problem/param";
-        assertThat(mockMvcTester.post().uri(url).exchange())
-                .satisfies(result -> assertThat(result)
-                        .hasStatus(HttpStatus.METHOD_NOT_ALLOWED)
-                        .hasContentType(MediaType.APPLICATION_PROBLEM_JSON)
-                        .headers().extracting("Allow").asString().contains(HttpMethod.GET.name()))
-                .bodyJson().convertTo(ProblemDetails.class)
+        MvcTestResult result = mockMvcTester.post().uri(url).exchange();
+        assertThat(result)
+                .hasStatus(HttpStatus.METHOD_NOT_ALLOWED)
+                .hasContentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .hasHeader(HttpHeaders.ALLOW, HttpMethod.GET.name());
+        assertThat(result).bodyJson().convertTo(ProblemDetails.class)
+                .isNotNull()
                 .satisfies(problemDetails -> {
                     assertThat(problemDetails.getDetail()).contains(Arrays.asList(HttpMethod.POST.name(), "not supported"));
                     assertThat(problemDetails.getErrorCode()).isEqualTo("A00405");
@@ -52,18 +53,19 @@ class ProblemControllerTests {
     @Test
     void httpMediaTypeNotSupportedExceptionTest() throws Exception {
         String url = "/problem/consume-json";
-        mockMvc.perform(MockMvcRequestBuilders.put(url))
-                .andExpect(status().isUnsupportedMediaType())
-                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(header().string("Accept", Matchers.is(MediaType.APPLICATION_JSON_VALUE)))
-                .andExpect(jsonPath("$.detail").value(allOf(
-                        containsString("null"),
-                        containsString("not supported")
-                )))
-                .andExpect(jsonPath("$.errorCode").value("A00415"))
-                .andExpect(jsonPath("$.instance").value(url))
-                .andExpect(jsonPath("$.status").value(UNSUPPORTED_MEDIA_TYPE.value()))
-                .andExpect(jsonPath("$.title").value(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase()));
+        MvcTestResult result = mockMvcTester.put().uri(url).exchange();
+        assertThat(result).hasStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .hasContentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .hasHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        assertThat(result).bodyJson().convertTo(ProblemDetails.class)
+                .isNotNull()
+                .satisfies(problemDetails -> {
+                    assertThat(problemDetails.getDetail()).contains(Arrays.asList("null", "not supported"));
+                    assertThat(problemDetails.getErrorCode()).isEqualTo("A00415");
+                    assertThat(problemDetails.getInstance()).isEqualTo(URI.create(url));
+                    assertThat(problemDetails.getStatus()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
+                    assertThat(problemDetails.getTitle()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
+                });
     }
 
     @Test
@@ -85,7 +87,7 @@ class ProblemControllerTests {
 
     @Test
     void missingPathVariableExceptionTest() throws Exception {
-        String url = "/problem/1";
+        String url = "/problem/delete/1";
         mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
