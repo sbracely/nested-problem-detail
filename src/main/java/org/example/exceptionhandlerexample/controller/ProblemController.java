@@ -23,12 +23,12 @@ public class ProblemController {
         log.info("problemRequest = {}", problemRequest);
     }
 
-    @PutMapping(path = "v2", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/v2", produces = MediaType.APPLICATION_JSON_VALUE)
     public void putV2(ProblemRequest problemRequest) {
         log.info("problemRequest = {}", problemRequest);
     }
 
-    @DeleteMapping("/path-variable/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer iid) {
         log.info("iid = {}", iid);
     }
@@ -38,8 +38,13 @@ public class ProblemController {
         log.info("file = {}", file);
     }
 
-    @GetMapping("/matrix/path-variable/{id}")
+    @GetMapping("/matrix/{id}")
     public void matrix(@PathVariable String id, @MatrixVariable List<String> list) {
         log.info("id = {}, list = {}", id, list);
+    }
+
+    @GetMapping("/cookie")
+    public void cookie(@CookieValue String cookieValue) {
+        log.info("cookieValue = {}", cookieValue);
     }
 }

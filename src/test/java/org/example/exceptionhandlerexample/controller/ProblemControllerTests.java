@@ -75,7 +75,7 @@ class ProblemControllerTests {
 
     @Test
     void missingPathVariableExceptionTest() throws Exception {
-        String url = "/problem/path-variable/1";
+        String url = "/problem/1";
         mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -121,12 +121,28 @@ class ProblemControllerTests {
 
     @Test
     void servletRequestBindingExceptionMissingMatrixVariableExceptionTest() throws Exception {
-        String url = "/problem/matrix/path-variable/abc;list1=a,b,c";
+        String url = "/problem/matrix/abc;list1=a,b,c";
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.detail").value(Matchers.allOf(
                         Matchers.containsString("list"),
+                        Matchers.containsString("is not present")
+                )))
+                .andExpect(jsonPath("$.errorCode").value("A00400"))
+                .andExpect(jsonPath("$.instance").value(url))
+                .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.title").value(BAD_REQUEST.getReasonPhrase()));
+    }
+
+    @Test
+    void servletRequestBindingExceptionMissingRequestCookieException() throws Exception {
+        String url = "/problem/cookie";
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value(Matchers.allOf(
+                        Matchers.containsString("cookieValue"),
                         Matchers.containsString("is not present")
                 )))
                 .andExpect(jsonPath("$.errorCode").value("A00400"))
