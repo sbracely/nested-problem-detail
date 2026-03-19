@@ -41,7 +41,7 @@ class ProblemControllerTests {
 
     @Test
     void httpMediaTypeNotSupportedExceptionTest() throws Exception {
-        String url = "/problem";
+        String url = "/problem/consume-json";
         mockMvc.perform(MockMvcRequestBuilders.put(url))
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -58,7 +58,7 @@ class ProblemControllerTests {
 
     @Test
     void httpMediaTypeNotAcceptableExceptionTest() throws Exception {
-        String url = "/problem/v2";
+        String url = "/problem/produce-json";
         mockMvc.perform(MockMvcRequestBuilders.put(url).header("Accept", MediaType.APPLICATION_XML_VALUE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -161,6 +161,20 @@ class ProblemControllerTests {
                         Matchers.containsString("header"),
                         Matchers.containsString("is not present")
                 )))
+                .andExpect(jsonPath("$.errorCode").value("A00400"))
+                .andExpect(jsonPath("$.instance").value(url))
+                .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.title").value(BAD_REQUEST.getReasonPhrase()));
+    }
+
+    @Test
+    void servletRequestBindingExceptionUnsatisfiedServletRequestParameterException() throws Exception {
+        String url = "/problem/unsatisfied";
+        mockMvc.perform(MockMvcRequestBuilders.get(url)
+                        .param("type", "1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value(Matchers.is("Invalid request parameters.")))
                 .andExpect(jsonPath("$.errorCode").value("A00400"))
                 .andExpect(jsonPath("$.instance").value(url))
                 .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))

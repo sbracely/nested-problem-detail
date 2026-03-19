@@ -18,13 +18,13 @@ public class ProblemController {
         log.info("id = {}", id);
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void put(ProblemRequest problemRequest) {
+    @PutMapping(path = "/consume-json", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void putConsumeJson(ProblemRequest problemRequest) {
         log.info("problemRequest = {}", problemRequest);
     }
 
-    @PutMapping(path = "/v2", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void putV2(ProblemRequest problemRequest) {
+    @PutMapping(path = "/produce-json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void putProduceJson(ProblemRequest problemRequest) {
         log.info("problemRequest = {}", problemRequest);
     }
 
@@ -51,5 +51,14 @@ public class ProblemController {
     @GetMapping("/header")
     public void header(@RequestHeader String header) {
         log.info("header = {}", header);
+    }
+
+    @GetMapping(path = "/unsatisfied", params = {
+            "type=1",
+            "exist",
+            "!debug"
+    })
+    public void unsatisfied() {
+        log.info("unsatisfied");
     }
 }
