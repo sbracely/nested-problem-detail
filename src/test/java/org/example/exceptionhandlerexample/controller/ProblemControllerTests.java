@@ -10,8 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -21,6 +20,9 @@ class ProblemControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+//    @Autowired
+//    private MockMvcTester mockMvcTester;
 
     @Test
     void httpRequestMethodNotSupportedExceptionTest() throws Exception {
@@ -195,7 +197,19 @@ class ProblemControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.detail").value(Matchers.is("Invalid request content.")))
                 .andExpect(jsonPath("$.errorCode").value("A00400"))
+                .andExpect(jsonPath("$.errors").isArray())
                 .andExpect(jsonPath("$.errors").value(Matchers.hasSize(3)))
+                .andExpect(jsonPath("$.errors[?(@.field == 'name')].message")
+                        .value(hasItem("姓名长度范围 6-10")))
+                .andExpect(jsonPath("$.errors[?(@.field == 'name')].type")
+                        .value(hasItem("parameter")))
+                .andExpect(jsonPath("$.errors[?(@.field == 'age')].message")
+                        .value(hasItem("年龄不可为空")))
+                .andExpect(jsonPath("$.errors[?(@.field == 'age')].type")
+                        .value(hasItem("parameter")))
+                .andExpect(jsonPath("$.errors[?(@.message == '密码与确认密码不一致')]").value(hasSize(1)))
+                .andExpect(jsonPath("$.errors[?(@.message == '密码与确认密码不一致')].type").value("parameter"))
+                .andExpect(jsonPath("$.errors[?(@.message == '密码与确认密码不一致')].field").value(hasItem(nullValue())))
                 .andExpect(jsonPath("$.instance").value(url))
                 .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))
                 .andExpect(jsonPath("$.title").value(BAD_REQUEST.getReasonPhrase()));
