@@ -17,14 +17,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTests {
+class ProblemControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     void httpRequestMethodNotSupportedExceptionTest() throws Exception {
-        String url = "/user/get-by-id";
+        String url = "/problem/get-by-id";
         mockMvc.perform(MockMvcRequestBuilders.post(url))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -41,7 +41,7 @@ class UserControllerTests {
 
     @Test
     void httpMediaTypeNotSupportedExceptionTest() throws Exception {
-        String url = "/user";
+        String url = "/problem";
         mockMvc.perform(MockMvcRequestBuilders.put(url))
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -58,7 +58,7 @@ class UserControllerTests {
 
     @Test
     void httpMediaTypeNotAcceptableExceptionTest() throws Exception {
-        String url = "/user/v2";
+        String url = "/problem/v2";
         mockMvc.perform(MockMvcRequestBuilders.put(url).header("Accept", MediaType.APPLICATION_XML_VALUE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -75,7 +75,7 @@ class UserControllerTests {
 
     @Test
     void missingPathVariableExceptionTest() throws Exception {
-        String url = "/user/path-variable/1";
+        String url = "/problem/path-variable/1";
         mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -88,7 +88,7 @@ class UserControllerTests {
 
     @Test
     void missingServletRequestParameterExceptionTest() throws Exception {
-        String url = "/user/get-by-id";
+        String url = "/problem/get-by-id";
         mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
@@ -104,7 +104,7 @@ class UserControllerTests {
 
     @Test
     void missingServletRequestPartExceptionTest() throws Exception {
-        String url = "/user/file";
+        String url = "/problem/file";
         mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PUT, url)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isBadRequest())
@@ -112,6 +112,22 @@ class UserControllerTests {
                 .andExpect(jsonPath("$.detail").value(Matchers.allOf(
                         Matchers.containsString("file"),
                         Matchers.containsString("not present")
+                )))
+                .andExpect(jsonPath("$.errorCode").value("A00400"))
+                .andExpect(jsonPath("$.instance").value(url))
+                .andExpect(jsonPath("$.status").value(BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.title").value(BAD_REQUEST.getReasonPhrase()));
+    }
+
+    @Test
+    void servletRequestBindingExceptionMissingMatrixVariableExceptionTest() throws Exception {
+        String url = "/problem/matrix/path-variable/abc;list1=a,b,c";
+        mockMvc.perform(MockMvcRequestBuilders.get(url))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.detail").value(Matchers.allOf(
+                        Matchers.containsString("list"),
+                        Matchers.containsString("is not present")
                 )))
                 .andExpect(jsonPath("$.errorCode").value("A00400"))
                 .andExpect(jsonPath("$.instance").value(url))

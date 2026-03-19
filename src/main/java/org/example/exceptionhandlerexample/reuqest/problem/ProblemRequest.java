@@ -1,4 +1,4 @@
-package org.example.exceptionhandlerexample.reuqest.user;
+package org.example.exceptionhandlerexample.reuqest.problem;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -9,13 +9,13 @@ import lombok.ToString;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.ConfirmPassword;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.validation.annotation.Validated;
 
 @Getter
 @Setter
 @ToString
 @ConfirmPassword(message = "密码与确认密码不一致")
-public class UserRequest {
+public class ProblemRequest {
+
     @NotBlank(message = "姓名不可为空")
     @NotNull(message = "姓名不能为null")
     @Length(min = 6, max = 10, message = "姓名长度范围 6-10")
@@ -29,5 +29,5 @@ public class UserRequest {
     private String confirmPassword;
 
     @Valid
-    private UserRequest userRequest;
+    private ProblemRequest problemRequest;
 }

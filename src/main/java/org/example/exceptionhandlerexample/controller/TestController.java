@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.example.exceptionhandlerexample.reuqest.user.UserRequest;
+import org.example.exceptionhandlerexample.reuqest.problem.ProblemRequest;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +22,9 @@ public class TestController {
     }
 
     @PostMapping("/hello")
-    public Object hello(@Validated UserRequest userRequest) {
-        log.info("userRequest = {}", userRequest);
-        return userRequest;
+    public Object hello(@Validated ProblemRequest problemRequest) {
+        log.info("problemRequest = {}", problemRequest);
+        return problemRequest;
     }
 
     @GetMapping(value = "/echo")
@@ -34,9 +34,9 @@ public class TestController {
     }
 
     @PostMapping("/list")
-    public List<UserRequest> list(@Valid List<UserRequest> userRequestList) {
-        log.info("userRequestList={}", userRequestList);
-        return userRequestList;
+    public List<ProblemRequest> list(@Valid List<ProblemRequest> problemRequestList) {
+        log.info("problemRequestList = {}", problemRequestList);
+        return problemRequestList;
     }
 
     @GetMapping(value = "/cookie")
