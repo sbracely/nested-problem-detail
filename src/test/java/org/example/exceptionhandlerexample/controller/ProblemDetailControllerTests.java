@@ -256,9 +256,29 @@ class ProblemDetailControllerTests {
                 .isEqualTo(new Error("list", "最大长度是 2", Error.Type.PARAMETER));
     }
 
+    //TODO
     @Test
     void handlerMethodValidationExceptionModelAttribute() {
         String url = BASE_PATH + "/model-attribute";
-
+        mockMvcTester.get().uri(url).exchange();
     }
+
+    @Test
+    void handlerMethodValidationExceptionPathVariable() {
+        String url = BASE_PATH + "/path-variable/a";
+        MvcTestResult result = mockMvcTester.get().uri(url).exchange();
+        assertThat(result)
+                .hasStatus(BAD_REQUEST)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        assertThat(nestedProblemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00400");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(url));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).singleElement()
+                .isEqualTo(new Error("id", "id 最小长度是 2", Error.Type.PARAMETER));
+    }
+
 }

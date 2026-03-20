@@ -1,8 +1,8 @@
 package org.example.exceptionhandlerexample.component;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.exceptionhandlerexample.response.ErrorCode;
 import org.example.exceptionhandlerexample.response.Error;
+import org.example.exceptionhandlerexample.response.ErrorCode;
 import org.example.exceptionhandlerexample.response.NestedProblemDetail;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSourceResolvable;
@@ -27,9 +27,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        List<Error> errorList = ex.getBindingResult().getAllErrors().stream().map(Error::new).toList();
+        List<Error> errors = ex.getBindingResult().getAllErrors().stream().map(Error::new).toList();
         NestedProblemDetail nestedProblemDetail = new NestedProblemDetail(ex.getBody());
-        nestedProblemDetail.setErrors(errorList);
+        nestedProblemDetail.setErrors(errors);
         return handleExceptionInternal(ex, nestedProblemDetail, headers, status, request);
     }
 
@@ -40,64 +40,64 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
             @Override
             public void cookieValue(CookieValue cookieValue, ParameterValidationResult result) {
-                String parameterName = result.getMethodParameter().getParameterName();
-                result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
-                        .map(defaultMessage -> new Error(parameterName, defaultMessage, Error.Type.COOKIE))
-                        .forEach(errorList::add);
+                processParameterValidationResult(result, Error.Type.COOKIE);
             }
 
             @Override
             public void matrixVariable(MatrixVariable matrixVariable, ParameterValidationResult result) {
-                String parameterName = result.getMethodParameter().getParameterName();
-                result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
-                        .map(defaultMessage -> new Error(parameterName, defaultMessage, Error.Type.PARAMETER))
-                        .forEach(errorList::add);
+                processParameterValidationResult(result, Error.Type.PARAMETER);
             }
 
             @Override
             public void modelAttribute(@Nullable ModelAttribute modelAttribute, ParameterErrors errors) {
-                log.info("errors = {}", errors);
+                //TODO: without test
+                processParameterErrors(errors);
             }
 
             @Override
             public void pathVariable(PathVariable pathVariable, ParameterValidationResult result) {
-                log.info("result = {}", result);
+                processParameterValidationResult(result, Error.Type.PARAMETER);
             }
 
             @Override
             public void requestBody(RequestBody requestBody, ParameterErrors errors) {
-                log.info("errors = {}", errors);
-                errors.getAllErrors().stream().map(Error::new).forEach(errorList::add);
+                processParameterErrors(errors);
             }
 
             @Override
             public void requestHeader(RequestHeader requestHeader, ParameterValidationResult result) {
-                log.info("result = {}", result);
+                processParameterValidationResult(result, Error.Type.HEADER);
             }
 
             @Override
             public void requestParam(@Nullable RequestParam requestParam, ParameterValidationResult result) {
-                log.info("result = {}", result);
-                String parameterName = result.getMethodParameter().getParameterName();
-                result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
-                        .map(defaultMessage -> new Error(parameterName, defaultMessage, Error.Type.PARAMETER))
-                        .forEach(errorList::add);
+                processParameterValidationResult(result, Error.Type.PARAMETER);
             }
 
             @Override
             public void requestPart(RequestPart requestPart, ParameterErrors errors) {
-                log.info("errors = {}", errors);
+                processParameterErrors(errors);
             }
 
             @Override
             public void other(ParameterValidationResult result) {
-                log.info("result = {}", result);
+                processParameterValidationResult(result, Error.Type.PARAMETER);
             }
 
             @Override
             public void requestBodyValidationResult(RequestBody requestBody, ParameterValidationResult result) {
-                log.info("result = {}", result);
-                HandlerMethodValidationException.Visitor.super.requestBodyValidationResult(requestBody, result);
+                processParameterValidationResult(result, Error.Type.PARAMETER);
+            }
+
+            private void processParameterValidationResult(ParameterValidationResult result, Error.Type errorType) {
+                String parameterName = result.getMethodParameter().getParameterName();
+                result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
+                        .map(defaultMessage -> new Error(parameterName, defaultMessage, errorType))
+                        .forEach(errorList::add);
+            }
+
+            private void processParameterErrors(ParameterErrors errors) {
+                errors.getAllErrors().stream().map(Error::new).forEach(errorList::add);
             }
         });
         NestedProblemDetail nestedProblemDetail = new NestedProblemDetail(ex.getBody());

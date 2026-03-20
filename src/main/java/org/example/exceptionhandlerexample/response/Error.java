@@ -35,5 +35,6 @@ public class Error {
     public enum Type {
         PARAMETER,
         COOKIE,
+        HEADER,
     }
 }

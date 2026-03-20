@@ -1,5 +1,7 @@
 package org.example.exceptionhandlerexample.controller;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.example.exceptionhandlerexample.reuqest.problem.ProblemDetailRequest;
@@ -81,5 +83,10 @@ public class ProblemDetailController {
     @GetMapping("/model-attribute")
     public void modelAttribute(ProblemDetailRequest problemDetailRequest) {
         log.info("problemRequest: {}", problemDetailRequest);
+    }
+
+    @GetMapping("/path-variable/{id}")
+    public void pathVariable(@PathVariable @Length(min = 2, message = "id 最小长度是 2") String id) {
+        log.info("id: {}", id);
     }
 }
