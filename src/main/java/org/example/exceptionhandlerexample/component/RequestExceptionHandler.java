@@ -82,11 +82,10 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
             public void other(ParameterValidationResult result) {
                 /*
                   Annotation[] parameterAnnotations = result.getMethodParameter().getParameterAnnotations();
-                  @Value @SessionAttribute @RequestAttribute
+                  @Value @SessionAttribute @RequestAttribute ...
                  */
-                result.getResolvableErrors().forEach(error -> {
-                    log.error("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage());
-                });
+                result.getResolvableErrors().forEach(error ->
+                        log.error("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage()));
             }
 
             @Override
@@ -129,8 +128,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 }
             }
             case ProblemDetail problemDetail -> body = new NestedProblemDetail(problemDetail);
-            default -> {
-            }
+            default -> log.error("body class: {}", body.getClass());
         }
 
         return super.createResponseEntity(body, headers, statusCode, request);

@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.exceptionhandlerexample.response.Error;
 import org.example.exceptionhandlerexample.response.NestedProblemDetail;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,7 +34,7 @@ class ProblemDetailControllerTests {
     private static final String BASE_PATH = "/problem-detail";
 
     @Test
-    void httpRequestMethodNotSupportedExceptionTest() {
+    void httpRequestMethodNotSupportedException() {
         String uri = BASE_PATH + "/param";
         MvcTestResult result = mockMvcTester.post().uri(uri).exchange();
         assertThat(result)
@@ -48,7 +51,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void httpMediaTypeNotSupportedExceptionTest() {
+    void httpMediaTypeNotSupportedException() {
         String uri = BASE_PATH + "/consume-json";
         MvcTestResult result = mockMvcTester.put().uri(uri).exchange();
         assertThat(result)
@@ -65,7 +68,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void httpMediaTypeNotAcceptableExceptionTest() {
+    void httpMediaTypeNotAcceptableException() {
         String uri = BASE_PATH + "/produce-json";
         MvcTestResult result = mockMvcTester.put().uri(uri)
                 .header(ACCEPT, APPLICATION_XML_VALUE).exchange();
@@ -83,7 +86,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void missingPathVariableExceptionTest() {
+    void missingPathVariableException() {
         String uri = BASE_PATH + "/delete/1";
         MvcTestResult result = mockMvcTester.delete().uri(uri).exchange();
         assertThat(result)
@@ -99,7 +102,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void missingServletRequestParameterExceptionTest() {
+    void missingServletRequestParameterException() {
         String uri = BASE_PATH + "/param";
         MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
         assertThat(result)
@@ -115,7 +118,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void missingServletRequestPartExceptionTest() {
+    void missingServletRequestPartException() {
         String uri = BASE_PATH + "/file";
         MvcTestResult result = mockMvcTester.put().multipart().contentType(MULTIPART_FORM_DATA).uri(uri).exchange();
         assertThat(result)
@@ -131,7 +134,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void servletRequestBindingExceptionMissingMatrixVariableExceptionTest() {
+    void servletRequestBindingExceptionMissingMatrixVariableException() {
         String uri = BASE_PATH + "/matrix/abc;list1=a,b,c";
         MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
         assertThat(result)
@@ -147,7 +150,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void servletRequestBindingExceptionMissingRequestCookieExceptionTest() {
+    void servletRequestBindingExceptionMissingRequestCookieException() {
         String uri = BASE_PATH + "/cookie";
         MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
         assertThat(result)
@@ -163,7 +166,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void servletRequestBindingExceptionMissingRequestHeaderExceptionTest() {
+    void servletRequestBindingExceptionMissingRequestHeaderException() {
         String uri = BASE_PATH + "/header";
         MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
         assertThat(result)
@@ -179,7 +182,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void servletRequestBindingExceptionUnsatisfiedServletRequestParameterExceptionTest() {
+    void servletRequestBindingExceptionUnsatisfiedServletRequestParameterException() {
         String uri = BASE_PATH + "/unsatisfied";
         MvcTestResult result = mockMvcTester.get().uri(uri).param("type", "1").exchange();
         assertThat(result)
@@ -195,7 +198,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void methodArgumentNotValidExceptionTest() {
+    void methodArgumentNotValidException() {
         String uri = BASE_PATH + "/create";
         MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
                                 {
@@ -405,5 +408,23 @@ class ProblemDetailControllerTests {
         assertThat(nestedProblemDetail.getErrors()).singleElement()
                 .isEqualTo(new Error(null, "元素不能包含空", Error.Type.PARAMETER));
 
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "spring.web.resources.add-mappings", matches = "false")
+    void noHandlerFoundException() {
+        String uri = BASE_PATH + "/no-handler-found";
+        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(NOT_FOUND)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        assertThat(nestedProblemDetail.getDetail()).contains("No endpoint");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00404");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).isNull();
     }
 }
