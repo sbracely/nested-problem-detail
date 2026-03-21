@@ -1,13 +1,19 @@
 package org.example.exceptionhandlerexample.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.example.exceptionhandlerexample.reuqest.problem.ProblemDetailRequest;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckMultipartFile;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckPassword;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -116,8 +122,11 @@ public class ProblemDetailController {
 
     @GetMapping("/request-other")
     public void requestOther(@SessionAttribute(required = false) @NotBlank(message = "sessionAttribute 不能为空")
-                             String sessionAttribute) {
-        log.info("sessionAttribute: {}", sessionAttribute);
+                             String sessionAttribute,
+                             @RequestAttribute(required = false) @NotBlank(message = "requestAttribute 不能为空")
+                             String requestAttribute,
+                             @Value("") @NotBlank(message = "value 不能为空") String value) {
+        log.info("sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
     }
 
     @PostMapping("/request-body-validation-result")

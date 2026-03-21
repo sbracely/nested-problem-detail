@@ -80,7 +80,13 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
             @Override
             public void other(ParameterValidationResult result) {
-                processParameterValidationResult(result, getParameterName(result), Error.Type.PARAMETER);
+                /*
+                  Annotation[] parameterAnnotations = result.getMethodParameter().getParameterAnnotations();
+                  @Value @SessionAttribute @RequestAttribute
+                 */
+                result.getResolvableErrors().forEach(error -> {
+                    log.error("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage());
+                });
             }
 
             @Override
