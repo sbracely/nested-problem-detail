@@ -330,6 +330,24 @@ class ProblemDetailControllerTests {
     }
 
     @Test
+    void handlerMethodValidationExceptionRequestParam() {
+        String uri = BASE_PATH + "/request-param";
+        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(BAD_REQUEST)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        assertThat(nestedProblemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00400");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).singleElement()
+                .isEqualTo(new Error("param", "参数不能为空", Error.Type.PARAMETER));
+    }
+
+    @Test
     void handlerMethodValidationExceptionRequestPart() {
         String uri = BASE_PATH + "/request-part";
         MvcTestResult result = mockMvcTester.get().uri(uri)

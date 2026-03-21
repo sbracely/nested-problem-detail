@@ -1,5 +1,6 @@
 package org.example.exceptionhandlerexample.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.example.exceptionhandlerexample.reuqest.problem.ProblemDetailRequest;
@@ -98,6 +99,11 @@ public class ProblemDetailController {
     @GetMapping("/request-header")
     public void requestHeader(@RequestHeader @Length(min = 2, message = "最小长度是 2") String headerValue) {
         log.info("headerValue: {}", headerValue);
+    }
+
+    @GetMapping("/request-param")
+    public void requestParam(@NotBlank(message = "参数不能为空") String param) {
+        log.info("param: {}", param);
     }
 
     @GetMapping("/request-part")
