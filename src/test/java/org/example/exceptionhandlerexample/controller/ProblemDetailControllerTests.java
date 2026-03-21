@@ -2,15 +2,21 @@ package org.example.exceptionhandlerexample.controller;
 
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
+import org.example.exceptionhandlerexample.component.RequestExceptionHandler;
 import org.example.exceptionhandlerexample.response.Error;
 import org.example.exceptionhandlerexample.response.NestedProblemDetail;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
+import org.springframework.validation.method.ParameterValidationResult;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -364,5 +370,38 @@ class ProblemDetailControllerTests {
         assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(nestedProblemDetail.getErrors()).singleElement()
                 .isEqualTo(new Error("file", "文件不能为空", Error.Type.PARAMETER));
+    }
+
+    /**
+     * TODO
+     * {@link RequestExceptionHandler#handleHandlerMethodValidationException(HandlerMethodValidationException, HttpHeaders, HttpStatusCode, WebRequest)}
+     * {@link HandlerMethodValidationException.Visitor#other(ParameterValidationResult)}
+     * {@link ProblemDetailController#requestOther()}
+     */
+    @Test
+    @Disabled
+    void handlerMethodValidationExceptionOther() {
+
+    }
+
+    @Test
+    void HandlerMethodValidationExceptionRequestBodyValidationResult() {
+        String uri = BASE_PATH + "/request-body-validation-result";
+        MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
+                              ["","a"]
+                """).exchange();
+        assertThat(result)
+                .hasStatus(BAD_REQUEST)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        assertThat(nestedProblemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00400");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).singleElement()
+                .isEqualTo(new Error(null, "元素不能包含空", Error.Type.PARAMETER));
+
     }
 }

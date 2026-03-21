@@ -85,7 +85,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
             @Override
             public void requestBodyValidationResult(RequestBody requestBody, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.PARAMETER);
+                result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
+                        .map(defaultMessage -> new Error(null, defaultMessage, Error.Type.PARAMETER))
+                        .forEach(errorList::add);
             }
 
             private void processParameterValidationResult(ParameterValidationResult result, Error.Type errorType) {

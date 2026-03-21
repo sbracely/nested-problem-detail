@@ -115,4 +115,14 @@ public class ProblemDetailController {
                             ) MultipartFile file) {
         log.info("file: {}", file);
     }
+
+    @GetMapping("/request-other")
+    public void requestOther() {
+
+    }
+
+    @PostMapping("/request-body-validation-result")
+    public void requestBodyValidationResult(@RequestBody List<@NotBlank(message = "元素不能包含空") String> list) {
+        log.info("list.size = {}, list: {}", list.size(), list);
+    }
 }
