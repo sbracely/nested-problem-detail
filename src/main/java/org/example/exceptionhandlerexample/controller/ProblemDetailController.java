@@ -80,7 +80,7 @@ public class ProblemDetailController {
     }
 
     @GetMapping("/model-attribute")
-    public void modelAttribute(@Validated ProblemDetailRequest problemDetailRequest) {
+    public void modelAttribute(@CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
         log.info("problemRequest: {}", problemDetailRequest);
     }
 
@@ -90,8 +90,7 @@ public class ProblemDetailController {
     }
 
     @PostMapping("/request-body")
-    public void requestBody(@RequestBody(required = false)
-                            @CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
+    public void requestBody(@CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
         log.info("problemDetailRequest: {}", problemDetailRequest);
     }
 

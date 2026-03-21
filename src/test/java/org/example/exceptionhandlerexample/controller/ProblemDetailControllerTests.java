@@ -4,20 +4,12 @@ import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.example.exceptionhandlerexample.response.Error;
 import org.example.exceptionhandlerexample.response.NestedProblemDetail;
-import org.example.exceptionhandlerexample.reuqest.problem.ProblemDetailRequest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
-import org.springframework.validation.method.ParameterErrors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -122,7 +114,7 @@ class ProblemDetailControllerTests {
     }
 
     @Test
-    void missingServletRequestPartExceptionTest() throws Exception {
+    void missingServletRequestPartExceptionTest() {
         String uri = BASE_PATH + "/file";
         MvcTestResult result = mockMvcTester.put().multipart().contentType(MULTIPART_FORM_DATA).uri(uri).exchange();
         assertThat(result)
@@ -264,17 +256,22 @@ class ProblemDetailControllerTests {
                 .isEqualTo(new Error("list", "最大长度是 2", Error.Type.PARAMETER));
     }
 
-    /**
-     * TODO
-     * {@link ProblemDetailController#modelAttribute(ProblemDetailRequest)}
-     * {@link org.example.exceptionhandlerexample.component.RequestExceptionHandler#handleHandlerMethodValidationException(HandlerMethodValidationException, HttpHeaders, HttpStatusCode, WebRequest)}
-     * {@link HandlerMethodValidationException.Visitor#modelAttribute(ModelAttribute, ParameterErrors)}
-     */
     @Test
-    @Disabled
     void handlerMethodValidationExceptionModelAttribute() {
         String uri = BASE_PATH + "/model-attribute";
-        mockMvcTester.get().uri(uri).exchange();
+        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(BAD_REQUEST)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        assertThat(nestedProblemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00400");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).singleElement()
+                .isEqualTo(new Error("password", "密码不能是空", Error.Type.PARAMETER));
     }
 
     @Test
