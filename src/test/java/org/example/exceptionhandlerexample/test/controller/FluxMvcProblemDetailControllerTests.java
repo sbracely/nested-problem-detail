@@ -1,10 +1,10 @@
-package org.example.exceptionhandlerexample.test.controller.mvc;
+package org.example.exceptionhandlerexample.test.controller;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncListener;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
-import org.example.exceptionhandlerexample.controller.mvc.MvcProblemDetailController;
+import org.example.exceptionhandlerexample.controller.MvcProblemDetailController;
 import org.example.exceptionhandlerexample.response.Error;
 import org.example.exceptionhandlerexample.response.NestedProblemDetail;
 import org.junit.jupiter.api.Nested;

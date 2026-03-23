@@ -1,10 +1,10 @@
-package org.example.exceptionhandlerexample.controller.mvc;
+package org.example.exceptionhandlerexample.controller;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
-import org.example.exceptionhandlerexample.reuqest.problem.ProblemDetailRequest;
+import org.example.exceptionhandlerexample.reuqest.problem.detail.ProblemDetailRequest;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckMultipartFile;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckPassword;
 import org.hibernate.validator.constraints.Length;

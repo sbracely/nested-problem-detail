@@ -1,4 +1,4 @@
-package org.example.exceptionhandlerexample.component;
+package org.example.exceptionhandlerexample.handler;
 
 import org.example.exceptionhandlerexample.response.Error;
 import org.example.exceptionhandlerexample.response.ErrorCode;

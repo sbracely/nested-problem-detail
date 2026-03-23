@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Strings;
-import org.example.exceptionhandlerexample.reuqest.problem.ProblemDetailRequest;
+import org.example.exceptionhandlerexample.reuqest.problem.detail.ProblemDetailRequest;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.ConfirmPassword;
 
 public class ConfirmPasswordValidator implements ConstraintValidator<ConfirmPassword, ProblemDetailRequest> {
