@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ContentTooLargeException;
 
 import java.util.List;
 
@@ -135,4 +136,10 @@ public class MvcProblemDetailController {
         return new DeferredResult<>(1L);
     }
 
+
+    @PostMapping("/content-too-large")
+    public void contentTooLarge(@RequestPart MultipartFile file) {
+        log.info("file: {}", file);
+        throw new ContentTooLargeException(new RuntimeException("content too large"));
+    }
 }

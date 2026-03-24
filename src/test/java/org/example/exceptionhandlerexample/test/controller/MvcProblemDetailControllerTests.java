@@ -14,6 +14,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockAsyncContext;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,10 +30,11 @@ import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.ALLOW;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 @Slf4j
 @WebMvcTest(MvcProblemDetailController.class)
-class FluxMvcProblemDetailControllerTests {
+class MvcProblemDetailControllerTests {
 
     @Autowired
     private MockMvcTester mockMvcTester;
@@ -473,6 +476,26 @@ class FluxMvcProblemDetailControllerTests {
         assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(nestedProblemDetail.getStatus()).isEqualTo(SERVICE_UNAVAILABLE.value());
         assertThat(nestedProblemDetail.getTitle()).isEqualTo(SERVICE_UNAVAILABLE.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).isNull();
+    }
+
+    @Test
+    void errorResponseExceptionContentTooLargeException() {
+        String uri = BASE_PATH + "/content-too-large";
+        MockMultipartFile file = new MockMultipartFile("file", "test-upload.txt",
+                "text/plain", "Hello, this is a test file content!".getBytes(StandardCharsets.UTF_8));
+        MvcTestResult result = mockMvcTester.perform(multipart(uri).file(file));
+        assertThat(result)
+                .hasStatus(CONTENT_TOO_LARGE)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        log.info("nestedProblemDetail: {}", nestedProblemDetail);
+        assertThat(nestedProblemDetail.getDetail()).isNull();
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00413");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
         assertThat(nestedProblemDetail.getErrors()).isNull();
     }
 }
