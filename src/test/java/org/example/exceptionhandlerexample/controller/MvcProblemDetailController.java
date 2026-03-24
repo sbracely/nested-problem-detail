@@ -155,4 +155,9 @@ public class MvcProblemDetailController {
         }
         throw new MethodNotAllowedException(httpMethod, supportedMethods);
     }
+
+    @PostMapping("/file-max-size")
+    public void fileMaxSize(@RequestPart MultipartFile file) {
+        log.info("file.size: {}", file.getSize());
+    }
 }
