@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -248,5 +249,11 @@ public class MvcProblemDetailController {
     @GetMapping("/missing-request-value-mvc")
     public void missingRequestValueMvc(String id) throws org.springframework.web.bind.MissingRequestValueException {
         throw new org.springframework.web.bind.MissingRequestValueException("id is required", true);
+    }
+
+    @GetMapping("/servlet-request-binding")
+    public void servletRequestBinding() throws ServletRequestBindingException {
+        log.info("servlet request binding");
+        throw new ServletRequestBindingException("binding error");
     }
 }
