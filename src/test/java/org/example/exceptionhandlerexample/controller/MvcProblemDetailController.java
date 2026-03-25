@@ -12,9 +12,11 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +30,9 @@ import org.springframework.web.server.*;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -263,5 +267,16 @@ public class MvcProblemDetailController {
                 List.of("type=1", "exist"),
                 org.springframework.util.CollectionUtils.toMultiValueMap(Map.of())
         );
+    }
+
+    @GetMapping("/error-response-exception")
+    public void errorResponseException() {
+        throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/response-status-exception")
+    public void responseStatusException() {
+        log.info("response status exception");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "exception");
     }
 }

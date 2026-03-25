@@ -437,7 +437,7 @@ class MvcProblemDetailControllerTests {
     }
 
     @Test
-    void HandlerMethodValidationExceptionRequestBodyValidationResult() {
+    void handlerMethodValidationExceptionRequestBodyValidationResult() {
         String uri = BASE_PATH + "/request-body-validation-result";
         MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
                               ["","a"]
@@ -515,6 +515,24 @@ class MvcProblemDetailControllerTests {
         assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(nestedProblemDetail.getStatus()).isEqualTo(SERVICE_UNAVAILABLE.value());
         assertThat(nestedProblemDetail.getTitle()).isEqualTo(SERVICE_UNAVAILABLE.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).isNull();
+    }
+
+    @Test
+    void errorResponseException() {
+        String uri = BASE_PATH + "/error-response-exception";
+        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(BAD_REQUEST)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        log.info("nestedProblemDetail: {}", nestedProblemDetail);
+        assertThat(nestedProblemDetail.getDetail()).isNull();
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00400");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(nestedProblemDetail.getErrors()).isNull();
     }
 
@@ -648,6 +666,24 @@ class MvcProblemDetailControllerTests {
         assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(nestedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
         assertThat(nestedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).isNull();
+    }
+
+    @Test
+    void errorResponseResponseStatusExceptionBaseClass() {
+        String uri = BASE_PATH + "/response-status-exception";
+        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(BAD_REQUEST)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        log.info("nestedProblemDetail: {}", nestedProblemDetail);
+        assertThat(nestedProblemDetail.getDetail()).isEqualTo("exception");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00400");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(nestedProblemDetail.getErrors()).isNull();
     }
 
