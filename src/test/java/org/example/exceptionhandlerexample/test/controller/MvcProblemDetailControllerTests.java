@@ -648,4 +648,22 @@ class MvcProblemDetailControllerTests {
         assertThat(nestedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(nestedProblemDetail.getErrors()).isNull();
     }
+
+    @Test
+    void errorResponseExceptionUnsupportedMediaTypeStatusException() {
+        String uri = BASE_PATH + "/unsupported-media-type";
+        MvcTestResult result = mockMvcTester.post().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(UNSUPPORTED_MEDIA_TYPE)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        NestedProblemDetail nestedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(NestedProblemDetail.class).isNotNull().actual();
+        log.info("nestedProblemDetail: {}", nestedProblemDetail);
+        assertThat(nestedProblemDetail.getDetail()).isEqualTo("Could not parse Content-Type.");
+        assertThat(nestedProblemDetail.getErrorCode()).isEqualTo("A00415");
+        assertThat(nestedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(nestedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
+        assertThat(nestedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
+        assertThat(nestedProblemDetail.getErrors()).isNull();
+    }
 }

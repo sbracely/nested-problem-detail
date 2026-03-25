@@ -219,4 +219,10 @@ public class MvcProblemDetailController {
         log.info("server web input");
         throw new ServerWebInputException("server web input error");
     }
+
+    @PostMapping("/unsupported-media-type")
+    public void unsupportedMediaType() {
+        log.info("unsupported media type");
+        throw new UnsupportedMediaTypeStatusException("unsupported media type");
+    }
 }
