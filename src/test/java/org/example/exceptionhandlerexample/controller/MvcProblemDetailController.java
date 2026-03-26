@@ -324,7 +324,7 @@ public class MvcProblemDetailController {
         log.info("data: {}", data);
     }
 
-    @GetMapping(path = "/http-message-not-writable", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/http-message-not-writable")
     public ProblemDetailResponse httpMessageNotWritable() {
         return new ProblemDetailResponse();
     }
