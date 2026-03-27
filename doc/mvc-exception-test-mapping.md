@@ -1,4 +1,4 @@
-# Exception Test Mapping
+# MVC Exception Test Mapping
 
 | No. | Grandparent Class | Superclass | Exception Class | Type | Test Method |
 |-----|-------------------|------------|-----------------|------|-------------|
