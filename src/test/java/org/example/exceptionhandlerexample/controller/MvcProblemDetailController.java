@@ -10,6 +10,7 @@ import org.example.exceptionhandlerexample.response.ProblemDetailResponse;
 import org.example.exceptionhandlerexample.reuqest.problem.detail.ProblemDetailRequest;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckMultipartFile;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckPassword;
+import org.example.exceptionhandlerexample.service.ProblemDetailService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.TypeMismatchException;
@@ -45,8 +46,11 @@ public class MvcProblemDetailController {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-    public MvcProblemDetailController(RequestMappingHandlerMapping requestMappingHandlerMapping) {
+    private final ProblemDetailService problemDetailService;
+
+    public MvcProblemDetailController(RequestMappingHandlerMapping requestMappingHandlerMapping, ProblemDetailService problemDetailService) {
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
+        this.problemDetailService = problemDetailService;
     }
 
     @GetMapping("/param")
@@ -327,5 +331,11 @@ public class MvcProblemDetailController {
     @GetMapping(path = "/http-message-not-writable")
     public ProblemDetailResponse httpMessageNotWritable() {
         return new ProblemDetailResponse();
+    }
+
+    @GetMapping("/method-validation")
+    public void methodValidation() {
+        String problemDetail = problemDetailService.createProblemDetail("");
+        log.info("problemDetail: {}", problemDetail);
     }
 }
