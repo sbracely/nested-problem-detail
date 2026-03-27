@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -156,5 +157,12 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     protected @NonNull ProblemDetail createProblemDetail(Exception ex, HttpStatusCode status, String defaultDetail, @Nullable String detailMessageCode, Object @Nullable [] detailMessageArguments, WebRequest request) {
         ProblemDetail problemDetail = super.createProblemDetail(ex, status, defaultDetail, detailMessageCode, detailMessageArguments, request);
         return new NestedProblemDetail(problemDetail);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleAsyncRequestNotUsableException(
+            AsyncRequestNotUsableException ex, WebRequest request) {
+        log.error("================================handleAsyncRequestNotUsableException========================================", ex);
+        return null;
     }
 }

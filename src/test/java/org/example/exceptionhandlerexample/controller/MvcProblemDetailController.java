@@ -29,11 +29,13 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.*;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -340,23 +342,20 @@ public class MvcProblemDetailController {
         log.info("problemDetail: {}", problemDetail);
     }
 
-    /**
-     * TODO: add test
-     * <p>
-     * {@link org.springframework.web.context.request.async.AsyncRequestNotUsableException}
-     */
-    @RequestMapping("/async-request-not-usable")
-    public DeferredResult<String> asyncRequestNotUsable() {
-        log.info("controller async request not usable");
-        DeferredResult<String> deferredResult = new DeferredResult<>(30000L);
+    @GetMapping("/async-request-not-usable")
+    public SseEmitter asyncRequestNotUsable() {
+        SseEmitter emitter = new SseEmitter(60000L);
         CompletableFuture.runAsync(() -> {
             try {
-                Thread.sleep(10000);
-                deferredResult.setResult("Hello, World!");
-            } catch (InterruptedException e) {
-                log.error("interrupted", e);
+                for (int i = 0; i < 10; i++) {
+                    emitter.send("event " + i);
+                    Thread.sleep(1000);
+                }
+                emitter.complete();
+            } catch (Exception e) {
+                emitter.completeWithError(e);
             }
         });
-        return deferredResult;
+        return emitter;
     }
 }
