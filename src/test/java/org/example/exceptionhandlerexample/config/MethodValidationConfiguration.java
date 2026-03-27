@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @Configuration
-public class ValidationConfig {
+public class MethodValidationConfiguration {
 
     @Bean
     public static MethodValidationPostProcessor validationPostProcessor() {

@@ -1,4 +1,4 @@
-package org.example.exceptionhandlerexample.serializer;
+package org.example.exceptionhandlerexample.response.serializer;
 
 import org.example.exceptionhandlerexample.response.ProblemDetailResponse;
 import org.springframework.http.converter.HttpMessageNotWritableException;

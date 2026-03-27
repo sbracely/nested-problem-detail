@@ -1,4 +1,4 @@
-package org.example.exceptionhandlerexample.reuqest.problem.detail;
+package org.example.exceptionhandlerexample.reuqest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

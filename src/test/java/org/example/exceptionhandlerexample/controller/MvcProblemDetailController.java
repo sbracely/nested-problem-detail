@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.example.exceptionhandlerexample.response.Error;
 import org.example.exceptionhandlerexample.response.ProblemDetailResponse;
-import org.example.exceptionhandlerexample.reuqest.problem.detail.ProblemDetailRequest;
+import org.example.exceptionhandlerexample.reuqest.ProblemDetailRequest;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckMultipartFile;
 import org.example.exceptionhandlerexample.reuqest.valid.annocation.CheckPassword;
 import org.example.exceptionhandlerexample.service.ProblemDetailService;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.*;
@@ -347,9 +346,9 @@ public class MvcProblemDetailController {
         SseEmitter emitter = new SseEmitter(60000L);
         CompletableFuture.runAsync(() -> {
             try {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 100; i++) {
                     emitter.send("event " + i);
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 }
                 emitter.complete();
             } catch (Exception e) {
