@@ -28,7 +28,6 @@
         <url/>
     </scm>
     <properties>
-        <java.version>25</java.version>
         <nested-problem-detail.version>0.0.1-SNAPSHOT</nested-problem-detail.version>
     </properties>
 

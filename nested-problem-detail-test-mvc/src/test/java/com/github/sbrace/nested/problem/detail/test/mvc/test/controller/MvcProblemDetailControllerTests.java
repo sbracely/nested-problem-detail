@@ -510,7 +510,7 @@ class MvcProblemDetailControllerTests {
         assertThat(mvcTestResult.getRequest().isAsyncStarted()).isTrue();
         AsyncContext asyncContext = mvcTestResult.getRequest().getAsyncContext();
         assertThat(asyncContext).isNotNull();
-        AsyncListener listener = ((MockAsyncContext) asyncContext).getListeners().getFirst();
+        AsyncListener listener = ((MockAsyncContext) asyncContext).getListeners().get(0);
         listener.onTimeout(null);
         MvcTestResult result = mockMvcTester.perform(MockMvcRequestBuilders.asyncDispatch(mvcTestResult.getMvcResult()));
         assertThat(result)

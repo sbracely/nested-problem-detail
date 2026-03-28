@@ -79,8 +79,8 @@ The project covers **50+ test methods** for **35+ exception classes** including:
 
 ## Requirements
 
-- Java 25+
-- Spring Boot 4.0.4+
+- Java 17+
+- Spring Boot 4.0.5+
 
 ## License
 

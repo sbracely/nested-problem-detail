@@ -138,23 +138,18 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> createResponseEntity(Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-        Object resultBody = body;
-        switch (body) {
-            case null -> {
-                NestedProblemDetail nestedProblemDetail = new NestedProblemDetail();
+        if (null == body) {
+            NestedProblemDetail nestedProblemDetail = new NestedProblemDetail();
+            nestedProblemDetail.setErrorCode(ErrorCode.httpStatusCode(statusCode, properties.getErrorCodePrefix()));
+            body = nestedProblemDetail;
+        } else if (body instanceof NestedProblemDetail nestedProblemDetail) {
+            if (null == nestedProblemDetail.getErrorCode()) {
                 nestedProblemDetail.setErrorCode(ErrorCode.httpStatusCode(statusCode, properties.getErrorCodePrefix()));
-                resultBody = nestedProblemDetail;
             }
-            case NestedProblemDetail nestedProblemDetail -> {
-                if (null == nestedProblemDetail.getErrorCode()) {
-                    nestedProblemDetail.setErrorCode(ErrorCode.httpStatusCode(statusCode, properties.getErrorCodePrefix()));
-                }
-            }
-            case ProblemDetail problemDetail -> resultBody = new NestedProblemDetail(problemDetail);
-            default -> log.error("body class: {}", body.getClass());
+        } else if (body instanceof ProblemDetail problemDetail) {
+            body = new NestedProblemDetail(problemDetail);
         }
-
-        return super.createResponseEntity(resultBody, headers, statusCode, request);
+        return super.createResponseEntity(body, headers, statusCode, request);
     }
 
     @Override
