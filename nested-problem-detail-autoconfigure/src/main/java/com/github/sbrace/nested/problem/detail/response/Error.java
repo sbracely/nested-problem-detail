@@ -1,13 +1,17 @@
 package com.github.sbrace.nested.problem.detail.response;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import java.util.Objects;
 
 public class Error {
+    @Nullable
     private Type type;
+    @Nullable
     private String field;
+    @Nullable
     private String message;
 
     public Error() {
@@ -27,32 +31,32 @@ public class Error {
         this.type = Type.PARAMETER;
     }
 
-    public Type getType() {
+    public @Nullable Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(@Nullable Type type) {
         this.type = type;
     }
 
-    public String getField() {
+    public @Nullable String getField() {
         return field;
     }
 
-    public void setField(String field) {
+    public void setField(@Nullable String field) {
         this.field = field;
     }
 
-    public String getMessage() {
+    public @Nullable String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public final boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }

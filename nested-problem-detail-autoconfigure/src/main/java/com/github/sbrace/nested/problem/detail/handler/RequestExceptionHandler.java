@@ -4,6 +4,7 @@ import com.github.sbrace.nested.problem.detail.NestedProblemDetailProperties;
 import com.github.sbrace.nested.problem.detail.response.Error;
 import com.github.sbrace.nested.problem.detail.response.ErrorCode;
 import com.github.sbrace.nested.problem.detail.response.NestedProblemDetail;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
@@ -38,7 +39,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         List<Error> errors = ex.getBindingResult().getAllErrors().stream().map(Error::new).toList();
         NestedProblemDetail nestedProblemDetail = new NestedProblemDetail(ex.getBody());
         nestedProblemDetail.setErrors(errors);
@@ -46,7 +47,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    public ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    public @Nullable ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         List<Error> errorList = new ArrayList<>();
         ex.visitResults(new HandlerMethodValidationException.Visitor() {
 
@@ -61,7 +62,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
             }
 
             @Override
-            public void modelAttribute(ModelAttribute modelAttribute, ParameterErrors errors) {
+            public void modelAttribute(@Nullable ModelAttribute modelAttribute, ParameterErrors errors) {
                 processParameterErrors(errors);
             }
 
@@ -81,7 +82,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
             }
 
             @Override
-            public void requestParam(RequestParam requestParam, ParameterValidationResult result) {
+            public void requestParam(@Nullable RequestParam requestParam, ParameterValidationResult result) {
                 processParameterValidationResult(result, Error.Type.PARAMETER, getParameterName(result));
             }
 
@@ -101,13 +102,13 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 processParameterValidationResult(result, Error.Type.PARAMETER, null);
             }
 
-            private String getParameterName(ParameterValidationResult result) {
+            private @Nullable String getParameterName(ParameterValidationResult result) {
                 return result.getMethodParameter().getParameterName();
             }
 
             private void processParameterValidationResult(ParameterValidationResult result,
                                                           Error.Type errorType,
-                                                          String parameterName) {
+                                                          @Nullable String parameterName) {
                 result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
                         .map(defaultMessage -> new Error(errorType, parameterName, defaultMessage))
                         .forEach(errorList::add);
@@ -123,7 +124,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleErrorResponseException(
+    protected @Nullable ResponseEntity<Object> handleErrorResponseException(
             ErrorResponseException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         if (ex instanceof WebExchangeBindException exchangeBindException) {
             ProblemDetail body = exchangeBindException.getBody();
@@ -137,7 +138,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> createResponseEntity(Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+    protected ResponseEntity<Object> createResponseEntity(@Nullable Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
         if (null == body) {
             NestedProblemDetail nestedProblemDetail = new NestedProblemDetail();
             nestedProblemDetail.setErrorCode(ErrorCode.httpStatusCode(statusCode, properties.getErrorCodePrefix()));
@@ -153,13 +154,13 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ProblemDetail createProblemDetail(Exception ex, HttpStatusCode status, String defaultDetail, String detailMessageCode, Object[] detailMessageArguments, WebRequest request) {
+    protected ProblemDetail createProblemDetail(Exception ex, HttpStatusCode status, String defaultDetail, @Nullable String detailMessageCode, Object @Nullable [] detailMessageArguments, WebRequest request) {
         ProblemDetail problemDetail = super.createProblemDetail(ex, status, defaultDetail, detailMessageCode, detailMessageArguments, request);
         return new NestedProblemDetail(problemDetail);
     }
 
     @Override
-    protected ResponseEntity<Object> handleAsyncRequestNotUsableException(
+    protected @Nullable ResponseEntity<Object> handleAsyncRequestNotUsableException(
             AsyncRequestNotUsableException ex, WebRequest request) {
         log.error("handleAsyncRequestNotUsableException", ex);
         return null;

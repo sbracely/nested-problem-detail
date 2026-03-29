@@ -1,13 +1,16 @@
 package com.github.sbrace.nested.problem.detail.response;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.ProblemDetail;
 
 import java.util.List;
 
 public class NestedProblemDetail extends ProblemDetail {
 
+    @Nullable
     private String errorCode;
 
+    @Nullable
     private List<Error> errors;
 
     public NestedProblemDetail() {
@@ -18,19 +21,19 @@ public class NestedProblemDetail extends ProblemDetail {
         this.errorCode = ErrorCode.httpStatusValue(problemDetail.getStatus());
     }
 
-    public String getErrorCode() {
+    public @Nullable String getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(@Nullable String errorCode) {
         this.errorCode = errorCode;
     }
 
-    public List<Error> getErrors() {
+    public @Nullable List<Error> getErrors() {
         return errors;
     }
 
-    public void setErrors(List<Error> errors) {
+    public void setErrors(@Nullable List<Error> errors) {
         this.errors = errors;
     }
 
