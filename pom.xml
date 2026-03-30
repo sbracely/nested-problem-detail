@@ -38,10 +38,10 @@
     </properties>
 
     <modules>
-        <module>extended-problem-detail-response</module>
-        <module>extended-problem-detail-autoconfigure-webmvc</module>
-        <module>extended-problem-detail-spring-boot-starter-webmvc</module>
-        <module>extended-problem-detail-test-flux</module>
+        <module>response</module>
+        <module>autoconfigure-webmvc</module>
+        <module>starter-webmvc</module>
+        <module>test-flux</module>
     </modules>
 
     <dependencyManagement>
