@@ -1,7 +1,6 @@
-package com.github.sbracely.extended.problem.detail.test.mvc.test.controller.api.version;
+package com.github.sbracely.extended.problem.detail.test.mvc.test.api.version;
 
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
-import com.github.sbracely.extended.problem.detail.test.mvc.ExtendedProblemDetailApplicationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Slf4j
 @AutoConfigureRestTestClient
-@SpringBootTest(classes = ExtendedProblemDetailApplicationTest.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {
         "spring.mvc.apiversion.use.header=API-Version",
         "spring.mvc.apiversion.supported=1,2",

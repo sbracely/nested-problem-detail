@@ -1,6 +1,5 @@
-package com.github.sbracely.extended.problem.detail.test.mvc.test.controller.async;
+package com.github.sbracely.extended.problem.detail.test.mvc.test.async;
 
-import com.github.sbracely.extended.problem.detail.test.mvc.ExtendedProblemDetailApplicationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @AutoConfigureMockMvc
-@SpringBootTest(classes = ExtendedProblemDetailApplicationTest.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AsyncRequestNotUsableExceptionTests {
 
     private static final String BASE_PATH = "/mvc-problem-detail";

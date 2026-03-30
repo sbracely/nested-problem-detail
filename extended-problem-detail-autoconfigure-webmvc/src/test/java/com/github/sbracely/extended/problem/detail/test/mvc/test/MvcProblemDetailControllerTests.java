@@ -1,10 +1,7 @@
-package com.github.sbracely.extended.problem.detail.test.mvc.test.controller;
+package com.github.sbracely.extended.problem.detail.test.mvc.test;
 
-import com.github.sbracely.extended.problem.detail.ExtendedProblemDetailAutoConfiguration;
 import com.github.sbracely.extended.problem.detail.response.Error;
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
-import com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController;
-import com.github.sbracely.extended.problem.detail.test.mvc.service.ProblemDetailService;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncListener;
 import jakarta.servlet.http.Cookie;
@@ -12,14 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockAsyncContext;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -37,15 +33,12 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 @Slf4j
-@WebMvcTest(MvcProblemDetailController.class)
-@Import(ExtendedProblemDetailAutoConfiguration.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class MvcProblemDetailControllerTests {
 
     @Autowired
     private MockMvcTester mockMvcTester;
-
-    @MockitoBean
-    private ProblemDetailService problemDetailService;
 
     private static final String BASE_PATH = "/mvc-problem-detail";
 
@@ -573,6 +566,30 @@ class MvcProblemDetailControllerTests {
         }
     }
 
+    @Nested
+    @TestPropertySource(properties = "management.endpoints.web.exposure.include=demo")
+    class EndPointTest {
+        private static final String BASE_PATH = "/actuator";
+
+        @Test
+        void errorResponseExceptionAbstractWebMvcEndpointHandlerMappingInvalidEndpointBadRequestException() {
+            String uri = BASE_PATH + "/demo/name";
+            MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+            assertThat(result)
+                    .hasStatus(BAD_REQUEST)
+                    .hasContentType(APPLICATION_PROBLEM_JSON);
+            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
+                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            assertThat(extendedProblemDetail.getDetail()).containsOnlyOnce("Missing parameters: ")
+                    .contains("param1", "param2");
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(extendedProblemDetail.getErrors()).isNull();
+        }
+    }
+
     @Test
     void errorResponseExceptionMethodNotAllowedException() {
         String uri = BASE_PATH + "/method-not-allowed";
@@ -855,6 +872,23 @@ class MvcProblemDetailControllerTests {
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
         log.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getDetail()).isEqualTo("Failed to write request");
+        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(extendedProblemDetail.getErrors()).isNull();
+    }
+
+    @Test
+    void methodValidationException() {
+        String uri = BASE_PATH + "/method-validation";
+        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+        assertThat(result)
+                .hasStatus(INTERNAL_SERVER_ERROR)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failed");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());

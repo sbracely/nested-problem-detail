@@ -1,6 +1,5 @@
-package com.github.sbracely.extended.problem.detail.test.mvc.test.controller.file;
+package com.github.sbracely.extended.problem.detail.test.mvc.test.file;
 
-import com.github.sbracely.extended.problem.detail.test.mvc.ExtendedProblemDetailApplicationTest;
 import lombok.extern.slf4j.Slf4j;
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import static org.springframework.http.HttpStatus.CONTENT_TOO_LARGE;
 
 @Slf4j
 @AutoConfigureTestRestTemplate
-@SpringBootTest(classes = ExtendedProblemDetailApplicationTest.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = "spring.servlet.multipart.max-file-size=1")
 class FileTests {
 
