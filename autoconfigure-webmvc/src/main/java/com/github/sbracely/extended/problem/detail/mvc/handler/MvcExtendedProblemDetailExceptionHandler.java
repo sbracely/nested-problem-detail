@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail.handler;
+package com.github.sbracely.extended.problem.detail.mvc.handler;
 
 import com.github.sbracely.extended.problem.detail.response.Error;
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
-public class ExtendedProblemDetailExceptionHandler extends ResponseEntityExceptionHandler {
+public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(ExtendedProblemDetailExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(MvcExtendedProblemDetailExceptionHandler.class);
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -109,7 +109,7 @@ public class ExtendedProblemDetailExceptionHandler extends ResponseEntityExcepti
             }
 
             private void processParameterErrors(ParameterErrors errors) {
-                errors.getAllErrors().stream().map(ExtendedProblemDetailExceptionHandler.this::ObjectErrorConvertToError).forEach(errorList::add);
+                errors.getAllErrors().stream().map(MvcExtendedProblemDetailExceptionHandler.this::ObjectErrorConvertToError).forEach(errorList::add);
             }
         });
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(ex.getBody());

@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail;
+package com.github.sbracely.extended.problem.detail.mvc;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Configuration properties for extended ProblemDetail exception handling.
  */
 @ConfigurationProperties(prefix = "extended.problem-detail")
-public class ExtendedProblemDetailProperties {
+public class ExtendedProblemDetailMvcProperties {
 
     /**
      * Whether to enable extended ProblemDetail exception handling.

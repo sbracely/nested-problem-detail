@@ -54,8 +54,8 @@ The project covers **50+ test methods** for **35+ exception classes** including:
 │       ├── extendedProblemDetailProperties.java
 │       └── handler/RequestExceptionHandler.java
 ├── extended-problem-detail-spring-boot-starter/  # Starter module
-├── extended-problem-detail-test-mvc/          # MVC test module
-│   └── src/test/java/com/github/sbracely/extended/problem/detail/test/mvc/
+├── extended-problem-detail-test-flux/          # MVC test module
+│   └── src/test/java/com/github/sbracely/extended/problem/detail/test/flux/
 ├── extended-problem-detail-test-flux/         # WebFlux test module (TODO)
 └── pom.xml
 ```
@@ -73,7 +73,7 @@ The project covers **50+ test methods** for **35+ exception classes** including:
 ./mvnw test
 
 # Run MVC tests only
-./mvnw test -pl extended-problem-detail-test-mvc
+./mvnw test -pl extended-problem-detail-test-flux
 ```
 
 ## Requirements

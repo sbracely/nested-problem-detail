@@ -1,6 +1,6 @@
-package com.github.sbracely.extended.problem.detail;
+package com.github.sbracely.extended.problem.detail.flux;
 
-import com.github.sbracely.extended.problem.detail.handler.ExtendedProblemDetailExceptionHandler;
+import com.github.sbracely.extended.problem.detail.flux.handler.ExtendedProblemDetailFluxExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(ExtendedProblemDetailProperties.class)
+@EnableConfigurationProperties(ExtendedProblemDetailFluxProperties.class)
 @ConditionalOnProperty(prefix = "extended.problem-detail", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class ExtendedProblemDetailAutoConfiguration {
+public class ExtendedProblemDetailFluxAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ExtendedProblemDetailExceptionHandler requestExceptionHandler() {
-        return new ExtendedProblemDetailExceptionHandler();
+    public ExtendedProblemDetailFluxExceptionHandler requestExceptionHandler() {
+        return new ExtendedProblemDetailFluxExceptionHandler();
     }
 
 }
