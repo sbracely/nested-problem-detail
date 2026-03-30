@@ -8,26 +8,16 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>nested-problem-detail-autoconfigure</artifactId>
-    <name>nested-problem-detail-autoconfigure</name>
-    <description>Auto-configuration for nested ProblemDetail exception handling</description>
+    <artifactId>nested-problem-detail-core</artifactId>
+    <name>nested-problem-deatil-core</name>
+    <description>Core for nested ProblemDetail exception handling</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.github.sbracely</groupId>
-            <artifactId>nested-problem-detail-core</artifactId>
-        </dependency>
         <!-- Compile dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <!-- Configuration processor -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -37,14 +27,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

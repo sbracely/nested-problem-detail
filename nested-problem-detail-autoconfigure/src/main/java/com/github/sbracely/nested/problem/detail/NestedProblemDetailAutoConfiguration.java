@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 /**
- * Auto-configuration for nested ProblemDetail exception handling.
+ * Autoconfiguration for nested ProblemDetail exception handling.
  */
 @AutoConfiguration
 @ConditionalOnWebApplication
