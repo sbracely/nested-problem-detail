@@ -9,12 +9,12 @@
         <relativePath/>
     </parent>
     <groupId>com.github.sbracely</groupId>
-    <artifactId>nested-problem-detail</artifactId>
+    <artifactId>extended-problem-detail</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>nested-problem-detail</name>
-    <description>Spring Boot Starter for nested ProblemDetail exception handling</description>
-    <url>https://github.com/sbracely/nested-problem-detail</url>
+    <name>extended-problem-detail</name>
+    <description>Spring Boot Starter for extended ProblemDetail exception handling</description>
+    <url>https://github.com/sbracely/extended-problem-detail</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -34,32 +34,32 @@
         <url/>
     </scm>
     <properties>
-        <nested-problem-detail.version>0.0.1-SNAPSHOT</nested-problem-detail.version>
+        <extended-problem-detail.version>0.0.1-SNAPSHOT</extended-problem-detail.version>
     </properties>
 
     <modules>
-        <module>nested-problem-detail-core</module>
-        <module>nested-problem-detail-autoconfigure-webmvc</module>
-        <module>nested-problem-detail-spring-boot-starter-webmvc</module>
-        <module>nested-problem-detail-test-flux</module>
+        <module>extended-problem-detail-core</module>
+        <module>extended-problem-detail-autoconfigure-webmvc</module>
+        <module>extended-problem-detail-spring-boot-starter-webmvc</module>
+        <module>extended-problem-detail-test-flux</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.github.sbracely</groupId>
-                <artifactId>nested-problem-detail-core</artifactId>
-                <version>${nested-problem-detail.version}</version>
+                <artifactId>extended-problem-detail-core</artifactId>
+                <version>${extended-problem-detail.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.sbracely</groupId>
-                <artifactId>nested-problem-detail-autoconfigure-webmvc</artifactId>
-                <version>${nested-problem-detail.version}</version>
+                <artifactId>extended-problem-detail-autoconfigure-webmvc</artifactId>
+                <version>${extended-problem-detail.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.sbracely</groupId>
-                <artifactId>nested-problem-detail-spring-boot-starter-webmvc</artifactId>
-                <version>${nested-problem-detail.version}</version>
+                <artifactId>extended-problem-detail-spring-boot-starter-webmvc</artifactId>
+                <version>${extended-problem-detail.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,13 +1,13 @@
-# Nested Problem Detail
+# Extended Problem Detail
 
-A Spring Boot Starter for comprehensive exception handling with nested ProblemDetail responses (RFC 9457).
+A Spring Boot Starter for comprehensive exception handling with extended ProblemDetail responses (RFC 9457).
 
 ## Features
 
 - **Spring Boot Starter**: Auto-configuration for easy integration
 - **Global exception handler**: Extends `ResponseEntityExceptionHandler`
 - **Standardized error responses**: Using `ProblemDetail` (RFC 9457)
-- **Nested error details**: Custom `NestedProblemDetail` with field-level error information
+- **Extended error details**: Custom `ExtendedProblemDetail` with field-level error information
 - **Configurable**: Enable/disable exception handling
 - **Full test coverage**: 50+ test methods for 35+ exception classes
 
@@ -18,7 +18,7 @@ A Spring Boot Starter for comprehensive exception handling with nested ProblemDe
 ```xml
 <dependency>
     <groupId>com.github.sbracely</groupId>
-    <artifactId>nested-problem-detail-spring-boot-starter</artifactId>
+    <artifactId>extended-problem-detail-spring-boot-starter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
@@ -26,7 +26,7 @@ A Spring Boot Starter for comprehensive exception handling with nested ProblemDe
 ### 2. Configure (Optional)
 
 ```yaml
-nested:
+extended:
   problem-detail:
     enabled: true              # Enable/disable exception handling
 ```
@@ -37,7 +37,7 @@ The starter auto-configures exception handling for your Spring MVC application.
 
 ## Exception Test Coverage
 
-See [MVC Exception Test Mapping](nested-problem-detail-test-mvc/mvc-exception-test-mapping.md) for the complete test coverage table.
+See [MVC Exception Test Mapping](extended-problem-detail-test-mvc/mvc-exception-test-mapping.md) for the complete test coverage table.
 
 The project covers **50+ test methods** for **35+ exception classes** including:
 - 20 base Spring MVC exceptions (HttpRequestMethodNotSupportedException, HttpMediaTypeNotSupportedException, etc.)
@@ -48,15 +48,15 @@ The project covers **50+ test methods** for **35+ exception classes** including:
 
 ```
 .
-├── nested-problem-detail-autoconfigure/     # Auto-configuration module
-│   └── src/main/java/com/github/sbracely/nested/problem/detail/
-│       ├── NestedProblemDetailAutoConfiguration.java
-│       ├── NestedProblemDetailProperties.java
+├── extended-problem-detail-autoconfigure/     # Auto-configuration module
+│   └── src/main/java/com/github/sbracely/extended/problem/detail/
+│       ├── extendedProblemDetailAutoConfiguration.java
+│       ├── extendedProblemDetailProperties.java
 │       └── handler/RequestExceptionHandler.java
-├── nested-problem-detail-spring-boot-starter/  # Starter module
-├── nested-problem-detail-test-mvc/          # MVC test module
-│   └── src/test/java/com/github/sbracely/nested/problem/detail/test/mvc/
-├── nested-problem-detail-test-flux/         # WebFlux test module (TODO)
+├── extended-problem-detail-spring-boot-starter/  # Starter module
+├── extended-problem-detail-test-mvc/          # MVC test module
+│   └── src/test/java/com/github/sbracely/extended/problem/detail/test/mvc/
+├── extended-problem-detail-test-flux/         # WebFlux test module (TODO)
 └── pom.xml
 ```
 
@@ -73,7 +73,7 @@ The project covers **50+ test methods** for **35+ exception classes** including:
 ./mvnw test
 
 # Run MVC tests only
-./mvnw test -pl nested-problem-detail-test-mvc
+./mvnw test -pl extended-problem-detail-test-mvc
 ```
 
 ## Requirements

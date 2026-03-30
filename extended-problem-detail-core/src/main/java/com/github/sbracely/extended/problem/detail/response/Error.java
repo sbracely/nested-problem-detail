@@ -1,0 +1,74 @@
+package com.github.sbracely.extended.problem.detail.response;
+
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
+
+public class Error {
+    @Nullable
+    private Type type;
+    @Nullable
+    private String field;
+    @Nullable
+    private String message;
+
+    public Error() {
+    }
+
+    public Error(String message) {
+        this.message = message;
+    }
+
+    public Error(@Nullable Type type, @Nullable String field, @Nullable String message) {
+        this.type = type;
+        this.field = field;
+        this.message = message;
+    }
+
+    public @Nullable Type getType() {
+        return type;
+    }
+
+    public void setType(@Nullable Type type) {
+        this.type = type;
+    }
+
+    public @Nullable String getField() {
+        return field;
+    }
+
+    public void setField(@Nullable String field) {
+        this.field = field;
+    }
+
+    public @Nullable String getMessage() {
+        return message;
+    }
+
+    public void setMessage(@Nullable String message) {
+        this.message = message;
+    }
+
+    @Override
+    public final boolean equals(@Nullable Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Error error = (Error) o;
+        return type == error.type && Objects.equals(field, error.field) && Objects.equals(message, error.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, field, message);
+    }
+
+    public enum Type {
+        PARAMETER,
+        COOKIE,
+        HEADER,
+    }
+}

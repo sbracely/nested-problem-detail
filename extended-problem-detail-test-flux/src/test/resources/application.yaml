@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: extended-problem-detail-test-flux
