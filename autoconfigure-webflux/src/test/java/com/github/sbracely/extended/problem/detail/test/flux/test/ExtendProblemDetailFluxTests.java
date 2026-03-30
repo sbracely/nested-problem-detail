@@ -1,15 +1,12 @@
 package com.github.sbracely.extended.problem.detail.test.flux.test;
 
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
-import io.micrometer.core.ipc.http.HttpSender;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -17,11 +14,11 @@ import java.io.IOException;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.ALLOW;
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
-import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
-import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 
 @Slf4j
 @SpringBootTest
@@ -57,9 +54,10 @@ class ExtendProblemDetailFluxTests {
     void notAcceptableStatusException() {
         String uri = BASE_PATH + "/not-acceptable-status";
         ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
-                .header(HttpHeaders.ACCEPT, "application/xml")
+                .header(ACCEPT, APPLICATION_XML_VALUE)
                 .exchange()
                 .expectStatus().isEqualTo(NOT_ACCEPTABLE)
+                .expectHeader().valueEquals(ACCEPT, APPLICATION_JSON_VALUE)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
                 .expectBody(ExtendedProblemDetail.class)
                 .returnResult().getResponseBody();
@@ -69,6 +67,26 @@ class ExtendProblemDetailFluxTests {
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
         assertThat(extendedProblemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
+        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(extendedProblemDetail.getProperties()).isNull();
+        assertThat(extendedProblemDetail.getErrors()).isNull();
+    }
+
+    @Test
+    void unsupportedMediaTypeStatusException() {
+        String uri = BASE_PATH + "/unsupported-media-type";
+        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri).exchange()
+                .expectStatus().isEqualTo(UNSUPPORTED_MEDIA_TYPE)
+                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                .expectHeader().valueEquals(ACCEPT, APPLICATION_XML_VALUE)
+                .expectBody(ExtendedProblemDetail.class)
+                .returnResult().getResponseBody();
+        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
+        assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
+        assertThat(extendedProblemDetail.getDetail()).isNull();
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -723,23 +741,6 @@ class ExtendProblemDetailFluxTests {
 //        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
 //        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
 //        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-//        assertThat(extendedProblemDetail.getErrors()).isNull();
-    }
-
-    @Test
-    void errorResponseExceptionUnsupportedMediaTypeStatusException() {
-//        String uri = BASE_PATH + "/unsupported-media-type";
-//        MvcTestResult result = webTestClient.post().uri(uri).exchange();
-//        assertThat(result)
-//                .hasStatus(UNSUPPORTED_MEDIA_TYPE)
-//                .hasContentType(APPLICATION_PROBLEM_JSON);
-//        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-//                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-//        log.info("extendedProblemDetail: {}", extendedProblemDetail);
-//        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Could not parse Content-Type.");
-//        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-//        assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
-//        assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
 //        assertThat(extendedProblemDetail.getErrors()).isNull();
     }
 

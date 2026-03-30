@@ -44,6 +44,11 @@ public class ExtendProblemDetailFluxController {
         log.info("not-acceptable-status");
     }
 
+    @PostMapping(path = "/unsupported-media-type", consumes = MediaType.APPLICATION_XML_VALUE)
+    public void unsupportedMediaType() {
+        log.info("unsupported media type");
+    }
+
 //    private final ProblemDetailService problemDetailService;
 //
 //    public ExtendProblemDetailFluxController(ProblemDetailService problemDetailService) {
@@ -208,12 +213,6 @@ public class ExtendProblemDetailFluxController {
     public void serverWebInput() {
         log.info("server web input");
         throw new ServerWebInputException("server web input error");
-    }
-
-    @PostMapping("/unsupported-media-type")
-    public void unsupportedMediaType() {
-        log.info("unsupported media type");
-        throw new UnsupportedMediaTypeStatusException("unsupported media type");
     }
 
     @PostMapping("/web-exchange-bind")
