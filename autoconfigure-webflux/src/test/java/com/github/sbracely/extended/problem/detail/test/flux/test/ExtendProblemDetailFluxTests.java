@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.net.URI;
@@ -322,6 +323,27 @@ class ExtendProblemDetailFluxTests {
         );
     }
 
+    @Test
+    void handlerMethodValidationExceptionRequestPart() {
+        String uri = BASE_PATH + "/handler-method-validation-request-part";
+        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                .expectBody(ExtendedProblemDetail.class)
+                .returnResult().getResponseBody();
+        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(extendedProblemDetail.getProperties()).isNull();
+        assertThat(extendedProblemDetail.getErrors()).singleElement()
+                .isEqualTo(new Error(Error.Type.PARAMETER, "file", "文件不能为空"));
+    }
 
 
 

@@ -6,7 +6,6 @@ import com.github.sbracely.extended.problem.detail.test.flux.exception.Customize
 import com.github.sbracely.extended.problem.detail.test.flux.reuqest.ProblemDetailRequest;
 import com.github.sbracely.extended.problem.detail.test.flux.reuqest.valid.annocation.CheckPassword;
 import com.github.sbracely.extended.problem.detail.test.flux.service.ProblemDetailService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -101,6 +101,11 @@ public class ExtendProblemDetailFluxController {
         return Mono.just(param + value);
     }
 
+    @PostMapping("/handler-method-validation-request-part")
+    public Mono<Void> handlerMethodValidationRequestPart(@RequestPart Mono<FilePart> filePartMono) {
+        log.info("part: {}", filePartMono);
+        return Mono.empty();
+    }
 
 
 

@@ -26,8 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.ALLOW;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -385,7 +384,7 @@ class ExtendProblemDetailMvcTests {
     void handlerMethodValidationExceptionRequestPart() {
         String uri = BASE_PATH + "/request-part";
         MvcTestResult result = mockMvcTester.get().uri(uri)
-                .header(HttpHeaders.CONTENT_TYPE, "multipart/form-data").exchange();
+                .header(CONTENT_TYPE, MULTIPART_FORM_DATA).exchange();
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
