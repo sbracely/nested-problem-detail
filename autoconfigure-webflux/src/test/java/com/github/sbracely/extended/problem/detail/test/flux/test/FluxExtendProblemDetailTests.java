@@ -11,10 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -492,6 +496,8 @@ class FluxExtendProblemDetailTests {
             "spring.webflux.apiversion.use.header=API-Version",
             "spring.webflux.apiversion.supported=1,2",
     })
+    @AutoConfigureWebTestClient(timeout = "PT10M")
+    @Import(ApiVersionTests.NotAcceptableApiVersionController.class)
     class ApiVersionTests {
 
         @Test
@@ -536,9 +542,19 @@ class FluxExtendProblemDetailTests {
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         }
 
+        @RestController
+        static class NotAcceptableApiVersionController {
+            @GetMapping(value = "/response-status-exception-not-acceptable-api-version", version = "1")
+            public Mono<Void> responseStatusExceptionNotAcceptableApiVersion() {
+                log.info("response status exception not acceptable api version");
+                return Mono.empty();
+            }
+        }
+
+
         @Test
         void responseStatusExceptionNotAcceptableApiVersionException() {
-            String uri = BASE_PATH + "/response-status-exception-not-acceptable-api-version";
+            String uri = "/response-status-exception-not-acceptable-api-version";
             ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
                     .header("API-Version", "2")
                     .exchange()
