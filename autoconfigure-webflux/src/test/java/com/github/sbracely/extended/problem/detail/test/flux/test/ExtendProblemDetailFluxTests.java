@@ -468,7 +468,7 @@ class ExtendProblemDetailFluxTests {
     }
 
     @Test
-    void contentTooLargeException() {
+    void responseStatusExceptionContentTooLargeException() {
         String uri = BASE_PATH + "/content-too-large";
         ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
                 .bodyValue("x".repeat(1024 * 1024)) // 1MB
@@ -514,7 +514,32 @@ class ExtendProblemDetailFluxTests {
         }
     }
 
+    @Nested
+    @TestPropertySource(properties = "management.endpoints.web.exposure.include=demo")
+    class EndPointTests {
 
+        private static final String BASE_PATH = "/actuator";
+
+        @Test
+        void responseStatusExceptionInvalidEndpointBadRequestException() {
+            String uri = BASE_PATH + "/demo/name";
+            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri).exchange()
+                    .expectStatus().isEqualTo(BAD_REQUEST)
+                    .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getType()).isNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getDetail()).containsOnlyOnce("Missing parameters: ")
+                    .contains("param1", "param2");
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
+            assertThat(extendedProblemDetail.getErrors()).isNull();
+        }
+    }
 
 
 
