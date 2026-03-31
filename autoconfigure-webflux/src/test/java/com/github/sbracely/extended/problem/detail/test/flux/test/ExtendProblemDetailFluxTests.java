@@ -562,6 +562,25 @@ class ExtendProblemDetailFluxTests {
         }
     }
 
+    @Test
+    void noResourceFoundException() {
+        String uri = BASE_PATH + "/no-resource-found/nonexistent.js";
+        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+                .exchange()
+                .expectStatus().isEqualTo(NOT_FOUND)
+                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                .expectBody(ExtendedProblemDetail.class)
+                .returnResult().getResponseBody();
+        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
+        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
+        assertThat(extendedProblemDetail.getDetail()).contains("No static resource");
+        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(extendedProblemDetail.getProperties()).isNull();
+        assertThat(extendedProblemDetail.getErrors()).isNull();
+    }
 
 
 
@@ -779,25 +798,7 @@ class ExtendProblemDetailFluxTests {
         assertThat(extendedProblemDetail.getErrors()).isNull();
     }
 
-    @Test
-    void noResourceFoundException() {
-        String uri = BASE_PATH + "/no-resource-found/nonexistent.js";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
-                .exchange()
-                .expectStatus().isEqualTo(NOT_FOUND)
-                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
-                .returnResult().getResponseBody();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("No static resource");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
-    }
+
 
     @Test
     void payloadTooLargeException() {

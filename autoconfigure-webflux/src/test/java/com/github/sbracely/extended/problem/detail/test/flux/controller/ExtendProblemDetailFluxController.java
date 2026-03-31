@@ -258,12 +258,6 @@ public class ExtendProblemDetailFluxController {
         return Mono.error(new MissingApiVersionException());
     }
 
-    // NoResourceFoundException - 通过访问不存在的静态资源触发
-    @GetMapping("/no-resource-found/**")
-    public Mono<Void> noResourceFound() {
-        return Mono.empty();
-    }
-
     // PayloadTooLargeException - 通过请求实体过大触发
     @PostMapping("/payload-too-large")
     public Mono<Void> payloadTooLarge(@RequestBody byte[] body) {
