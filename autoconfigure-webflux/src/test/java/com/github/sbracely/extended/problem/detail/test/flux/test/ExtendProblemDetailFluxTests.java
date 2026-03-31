@@ -489,14 +489,17 @@ class ExtendProblemDetailFluxTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "spring.webflux.apiversion.use.header=API-Version")
+    @TestPropertySource(properties = {
+            "spring.webflux.apiversion.use.header=API-Version",
+            "spring.webflux.apiversion.supported=1,2",
+    })
     class ApiVersionTests {
 
         @Test
         void responseStatusExceptionInvalidApiVersionException() {
             String uri = BASE_PATH + "/response-status-exception-invalid-api-version";
             ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
-                    .header("API-Version", "1")
+                    .header("API-Version", "3")
                     .exchange()
                     .expectStatus().isEqualTo(BAD_REQUEST)
                     .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
@@ -507,7 +510,7 @@ class ExtendProblemDetailFluxTests {
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '1.0.0'.");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '3.0.0'.");
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -532,6 +535,27 @@ class ExtendProblemDetailFluxTests {
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        }
+
+        @Test
+        void responseStatusExceptionNotAcceptableApiVersionException() {
+            String uri = BASE_PATH + "/response-status-exception-not-acceptable-api-version";
+            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+                    .header("API-Version", "1")
+                    .exchange()
+                    .expectStatus().isEqualTo(BAD_REQUEST)
+                    .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getType()).isNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '1.0.0'.");
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
+            assertThat(extendedProblemDetail.getErrors()).isNull();
         }
     }
 
@@ -671,48 +695,6 @@ class ExtendProblemDetailFluxTests {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void errorResponseException() {
         String uri = BASE_PATH + "/error-response-exception";
@@ -777,7 +759,6 @@ class ExtendProblemDetailFluxTests {
     }
 
 
-
     @Test
     void missingApiVersionException() {
         String uri = BASE_PATH + "/missing-api-version";
@@ -797,7 +778,6 @@ class ExtendProblemDetailFluxTests {
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
     }
-
 
 
     @Test
