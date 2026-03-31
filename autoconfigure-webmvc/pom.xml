@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>extended-problem-detail-autoconfigure-webmvc</artifactId>
-    <name>Extended Problem Detail Auto-configuration for WebMVC</name>
-    <description>Spring Boot auto-configuration module for extended ProblemDetail exception handling in Spring WebMVC</description>
+    <name>Extended Problem Detail Autoconfiguration for WebMVC</name>
+    <description>Spring Boot autoconfiguration module for extended ProblemDetail exception handling in Spring WebMVC</description>
 
     <dependencies>
         <dependency>

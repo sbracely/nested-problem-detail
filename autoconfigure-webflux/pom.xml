@@ -8,8 +8,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>extended-problem-detail-autoconfigure-webflux</artifactId>
-    <name>Extended Problem Detail Test for WebFlux</name>
-    <description>Test module for extended ProblemDetail exception handling in Spring WebFlux applications</description>
+    <name>Extended Problem Detail Autoconfiguration for WebFlux</name>
+    <description>Spring Boot autoconfiguration module for extended ProblemDetail exception handling in Spring Webflux
+    </description>
 
     <dependencies>
         <!-- Starter under test -->
