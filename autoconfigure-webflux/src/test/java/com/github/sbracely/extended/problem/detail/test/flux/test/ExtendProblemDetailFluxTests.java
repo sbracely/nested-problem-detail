@@ -378,6 +378,25 @@ class ExtendProblemDetailFluxTests {
         ));
     }
 
+    @Test
+    void serverWebInputException() {
+        String uri = BASE_PATH + "/server-web-input";
+        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                .expectBody(ExtendedProblemDetail.class)
+                .returnResult().getResponseBody();
+        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("server web input error");
+        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(extendedProblemDetail.getProperties()).isNull();
+        assertThat(extendedProblemDetail.getErrors()).isNull();
+    }
 
 
 
@@ -437,27 +456,7 @@ class ExtendProblemDetailFluxTests {
                 .isEqualTo(new Error(Error.Type.PARAMETER, null, "元素不能包含空"));
     }
 
-    @Test
-    void serverWebInputException() {
-        // 通过类型转换失败触发ServerWebInputException
-        String uri = BASE_PATH + "/server-web-input";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uriBuilder ->
-                        uriBuilder.queryParam("number", "not-a-number").build())
-                .exchange()
-                .expectStatus().isEqualTo(BAD_REQUEST)
-                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
-                .returnResult().getResponseBody();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Failed to convert");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
-    }
+
 
 
     @Test

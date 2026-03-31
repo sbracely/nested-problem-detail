@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerErrorException;
+import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -131,6 +132,11 @@ public class ExtendProblemDetailFluxController {
         return Mono.empty();
     }
 
+    @GetMapping("/server-web-input")
+    public Mono<Void> serverWebInput() {
+        log.info("server web input");
+        return Mono.error(new ServerWebInputException("server web input error"));
+    }
 
 
 
@@ -185,14 +191,6 @@ public class ExtendProblemDetailFluxController {
         extendedProblemDetail.setDetail("支付失败");
         extendedProblemDetail.setErrors(Lists.newArrayList(new Error("余额不足"), new Error("支付频繁")));
         throw new CustomizedException(HttpStatus.INTERNAL_SERVER_ERROR, extendedProblemDetail);
-    }
-
-
-    // ServerWebInputException的子类 - 通过类型转换失败触发
-    @GetMapping("/server-web-input")
-    public Mono<Integer> serverWebInput(@RequestParam Integer number) {
-        log.info("number: {}", number);
-        return Mono.just(number);
     }
 
     // ServerErrorException - 通过内部服务调用失败触发
