@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ import static org.springframework.http.MediaType.*;
 @Slf4j
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "PT10M")
-class ExtendProblemDetailFluxTests {
+class FluxExtendProblemDetailTests {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -541,7 +540,7 @@ class ExtendProblemDetailFluxTests {
         void responseStatusExceptionNotAcceptableApiVersionException() {
             String uri = BASE_PATH + "/response-status-exception-not-acceptable-api-version";
             ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
-                    .header("API-Version", "1")
+                    .header("API-Version", "2")
                     .exchange()
                     .expectStatus().isEqualTo(BAD_REQUEST)
                     .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
@@ -552,7 +551,7 @@ class ExtendProblemDetailFluxTests {
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '1.0.0'.");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '2.0.0'.");
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
