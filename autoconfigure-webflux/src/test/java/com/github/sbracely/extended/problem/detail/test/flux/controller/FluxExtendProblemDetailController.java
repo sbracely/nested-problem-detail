@@ -17,8 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.ErrorResponseException;
-import org.springframework.web.accept.InvalidApiVersionException;
-import org.springframework.web.accept.MissingApiVersionException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.PayloadTooLargeException;
 import org.springframework.web.server.ResponseStatusException;
@@ -205,47 +203,6 @@ public class FluxExtendProblemDetailController {
         throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, extendedProblemDetail);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping("/method-validation")
     public Mono<Void> methodValidation() {
         log.info("method validation");
@@ -253,20 +210,4 @@ public class FluxExtendProblemDetailController {
         log.info("result: {}", result);
         return Mono.empty();
     }
-
-
-
-    // InvalidApiVersionException - 通过无效的 API 版本触发
-    @GetMapping("/invalid-api-version")
-    public Mono<Void> invalidApiVersion() {
-        return Mono.error(new InvalidApiVersionException("invalid version"));
-    }
-
-    // MissingApiVersionException - 通过缺少 API 版本触发
-    @GetMapping("/missing-api-version")
-    public Mono<Void> missingApiVersion() {
-        return Mono.error(new MissingApiVersionException());
-    }
-
-    // PayloadTooLargeException - 通过请求实体过大触发
 }

@@ -687,50 +687,6 @@ class FluxExtendProblemDetailTests {
         );
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Test
     void methodValidationException() {
         String uri = BASE_PATH + "/method-validation";
@@ -750,5 +706,4 @@ class FluxExtendProblemDetailTests {
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
     }
-
 }
