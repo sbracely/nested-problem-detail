@@ -74,40 +74,40 @@ public class FluxExtendProblemDetailController {
     }
 
     @GetMapping("/handler-method-validation-cookie")
-    public Mono<String> handlerMethodValidationCookie(@CookieValue @NotBlank(message = "cookie不能为空") String cookieValue) {
+    public Mono<Void> handlerMethodValidationCookie(@CookieValue @NotBlank(message = "cookie不能为空") String cookieValue) {
         log.info("cookieValue: {}", cookieValue);
-        return Mono.just(cookieValue);
+        return Mono.empty();
     }
 
     @GetMapping("/handler-method-validation-matrix/{id}")
-    public Mono<String> handlerMethodValidationMatrix(@PathVariable String id,
+    public Mono<Void> handlerMethodValidationMatrix(@PathVariable String id,
                                                       @MatrixVariable @Size(max = 2, message = "list最大长度是2") List<String> list) {
         log.info("id: {}, list: {}", id, list);
-        return Mono.just(id + list);
+        return Mono.empty();
     }
 
     @GetMapping("/handler-method-validation-model")
-    public Mono<ProblemDetailRequest> handlerMethodValidationModel(@CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
+    public Mono<Void> handlerMethodValidationModel(@CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
         log.info("problemDetailRequest: {}", problemDetailRequest);
-        return Mono.just(problemDetailRequest);
+        return Mono.empty();
     }
 
     @GetMapping("/handler-method-validation-path/{id}")
-    public Mono<String> handlerMethodValidationPath(@PathVariable @Size(min = 5, message = "id长度至少5") String id) {
+    public Mono<Void> handlerMethodValidationPath(@PathVariable @Size(min = 5, message = "id长度至少5") String id) {
         log.info("id: {}", id);
-        return Mono.just(id);
+        return Mono.empty();
     }
 
     @PostMapping("/handler-method-validation-body")
-    public Mono<ProblemDetailRequest> handlerMethodValidationBody(@RequestBody @CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
+    public Mono<Void> handlerMethodValidationBody(@RequestBody @CheckPassword(message = "密码不能是空") ProblemDetailRequest problemDetailRequest) {
         log.info("problemDetailRequest: {}", problemDetailRequest);
-        return Mono.just(problemDetailRequest);
+        return Mono.empty();
     }
 
     @GetMapping("/handler-method-validation-header")
-    public Mono<String> handlerMethodValidationHeader(@RequestHeader @NotBlank(message = "header不能为空") String headerValue) {
+    public Mono<Void> handlerMethodValidationHeader(@RequestHeader @NotBlank(message = "header不能为空") String headerValue) {
         log.info("headerValue: {}", headerValue);
-        return Mono.just(headerValue);
+        return Mono.empty();
     }
 
     @GetMapping("/handler-method-validation-request-param")
@@ -146,9 +146,9 @@ public class FluxExtendProblemDetailController {
     }
 
     @GetMapping("/server-error")
-    public Mono<String> serverError() {
+    public Mono<Void> serverError() {
         log.info("server error");
-        return Mono.error(new ServerErrorException("server error", new RuntimeException()));
+        throw new ServerErrorException("server error", new RuntimeException());
     }
 
     @GetMapping("/response-status-exception")
