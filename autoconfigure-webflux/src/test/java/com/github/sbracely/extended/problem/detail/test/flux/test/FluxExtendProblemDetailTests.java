@@ -85,7 +85,7 @@ class FluxExtendProblemDetailTests {
 
     @Test
     void unsupportedMediaTypeStatusException() {
-        String uri = BASE_PATH + "/unsupported-media-type";
+        String uri = BASE_PATH + "/unsupported-media-type-status";
         ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri).exchange()
                 .expectStatus().isEqualTo(UNSUPPORTED_MEDIA_TYPE)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
@@ -124,7 +124,7 @@ class FluxExtendProblemDetailTests {
 
     @Test
     void unsatisfiedRequestParameterException() {
-        String uri = BASE_PATH + "/unsatisfied-request-param";
+        String uri = BASE_PATH + "/unsatisfied-request-parameter";
         ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
@@ -502,7 +502,7 @@ class FluxExtendProblemDetailTests {
 
         @Test
         void responseStatusExceptionInvalidApiVersionException() {
-            String uri = BASE_PATH + "/response-status-exception-invalid-api-version";
+            String uri = BASE_PATH + "/not-acceptable-status-invalid-api-version";
             ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
                     .header("API-Version", "3")
                     .exchange()
