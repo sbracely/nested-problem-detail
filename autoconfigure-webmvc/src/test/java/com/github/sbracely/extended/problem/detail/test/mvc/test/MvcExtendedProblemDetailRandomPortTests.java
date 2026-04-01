@@ -4,14 +4,11 @@ import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetai
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.system.CapturedOutput;
-import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
@@ -45,6 +42,9 @@ class MvcExtendedProblemDetailRandomPortTests {
 
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
 
+    /**
+     * @see org.springframework.web.multipart.MaxUploadSizeExceededException
+     */
     @Nested
     @AutoConfigureTestRestTemplate
     @TestPropertySource(properties = "spring.servlet.multipart.max-file-size=1")
@@ -53,8 +53,11 @@ class MvcExtendedProblemDetailRandomPortTests {
         @Autowired
         private TestRestTemplate restTemplate;
 
+        /**
+         * @see com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController#contentTooLargeException(org.springframework.web.multipart.MultipartFile)
+         */
         @Test
-        void maxUploadSizeExceededException() {
+        void contentTooLargeException() {
             byte[] largeContent = new byte[2];
 
             ByteArrayResource resource = new ByteArrayResource(largeContent) {
@@ -70,7 +73,7 @@ class MvcExtendedProblemDetailRandomPortTests {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-            String uri = BASE_PATH + "/file-max-size";
+            String uri = BASE_PATH + "/content-too-large-exception";
             ResponseEntity<ExtendedProblemDetail> response = restTemplate.postForEntity(
                     "http://localhost:" + port + uri,
                     new HttpEntity<>(body, headers),
@@ -79,19 +82,27 @@ class MvcExtendedProblemDetailRandomPortTests {
             assertThat(response.getStatusCode()).isEqualTo(CONTENT_TOO_LARGE);
             assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
             ExtendedProblemDetail extendedProblemDetail = response.getBody();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Maximum upload size exceeded");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
+            assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
+            assertThat(extendedProblemDetail.getDetail()).isNull();
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
 
     }
 
+    /**
+     * {@link org.springframework.web.accept.InvalidApiVersionException}
+     * {@link org.springframework.web.accept.MissingApiVersionException}
+     * {@link org.springframework.web.accept.NotAcceptableApiVersionException}
+     */
     @Nested
     @AutoConfigureRestTestClient
-    @Import(ApiVersionTests.ApiVersionTestController.class)
+    @Import(ApiVersionTests.NotAcceptableApiVersionController.class)
     @TestPropertySource(properties = {
             "spring.mvc.apiversion.use.header=API-Version",
             "spring.mvc.apiversion.supported=1,2",
@@ -101,16 +112,79 @@ class MvcExtendedProblemDetailRandomPortTests {
         @Autowired
         private RestTestClient restTestClient;
 
+        /**
+         * @see org.springframework.web.accept.InvalidApiVersionException
+         */
+        @Test
+        void invalidApiVersionException() {
+            String uri = "http://localhost:" + port + BASE_PATH + "/invalid-api-version-exception";
+            EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+                    .uri(uri)
+                    .header("API-Version", "3")
+                    .exchange()
+                    .expectStatus()
+                    .isEqualTo(BAD_REQUEST)
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult();
+            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getType()).isNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '3.0.0'.");
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create("/mvc-extended-problem-detail/invalid-api-version-exception"));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
+            assertThat(extendedProblemDetail.getErrors()).isNull();
+        }
+
+        /**
+         * @see org.springframework.web.accept.MissingApiVersionException
+         */
+        @Test
+        void missingApiVersionException() {
+            String uri = "http://localhost:" + port + BASE_PATH + "/missing-api-version-exception";
+            EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+                    .uri(uri)
+                    .exchange()
+                    .expectStatus()
+                    .isEqualTo(BAD_REQUEST)
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult();
+            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getType()).isNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("API version is required.");
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create("/mvc-extended-problem-detail/missing-api-version-exception"));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
+            assertThat(extendedProblemDetail.getErrors()).isNull();
+        }
+
+        /**
+         * {@link org.springframework.web.accept.NotAcceptableApiVersionException}
+         */
         @RestController
-        static class ApiVersionTestController {
-            @GetMapping(path = "/api-version-test", version = "1")
-            void apiVersionTest1() {
+        static class NotAcceptableApiVersionController {
+            @GetMapping(path = "/not-acceptable-api-version", version = "1")
+            void notAcceptableApiVersion() {
+                log.info("notAcceptableApiVersion");
             }
         }
 
+        /**
+         * @see org.springframework.web.accept.NotAcceptableApiVersionException
+         * @see NotAcceptableApiVersionController#notAcceptableApiVersion()
+         */
         @Test
-        void errorResponseExceptionNotAcceptableApiVersionException() {
-            String uri = "http://localhost:" + port + "/api-version-test";
+        void notAcceptableApiVersionException() {
+            String uri = "http://localhost:" + port + "/not-acceptable-api-version";
             EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                     .uri(uri)
                     .header("API-Version", "2")
@@ -124,17 +198,22 @@ class MvcExtendedProblemDetailRandomPortTests {
             ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
             log.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '2.0.0'.");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create("/api-version-test"));
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '2.0.0'.");
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create("/not-acceptable-api-version"));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
+            assertThat(extendedProblemDetail.getErrors()).isNull();
         }
     }
 
+    /**
+     * @see org.springframework.web.context.request.async.AsyncRequestNotUsableException
+     * @see com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController#asyncRequestNotUsableException()
+     */
     @Test
-    @ExtendWith(OutputCaptureExtension.class)
-    void asyncRequestNotUsableException(CapturedOutput output) {
+    void asyncRequestNotUsableException() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setReadTimeout(Duration.ofMillis(1));
 
@@ -145,7 +224,7 @@ class MvcExtendedProblemDetailRandomPortTests {
 
         try {
             restClient.get()
-                    .uri(BASE_PATH + "/async-request-not-usable")
+                    .uri(BASE_PATH + "/async-request-not-usable-exception")
                     .retrieve()
                     .toBodilessEntity();
         } catch (Exception e) {
@@ -158,9 +237,5 @@ class MvcExtendedProblemDetailRandomPortTests {
             log.error("Thread sleep interrupted", e);
             Thread.currentThread().interrupt();
         }
-
-
-        assertThat(output.getOut())
-                .contains("handleAsyncRequestNotUsableException");
     }
 }

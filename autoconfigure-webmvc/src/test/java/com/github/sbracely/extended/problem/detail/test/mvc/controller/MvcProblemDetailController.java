@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,19 +23,34 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.method.MethodValidationException;
+import org.springframework.validation.method.ParameterErrors;
+import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.ErrorResponseException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.accept.InvalidApiVersionException;
+import org.springframework.web.accept.MissingApiVersionException;
+import org.springframework.web.bind.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.server.*;
+import org.springframework.web.server.MissingRequestValueException;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -58,138 +74,220 @@ public class MvcProblemDetailController {
         this.problemDetailService = problemDetailService;
     }
 
-    @GetMapping("/param")
-    public void get(@RequestParam Integer id) {
-        log.info("id: {}", id);
+    /**
+     * @see MissingServletRequestParameterException
+     */
+    @GetMapping("/missing-servlet-request-parameter-exception")
+    public void missingServletRequestParameterException(@RequestParam Integer id) {
+        log.info("missingServletRequestParameterException, id: {}", id);
     }
 
-    @PutMapping(path = "/consume-json", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void putConsumeJson(ProblemDetailRequest problemDetailRequest) {
-        log.info("problemRequest: {}", problemDetailRequest);
+    /**
+     * @see HttpMediaTypeNotSupportedException
+     */
+    @PutMapping(path = "/http-media-type-not-supported-exception", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void httpMediaTypeNotSupportedException(ProblemDetailRequest problemDetailRequest) {
+        log.info("httpMediaTypeNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
     }
 
-    @PutMapping(path = "/produce-json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void putProduceJson(ProblemDetailRequest problemDetailRequest) {
-        log.info("problemRequest: {}", problemDetailRequest);
+    /**
+     * @see HttpMediaTypeNotAcceptableException
+     */
+    @PutMapping(path = "/http-media-type-not-acceptable-exception", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void httpMediaTypeNotAcceptableException(ProblemDetailRequest problemDetailRequest) {
+        log.info("httpMediaTypeNotAcceptableException, problemDetailRequest: {}", problemDetailRequest);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Integer iid) {
-        log.info("iid: {}", iid);
+    /**
+     * @see MissingPathVariableException
+     */
+    @DeleteMapping("/missing-path-variable-exception/{id}")
+    public void missingPathVariableException(@PathVariable Integer id) {
+        log.info("missingPathVariableException, id: {}", id);
     }
 
-    @PutMapping("/file")
-    public void file(@RequestPart MultipartFile file) {
-        log.info("file: {}", file);
+    /**
+     * @see MissingServletRequestPartException
+     */
+    @PutMapping("/missing-servlet-request-part-exception")
+    public void missingServletRequestPartException(@RequestPart MultipartFile file) {
+        log.info("missingServletRequestPartException, file: {}", file);
     }
 
-    @GetMapping("/matrix/{id}")
-    public void matrix(@PathVariable String id, @MatrixVariable List<String> list) {
-        log.info("id: {}, list: {}", id, list);
+    /**
+     * @see MissingMatrixVariableException
+     */
+    @GetMapping("/missing-matrix-variable-exception/{id}")
+    public void missingMatrixVariableException(@PathVariable String id, @MatrixVariable List<String> list) {
+        log.info("missingMatrixVariableException, id: {}, list: {}", id, list);
     }
 
-    @GetMapping("/cookie")
-    public void cookie(@CookieValue String cookieValue) {
-        log.info("cookieValue: {}", cookieValue);
+    /**
+     * @see MissingRequestCookieException
+     */
+    @GetMapping("/missing-request-cookie-exception")
+    public void missingRequestCookieException(@CookieValue String cookieValue) {
+        log.info("missingRequestCookieException, cookieValue: {}", cookieValue);
     }
 
-    @GetMapping("/header")
-    public void header(@RequestHeader String header) {
-        log.info("header: {}", header);
+    /**
+     * @see MissingRequestHeaderException
+     */
+    @GetMapping("/missing-request-header-exception")
+    public void missingRequestHeaderException(@RequestHeader String header) {
+        log.info("missingRequestHeaderException, header: {}", header);
     }
 
-    @GetMapping(path = "/unsatisfied", params = {"type=1", "exist", "!debug"})
-    public void unsatisfied() {
-        log.info("unsatisfied");
+    /**
+     * @see UnsatisfiedRequestParameterException
+     */
+    @GetMapping(path = "/unsatisfied-request-parameter-exception", params = {"type=1", "exist", "!debug"})
+    public void unsatisfiedRequestParameterException() {
+        log.info("unsatisfiedRequestParameterException");
     }
 
-    @PostMapping("/create")
-    public void create(@RequestBody @Validated ProblemDetailRequest problemDetailRequest) {
-        log.info("problemRequest: {}", problemDetailRequest);
+    /**
+     * @see MethodArgumentNotValidException
+     */
+    @PostMapping("/method-argument-not-valid-exception")
+    public void methodArgumentNotValidException(@RequestBody @Validated ProblemDetailRequest problemDetailRequest) {
+        log.info("methodArgumentNotValidException, problemDetailRequest: {}", problemDetailRequest);
     }
 
-    @GetMapping(value = "/cookie-value")
-    public String cookieValue(@CookieValue @Length(min = 2, message = "Name length must be at least 2") String name) {
-        log.info("name: {}", name);
-        return name;
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#cookieValue(CookieValue, ParameterValidationResult)
+     */
+    @GetMapping("/handler-method-validation-exception-cookie-value")
+    public void handlerMethodValidationExceptionCookieValue(@CookieValue @Length(min = 2, message = "Name length must be at least 2") String name) {
+        log.info("handlerMethodValidationExceptionCookieValue, name: {}", name);
     }
 
-    @GetMapping("/matrix-variable/{id}")
-    public void matrixVariable(@PathVariable String id,
-                               @MatrixVariable @Size(max = 2, message = "Maximum size is 2") List<String> list) {
-        log.info("id: {}, list: {}", id, list);
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#matrixVariable(MatrixVariable, ParameterValidationResult)
+     */
+    @GetMapping("/handler-method-validation-exception-matrix-variable/{id}")
+    public void handlerMethodValidationExceptionMatrixVariable(@PathVariable String id,
+                                                               @MatrixVariable @Size(max = 2, message = "Maximum size is 2") List<String> list) {
+        log.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
     }
-    
-    @GetMapping("/model-attribute")
-    public void modelAttribute(@CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
-        log.info("problemRequest: {}", problemDetailRequest);
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#modelAttribute(ModelAttribute, ParameterErrors)
+     */
+    @GetMapping("/handler-method-validation-exception-model-attribute")
+    public void handlerMethodValidationExceptionModelAttribute(@CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
+        log.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
     }
-    
-    @GetMapping("/path-variable/{id}")
-    public void pathVariable(@PathVariable @Length(min = 2, message = "ID minimum length is 2") String id) {
-        log.info("id: {}", id);
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#pathVariable(PathVariable, ParameterValidationResult)
+     */
+    @GetMapping("/handler-method-validation-exception-path-variable/{id}")
+    public void handlerMethodValidationExceptionPathVariable(@PathVariable @Length(min = 2, message = "ID minimum length is 2") String id) {
+        log.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
     }
-    
-    @PostMapping("/request-body")
-    public void requestBody(@RequestBody @CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
-        log.info("problemDetailRequest: {}", problemDetailRequest);
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#requestBody(RequestBody, ParameterErrors)
+     */
+    @PostMapping("/handler-method-validation-exception-request-body")
+    public void handlerMethodValidationExceptionRequestBody(@RequestBody @CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
+        log.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
     }
-    
-    @GetMapping("/request-header")
-    public void requestHeader(@RequestHeader @Length(min = 2, message = "Minimum length is 2") String headerValue) {
-        log.info("headerValue: {}", headerValue);
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#requestHeader(RequestHeader, ParameterValidationResult)
+     */
+    @GetMapping("/handler-method-validation-exception-request-header")
+    public void handlerMethodValidationExceptionRequestHeader(@RequestHeader @Length(min = 2, message = "Minimum length is 2") String headerValue) {
+        log.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
     }
-    
-    @GetMapping("/request-param")
-    public void requestParam(@NotBlank(message = "Parameter cannot be empty") String param,
-                             @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
-        log.info("param: {}, param2: {}", param, param2);
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#requestParam(RequestParam, ParameterValidationResult)
+     */
+    @GetMapping("/handler-method-validation-exception-request-param")
+    public void handlerMethodValidationExceptionRequestParam(@RequestParam @NotBlank(message = "Parameter cannot be empty") String param,
+                                                             @RequestParam @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
+        log.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
     }
-    
-    @GetMapping("/request-part")
-    public void requestPart(@RequestPart(required = false) @CheckMultipartFile(extensionIncludeMessage = "File type not supported",
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#requestPart(RequestPart, ParameterErrors)
+     */
+    @GetMapping("/handler-method-validation-exception-request-part")
+    public void handlerMethodValidationExceptionRequestPart(@RequestPart(required = false) @CheckMultipartFile(extensionIncludeMessage = "File type not supported",
             extensionInclude = "txt", requiredMessage = "File cannot be empty") MultipartFile file) {
-        log.info("file: {}", file);
-    }
-    
-    @GetMapping("/request-other")
-    public void requestOther(@SessionAttribute(required = false) @NotBlank(message = "sessionAttribute cannot be empty")
-                             String sessionAttribute,
-                             @RequestAttribute(required = false) @NotBlank(message = "requestAttribute cannot be empty")
-                             String requestAttribute,
-                             @Value("") @NotBlank(message = "value cannot be empty") String value) {
-        log.info("sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
-    }
-    
-    @PostMapping("/request-body-validation-result")
-    public void requestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
-        log.info("list.size = {}, list: {}", list.size(), list);
+        log.info("handlerMethodValidationExceptionRequestPart, file: {}", file);
     }
 
-    @GetMapping("/async-request-timeout")
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#other(ParameterValidationResult)
+     */
+    @GetMapping("/handler-method-validation-exception-other")
+    public void handlerMethodValidationExceptionOther(@SessionAttribute(required = false) @NotBlank(message = "sessionAttribute cannot be empty")
+                                                      String sessionAttribute,
+                                                      @RequestAttribute(required = false) @NotBlank(message = "requestAttribute cannot be empty")
+                                                      String requestAttribute,
+                                                      @Value("") @NotBlank(message = "value cannot be empty") String value) {
+        log.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
+    }
+
+    /**
+     * @see HandlerMethodValidationException
+     * @see HandlerMethodValidationException.Visitor#requestBodyValidationResult(RequestBody, ParameterValidationResult)
+     */
+    @PostMapping("/handler-method-validation-exception-request-body-validation-result")
+    public void handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
+        log.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
+    }
+
+    /**
+     * @see AsyncRequestTimeoutException
+     */
+    @GetMapping("/async-request-timeout-exception")
     public DeferredResult<Void> asyncRequestTimeoutException() {
+        log.info("asyncRequestTimeoutException");
         return new DeferredResult<>(1L);
     }
 
-
-    @PostMapping("/content-too-large")
-    public void contentTooLarge(@RequestPart MultipartFile file) {
-        log.info("file: {}", file);
+    /**
+     * @see ContentTooLargeException
+     */
+    @PostMapping("/content-too-large-exception")
+    public void contentTooLargeException(@RequestPart MultipartFile file) {
+        log.info("contentTooLargeException, file: {}", file);
         throw new ContentTooLargeException(new RuntimeException("content too large"));
     }
 
-    @RequestMapping("/method-not-allowed")
-    public void methodNotAllowed(HttpMethod httpMethod) {
+    /**
+     * @see MethodNotAllowedException
+     */
+    @RequestMapping("/method-not-allowed-exception")
+    public void methodNotAllowedException(HttpMethod httpMethod) {
         List<HttpMethod> supportedMethods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
-        log.info("httpMethod: {}", httpMethod);
+        log.info("methodNotAllowedException, httpMethod: {}", httpMethod);
         if (supportedMethods.contains(httpMethod)) {
             return;
         }
         throw new MethodNotAllowedException(httpMethod, supportedMethods);
     }
 
-    @GetMapping("/missing-request-value")
-    public void missingRequestValue(String id) throws Exception {
+    /**
+     * @see MissingRequestValueException
+     */
+    @GetMapping("/missing-request-value-exception")
+    public void missingRequestValueException(String id) throws Exception {
+        log.info("missingRequestValueException, id: {}", id);
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (null == servletRequestAttributes) {
             throw new MissingServletRequestParameterException("id", "String");
@@ -204,50 +302,75 @@ public class MvcProblemDetailController {
         throw new MissingRequestValueException("id", String.class, "request param", methodParameters[0]);
     }
 
-    @GetMapping(path = "/api-version")
-    public void apiVersion() {
-        log.info("apiVersion");
+    /**
+     * @see InvalidApiVersionException
+     */
+    @GetMapping("/invalid-api-version-exception")
+    public void invalidApiVersionException() {
+        log.info("invalidApiVersionException");
     }
 
-    @GetMapping("/not-acceptable-status")
-    public void notAcceptableStatus() {
+    /**
+     * @see MissingApiVersionException
+     */
+    @GetMapping("/missing-api-version-exception")
+    public void missingApiVersionException() {
+        log.info("missingApiVersionException");
+    }
+
+    /**
+     * @see NotAcceptableStatusException
+     */
+    @GetMapping("/not-acceptable-status-exception")
+    public void notAcceptableStatusException() {
+        log.info("notAcceptableStatusException");
         throw new NotAcceptableStatusException(List.of(MediaType.APPLICATION_JSON));
     }
 
-    @PostMapping("/file-max-size")
-    public void fileMaxSize(@RequestPart MultipartFile file) {
-        log.info("file.size: {}", file.getSize());
-    }
-
-    @PostMapping("/payload-too-large")
-    public void payloadTooLarge(@RequestPart MultipartFile file) {
-        log.info("file: {}", file);
+    /**
+     * @see PayloadTooLargeException
+     */
+    @PostMapping("/payload-too-large-exception")
+    public void payloadTooLargeException(@RequestPart MultipartFile file) {
+        log.info("payloadTooLargeException, file: {}", file);
         PayloadTooLargeException payloadTooLarge = new PayloadTooLargeException(new RuntimeException("payload too large"));
         payloadTooLarge.setDetail("payload too large");
         throw payloadTooLarge;
     }
 
-    @GetMapping("/server-error")
-    public void serverError() {
-        log.info("server error");
+    /**
+     * @see ServerErrorException
+     */
+    @GetMapping("/server-error-exception")
+    public void serverErrorException() {
+        log.info("serverErrorException");
         throw new ServerErrorException("server error", new RuntimeException());
     }
 
-    @GetMapping("/server-web-input")
-    public void serverWebInput() {
-        log.info("server web input");
+    /**
+     * @see ServerWebInputException
+     */
+    @GetMapping("/server-web-input-exception")
+    public void serverWebInputException() {
+        log.info("serverWebInputException");
         throw new ServerWebInputException("server web input error");
     }
 
-    @PostMapping("/unsupported-media-type")
-    public void unsupportedMediaType() {
-        log.info("unsupported media type");
+    /**
+     * @see UnsupportedMediaTypeStatusException
+     */
+    @PostMapping("/unsupported-media-type-status-exception")
+    public void unsupportedMediaTypeStatusException() {
+        log.info("unsupportedMediaTypeStatusException");
         throw new UnsupportedMediaTypeStatusException("unsupported media type");
     }
 
-    @PostMapping("/web-exchange-bind")
-    public void webExchangeBind(@RequestBody @Validated ProblemDetailRequest problemDetailRequest, BindingResult bindingResult) throws Exception {
-        log.info("web exchange bind");
+    /**
+     * @see WebExchangeBindException
+     */
+    @PostMapping("/web-exchange-bind-exception")
+    public void webExchangeBindException(@RequestBody @Validated ProblemDetailRequest problemDetailRequest, BindingResult bindingResult) throws Exception {
+        log.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (null == servletRequestAttributes) {
             throw new MissingServletRequestParameterException("id", "String");
@@ -262,40 +385,48 @@ public class MvcProblemDetailController {
         throw new WebExchangeBindException(methodParameters[0], bindingResult);
     }
 
-    @GetMapping("/missing-request-value-mvc")
-    public void missingRequestValueMvc(String id) throws org.springframework.web.bind.MissingRequestValueException {
+    /**
+     * @see org.springframework.web.bind.MissingRequestValueException
+     */
+    @GetMapping("/missing-request-value-mvc-exception")
+    public void missingRequestValueMvcException(String id) throws org.springframework.web.bind.MissingRequestValueException {
+        log.info("missingRequestValueMvcException, id: {}", id);
         throw new org.springframework.web.bind.MissingRequestValueException("id is required", true);
     }
 
-    @GetMapping("/servlet-request-binding")
-    public void servletRequestBinding() throws ServletRequestBindingException {
-        log.info("servlet request binding");
+    /**
+     * @see ServletRequestBindingException
+     */
+    @GetMapping("/servlet-request-binding-exception")
+    public void servletRequestBindingException() throws ServletRequestBindingException {
+        log.info("servletRequestBindingException");
         throw new ServletRequestBindingException("binding error");
     }
 
-    @GetMapping("/unsatisfied-request-param")
-    public void unsatisfiedRequestParam() {
-        log.info("unsatisfied request param");
-        throw new UnsatisfiedRequestParameterException(
-                List.of("type=1", "exist"),
-                org.springframework.util.CollectionUtils.toMultiValueMap(Map.of())
-        );
-    }
-
+    /**
+     * @see ErrorResponseException
+     */
     @GetMapping("/error-response-exception")
     public void errorResponseException() {
+        log.info("errorResponseException");
         throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * @see ResponseStatusException
+     */
     @GetMapping("/response-status-exception")
     public void responseStatusException() {
-        log.info("response status exception");
+        log.info("responseStatusException");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "exception");
     }
 
-    @GetMapping("/conversion-not-supported")
-    public void conversionNotSupported(String data) throws Exception {
-        log.info("data: {}", data);
+    /**
+     * @see ConversionNotSupportedException
+     */
+    @GetMapping("/conversion-not-supported-exception")
+    public void conversionNotSupportedException(String data) throws Exception {
+        log.info("conversionNotSupportedException, data: {}", data);
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (null == servletRequestAttributes) {
             throw new MissingServletRequestParameterException("data", "String");
@@ -309,49 +440,73 @@ public class MvcProblemDetailController {
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
         SimpleTypeConverter simpleTypeConverter = new SimpleTypeConverter();
         ProblemDetailRequest problemDetailRequest = simpleTypeConverter.convertIfNecessary(data, ProblemDetailRequest.class, methodParameters[0]);
-        log.info("problemDetailRequest: {}", problemDetailRequest);
+        log.info("conversionNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
     }
 
-    @GetMapping("/method-argument-conversion-not-supported")
-    public void methodArgumentConversionNotSupported(@RequestParam ProblemDetailRequest error) {
-        log.info("error: {}", error);
+    /**
+     * @see MethodArgumentConversionNotSupportedException
+     */
+    @GetMapping("/method-argument-conversion-not-supported-exception")
+    public void methodArgumentConversionNotSupportedException(@RequestParam ProblemDetailRequest error) {
+        log.info("methodArgumentConversionNotSupportedException, error: {}", error);
     }
 
+    /**
+     * @see TypeMismatchException
+     */
     @GetMapping("/type-mismatch-exception")
-    public void typeMismatchException() {
-        log.info("type mismatch exception");
+    public void typeMismatchExceptionTest() {
+        log.info("typeMismatchException");
         throw new TypeMismatchException("test", Integer.class);
     }
 
-    @GetMapping("/method-argument-type-mismatch")
-    public void methodArgumentTypeMismatch(Integer integer) {
-        log.info("integer: {}", integer);
+    /**
+     * @see MethodArgumentTypeMismatchException
+     */
+    @GetMapping("/method-argument-type-mismatch-exception")
+    public void methodArgumentTypeMismatchException(Integer integer) {
+        log.info("methodArgumentTypeMismatchException, integer: {}", integer);
     }
 
-    @PostMapping("/http-message-not-readable")
-    public void httpMessageNotReadable(@RequestBody ProblemDetailRequest data) {
-        log.info("data: {}", data);
+    /**
+     * @see HttpMessageNotReadableException
+     */
+    @PostMapping("/http-message-not-readable-exception")
+    public void httpMessageNotReadableException(@RequestBody ProblemDetailRequest data) {
+        log.info("httpMessageNotReadableException, data: {}", data);
     }
 
-    @GetMapping(path = "/http-message-not-writable")
-    public ProblemDetailResponse httpMessageNotWritable() {
+    /**
+     * @see HttpMessageNotWritableException
+     */
+    @GetMapping("/http-message-not-writable-exception")
+    public ProblemDetailResponse httpMessageNotWritableException() {
+        log.info("httpMessageNotWritableException");
         return new ProblemDetailResponse();
     }
 
-    @GetMapping("/method-validation")
-    public void methodValidation() {
-        String problemDetail = problemDetailService.createProblemDetail("");
-        log.info("problemDetail: {}", problemDetail);
+    /**
+     * @see MethodValidationException
+     */
+    @GetMapping("/method-validation-exception")
+    public void methodValidationException() {
+        log.info("methodValidationException");
+        String result = problemDetailService.createProblemDetail("");
+        log.info("methodValidationException, result: {}", result);
     }
 
-    @GetMapping("/async-request-not-usable")
-    public SseEmitter asyncRequestNotUsable() {
+    /**
+     * @see AsyncRequestNotUsableException
+     */
+    @GetMapping("/async-request-not-usable-exception")
+    public SseEmitter asyncRequestNotUsableException() {
+        log.info("asyncRequestNotUsableException");
         SseEmitter emitter = new SseEmitter(5000L);
         CompletableFuture.runAsync(() -> {
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                    log.info("emitter send: {}", i);
+                    log.info("asyncRequestNotUsableException, emitter send: {}", i);
                     emitter.send("event " + i);
                 }
                 emitter.complete();
@@ -366,9 +521,12 @@ public class MvcProblemDetailController {
         return emitter;
     }
 
-    @GetMapping("/business")
-    public void business() {
-        log.info("business");
+    /**
+     * @see BusinessException
+     */
+    @GetMapping("/business-exception")
+    public void businessException() {
+        log.info("businessException");
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail();
         extendedProblemDetail.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         extendedProblemDetail.setDetail("Payment failed");
