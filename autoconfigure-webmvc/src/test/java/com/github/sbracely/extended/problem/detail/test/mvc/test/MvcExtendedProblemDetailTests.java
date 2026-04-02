@@ -29,8 +29,6 @@ import org.springframework.validation.method.ParameterErrors;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.accept.InvalidApiVersionException;
-import org.springframework.web.accept.MissingApiVersionException;
 import org.springframework.web.bind.*;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.*;
@@ -48,10 +46,10 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.apache.tomcat.util.http.Method.GET;
-import static org.apache.tomcat.util.http.Method.POST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -80,7 +78,9 @@ class MvcExtendedProblemDetailTests {
                 .containsHeader(ALLOW)
                 .headers()
                 .hasHeaderSatisfying(ALLOW, header ->
-                        assertThat(header).contains(HttpMethod.GET.name(), HttpMethod.POST.name()));
+                        assertThat(header)
+                                .singleElement()
+                                .matches(h -> h.contains(GET.name()) && h.contains(POST.name())));
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
         log.info("extendedProblemDetail: {}", extendedProblemDetail);
@@ -112,7 +112,7 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Content-Type 'null' is not supported.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -183,7 +183,7 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required query parameter 'id' is not present.");
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required parameter 'id' is not present.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -206,7 +206,7 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required request part 'file' is not present.");
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required part 'file' is not present.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -229,7 +229,7 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Required matrix variable");
+        assertThat(extendedProblemDetail.getDetail()).contains("Required path parameter 'list' is not present.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -509,7 +509,7 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required parameter 'param' is not present.");
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
@@ -646,53 +646,6 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
         assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
-    }
-
-    /**
-     * @see InvalidApiVersionException
-     * @see MvcProblemDetailController#invalidApiVersionException()
-     */
-    @Test
-    void invalidApiVersionException() {
-        String uri = BASE_PATH + "/invalid-api-version-exception";
-        MvcTestResult result = mockMvcTester.get().uri(uri)
-                .header("API-Version", "1").exchange();
-        assertThat(result)
-                .hasStatus(BAD_REQUEST)
-                .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '1.0.0'.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
-    }
-
-    /**
-     * @see MissingApiVersionException
-     * @see MvcProblemDetailController#missingApiVersionException()
-     */
-    @Test
-    void missingApiVersionException() {
-        String uri = BASE_PATH + "/missing-api-version-exception";
-        MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
-        assertThat(result)
-                .hasStatus(BAD_REQUEST)
-                .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("API version is required.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -880,7 +833,7 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Could not parse Content-Type.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();

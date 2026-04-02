@@ -101,7 +101,7 @@ public class MvcProblemDetailController {
     /**
      * @see MissingPathVariableException
      */
-    @DeleteMapping("/missing-path-variable-exception/{id}")
+    @DeleteMapping("/missing-path-variable-exception")
     public void missingPathVariableException(@PathVariable Integer id) {
         log.info("missingPathVariableException, id: {}", id);
     }
@@ -214,8 +214,8 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException.Visitor#requestParam(RequestParam, ParameterValidationResult)
      */
     @GetMapping("/handler-method-validation-exception-request-param")
-    public void handlerMethodValidationExceptionRequestParam(@RequestParam @NotBlank(message = "Parameter cannot be empty") String param,
-                                                             @RequestParam @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
+    public void handlerMethodValidationExceptionRequestParam(@NotBlank(message = "Parameter cannot be empty") String param,
+                                                             @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
         log.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
     }
 

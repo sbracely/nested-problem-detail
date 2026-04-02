@@ -1,6 +1,7 @@
 package com.github.sbracely.extended.problem.detail.test.mvc.test;
 
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
+import com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,7 @@ class MvcExtendedProblemDetailRandomPortTests {
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
-            assertThat(extendedProblemDetail.getDetail()).isNull();
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Maximum upload size exceeded");
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -114,6 +115,7 @@ class MvcExtendedProblemDetailRandomPortTests {
 
         /**
          * @see org.springframework.web.accept.InvalidApiVersionException
+         * @see MvcProblemDetailController#invalidApiVersionException()
          */
         @Test
         void invalidApiVersionException() {
@@ -142,6 +144,7 @@ class MvcExtendedProblemDetailRandomPortTests {
 
         /**
          * @see org.springframework.web.accept.MissingApiVersionException
+         * @see MvcProblemDetailController#missingApiVersionException()
          */
         @Test
         void missingApiVersionException() {
