@@ -9,6 +9,7 @@ import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncListener;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
@@ -20,6 +21,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.web.MockAsyncContext;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -40,6 +42,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.server.*;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -631,6 +634,32 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
+    }
+
+    /**
+     * @see NoHandlerFoundException
+     */
+    @Nested
+    @TestPropertySource(properties = "spring.web.resources.add-mappings=false")
+    class NoHandlerFoundExceptionTest {
+        @Test
+        void noHandlerFoundException() {
+            String uri = BASE_PATH + "/no-handler-found-exception";
+            MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
+            assertThat(result)
+                    .hasStatus(NOT_FOUND)
+                    .hasContentType(APPLICATION_PROBLEM_JSON);
+            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
+                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            assertThat(extendedProblemDetail.getType()).isNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
+            assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("No endpoint %s %s.".formatted(GET.name(), uri));
+            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(extendedProblemDetail.getProperties()).isNull();
+            assertThat(extendedProblemDetail.getErrors()).isNull();
+        }
     }
 
     /**
