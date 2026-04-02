@@ -48,16 +48,17 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.server.*;
-import org.springframework.web.server.MissingRequestValueException;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -310,6 +311,24 @@ public class MvcProblemDetailController {
     }
 
     /**
+     * @see ResponseStatusException
+     */
+    @GetMapping("/response-status-exception")
+    public void responseStatusException() {
+        log.info("responseStatusException");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "exception");
+    }
+
+    /**
+     * @see ServerWebInputException
+     */
+    @GetMapping("/server-web-input-exception")
+    public void serverWebInputException() {
+        log.info("serverWebInputException");
+        throw new ServerWebInputException("server web input error");
+    }
+
+    /**
      * @see UnsatisfiedRequestParameterException
      */
     @GetMapping(path = "/unsatisfied-request-parameter-exception", params = {"type=1", "exist", "!debug"})
@@ -317,47 +336,41 @@ public class MvcProblemDetailController {
         log.info("unsatisfiedRequestParameterException");
     }
 
-
     /**
-     * @see ContentTooLargeException
+     * @see org.springframework.web.server.MissingRequestValueException
      */
-    @PostMapping("/content-too-large-exception")
-    public void contentTooLargeException(@RequestPart MultipartFile file) {
-        log.info("contentTooLargeException, file: {}", file);
-        throw new ContentTooLargeException(new RuntimeException("content too large"));
-    }
-
-    /**
-     * @see MethodNotAllowedException
-     */
-    @RequestMapping("/method-not-allowed-exception")
-    public void methodNotAllowedException(HttpMethod httpMethod) {
-        List<HttpMethod> supportedMethods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
-        log.info("methodNotAllowedException, httpMethod: {}", httpMethod);
-        if (supportedMethods.contains(httpMethod)) {
-            return;
-        }
-        throw new MethodNotAllowedException(httpMethod, supportedMethods);
-    }
-
-    /**
-     * @see MissingRequestValueException
-     */
-    @GetMapping("/missing-request-value-exception")
-    public void missingRequestValueException(String id) throws Exception {
+    @GetMapping("/org-springframework-web-server-missing-request-value-exception")
+    public void orgSpringframeworkWebServerMissingRequestValueException(HttpServletRequest httpServletRequest,
+                                                                        String id) throws Exception {
         log.info("missingRequestValueException, id: {}", id);
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (null == servletRequestAttributes) {
-            throw new MissingServletRequestParameterException("id", "String");
-        }
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-        HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(request);
-        if (null == handlerExecutionChain) {
-            throw new MissingServletRequestParameterException("id", "String");
-        }
-        HandlerMethod handlerMethod = (HandlerMethod) handlerExecutionChain.getHandler();
-        MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        throw new MissingRequestValueException("id", String.class, "request param", methodParameters[0]);
+        HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
+        Optional.ofNullable(handlerExecutionChain)
+                .map(HandlerExecutionChain::getHandler)
+                .map(handlerMethod -> (HandlerMethod) handlerMethod)
+                .map(HandlerMethod::getMethodParameters)
+                .map(methodParameters -> methodParameters[0])
+                .ifPresent(methodParameter -> {
+                    throw new org.springframework.web.server.MissingRequestValueException("id", String.class, "request param", methodParameter);
+                });
+    }
+
+    /**
+     * @see WebExchangeBindException
+     */
+    @PostMapping("/web-exchange-bind-exception")
+    public void webExchangeBindException(HttpServletRequest httpServletRequest,
+                                         @RequestBody @Validated ProblemDetailRequest problemDetailRequest,
+                                         BindingResult bindingResult) throws Exception {
+        log.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
+        HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
+        Optional.ofNullable(handlerExecutionChain)
+                .map(HandlerExecutionChain::getHandler)
+                .map(handlerMethod -> (HandlerMethod) handlerMethod)
+                .map(HandlerMethod::getMethodParameters)
+                .map(methodParameters -> methodParameters[0])
+                .ifPresent(methodParameter -> {
+                    throw new WebExchangeBindException(methodParameter, bindingResult);
+                });
     }
 
     /**
@@ -377,12 +390,52 @@ public class MvcProblemDetailController {
     }
 
     /**
+     * @see MethodNotAllowedException
+     */
+    @RequestMapping("/method-not-allowed-exception")
+    public void methodNotAllowedException(HttpMethod httpMethod) {
+        List<HttpMethod> supportedMethods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
+        log.info("methodNotAllowedException, httpMethod: {}", httpMethod);
+        if (supportedMethods.contains(httpMethod)) {
+            return;
+        }
+        throw new MethodNotAllowedException(httpMethod, supportedMethods);
+    }
+
+    /**
      * @see NotAcceptableStatusException
      */
     @GetMapping("/not-acceptable-status-exception")
     public void notAcceptableStatusException() {
         log.info("notAcceptableStatusException");
         throw new NotAcceptableStatusException(List.of(MediaType.APPLICATION_JSON));
+    }
+
+    /**
+     * @see ContentTooLargeException
+     */
+    @PostMapping("/content-too-large-exception")
+    public void contentTooLargeException(@RequestPart MultipartFile file) {
+        log.info("contentTooLargeException, file: {}", file);
+        throw new ContentTooLargeException(new RuntimeException("content too large"));
+    }
+
+    /**
+     * @see UnsupportedMediaTypeStatusException
+     */
+    @PostMapping("/unsupported-media-type-status-exception")
+    public void unsupportedMediaTypeStatusException() {
+        log.info("unsupportedMediaTypeStatusException");
+        throw new UnsupportedMediaTypeStatusException("unsupported media type");
+    }
+
+    /**
+     * @see ServerErrorException
+     */
+    @GetMapping("/server-error-exception")
+    public void serverErrorException() {
+        log.info("serverErrorException");
+        throw new ServerErrorException("server error", new RuntimeException());
     }
 
     /**
@@ -397,74 +450,20 @@ public class MvcProblemDetailController {
     }
 
     /**
-     * @see ServerErrorException
+     * @see MaxUploadSizeExceededException
      */
-    @GetMapping("/server-error-exception")
-    public void serverErrorException() {
-        log.info("serverErrorException");
-        throw new ServerErrorException("server error", new RuntimeException());
-    }
-
-    /**
-     * @see ServerWebInputException
-     */
-    @GetMapping("/server-web-input-exception")
-    public void serverWebInputException() {
-        log.info("serverWebInputException");
-        throw new ServerWebInputException("server web input error");
-    }
-
-    /**
-     * @see UnsupportedMediaTypeStatusException
-     */
-    @PostMapping("/unsupported-media-type-status-exception")
-    public void unsupportedMediaTypeStatusException() {
-        log.info("unsupportedMediaTypeStatusException");
-        throw new UnsupportedMediaTypeStatusException("unsupported media type");
-    }
-
-    /**
-     * @see WebExchangeBindException
-     */
-    @PostMapping("/web-exchange-bind-exception")
-    public void webExchangeBindException(@RequestBody @Validated ProblemDetailRequest problemDetailRequest, BindingResult bindingResult) throws Exception {
-        log.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (null == servletRequestAttributes) {
-            throw new MissingServletRequestParameterException("id", "String");
-        }
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-        HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(request);
-        if (null == handlerExecutionChain) {
-            throw new MissingServletRequestParameterException("id", "String");
-        }
-        HandlerMethod handlerMethod = (HandlerMethod) handlerExecutionChain.getHandler();
-        MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
-        throw new WebExchangeBindException(methodParameters[0], bindingResult);
-    }
-
-
-    /**
-     * @see ResponseStatusException
-     */
-    @GetMapping("/response-status-exception")
-    public void responseStatusException() {
-        log.info("responseStatusException");
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "exception");
+    @PostMapping("/max-upload-size-exceeded-exception")
+    public void maxUploadSizeExceedededException(@RequestPart MultipartFile file) {
+        log.info("maxUploadSizeExceedededException, file: {}", file);
     }
 
     /**
      * @see ConversionNotSupportedException
      */
     @GetMapping("/conversion-not-supported-exception")
-    public void conversionNotSupportedException(String data) throws Exception {
+    public void conversionNotSupportedException(HttpServletRequest httpServletRequest, String data) throws Exception {
         log.info("conversionNotSupportedException, data: {}", data);
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (null == servletRequestAttributes) {
-            throw new MissingServletRequestParameterException("data", "String");
-        }
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-        HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(request);
+        HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         if (null == handlerExecutionChain) {
             throw new MissingServletRequestParameterException("data", "String");
         }
@@ -487,7 +486,7 @@ public class MvcProblemDetailController {
      * @see TypeMismatchException
      */
     @GetMapping("/type-mismatch-exception")
-    public void typeMismatchExceptionTest() {
+    public void typeMismatchException() {
         log.info("typeMismatchException");
         throw new TypeMismatchException("test", Integer.class);
     }
