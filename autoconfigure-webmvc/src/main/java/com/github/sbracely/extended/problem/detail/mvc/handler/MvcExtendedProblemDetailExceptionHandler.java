@@ -2,17 +2,17 @@ package com.github.sbracely.extended.problem.detail.mvc.handler;
 
 import com.github.sbracely.extended.problem.detail.response.Error;
 import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
+import org.apache.logging.log4j.util.Strings;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.method.MethodValidationException;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.ErrorResponseException;
@@ -24,8 +24,11 @@ import org.springframework.web.context.request.async.AsyncRequestNotUsableExcept
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.lang.model.type.ErrorType;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * MVC Extended Problem Detail Exception Handler.
@@ -212,6 +215,45 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
             AsyncRequestNotUsableException ex, WebRequest request) {
         log.error("handleAsyncRequestNotUsableException", ex);
         return null;
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleMethodValidationException(MethodValidationException ex,
+                                                                               HttpHeaders headers,
+                                                                               HttpStatus status,
+                                                                               WebRequest request) {
+        List<Error> errors = methodValidationExceptionToError(ex);
+        String method = ex.getMethod().getName();
+        log.error("handleMethodValidationException method = {}, errors = {}", method, errors, ex);
+        ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, request);
+        ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(body);
+        extendedProblemDetail.setErrors(errors);
+        return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
+    }
+
+    private List<Error> methodValidationExceptionToError(MethodValidationException ex) {
+        List<Error> errors = new ArrayList<>();
+        ex.getParameterValidationResults().forEach(parameterValidationResult -> {
+            if (parameterValidationResult instanceof ParameterErrors parameterErrors) {
+                parameterErrors.getAllErrors().stream().map(this::ObjectErrorConvertToError).forEach(errors::add);
+            } else {
+                String parameterName = parameterValidationResult.getMethodParameter().getParameterName();
+                parameterValidationResult.getResolvableErrors().stream().map(messageSourceResolvable -> {
+                    Error error = new Error();
+                    error.setField(parameterName);
+                    error.setType(Error.Type.PARAMETER);
+                    error.setMessage(messageSourceResolvable.getDefaultMessage());
+                    return error;
+                }).forEach(errors::add);
+            }
+        });
+        ex.getCrossParameterValidationResults().forEach(parameterValidationResult -> {
+            Error error = new Error();
+            error.setType(Error.Type.PARAMETER);
+            error.setMessage(parameterValidationResult.getDefaultMessage());
+            errors.add(error);
+        });
+        return errors;
     }
 
     /**

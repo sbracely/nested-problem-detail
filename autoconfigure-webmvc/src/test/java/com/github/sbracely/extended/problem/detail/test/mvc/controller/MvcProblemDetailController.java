@@ -522,8 +522,10 @@ public class MvcProblemDetailController {
     @GetMapping("/method-validation-exception")
     public void methodValidationException() {
         log.info("methodValidationException");
-        String result = problemDetailService.createProblemDetail("");
-        log.info("methodValidationException, result: {}", result);
+        ProblemDetailRequest problemDetailRequest = new ProblemDetailRequest();
+        problemDetailRequest.setPassword("a");
+        problemDetailRequest.setName("");
+        problemDetailService.createProblemDetail(null, problemDetailRequest);
     }
 
     /**

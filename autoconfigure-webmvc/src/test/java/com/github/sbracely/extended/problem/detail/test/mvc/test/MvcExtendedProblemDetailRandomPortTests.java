@@ -23,9 +23,13 @@ import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.accept.InvalidApiVersionException;
+import org.springframework.web.accept.MissingApiVersionException;
+import org.springframework.web.accept.NotAcceptableApiVersionException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,9 +103,9 @@ class MvcExtendedProblemDetailRandomPortTests {
     }
 
     /**
-     * {@link org.springframework.web.accept.InvalidApiVersionException}
-     * {@link org.springframework.web.accept.MissingApiVersionException}
-     * {@link org.springframework.web.accept.NotAcceptableApiVersionException}
+     * {@link InvalidApiVersionException}
+     * {@link MissingApiVersionException}
+     * {@link NotAcceptableApiVersionException}
      */
     @Nested
     @AutoConfigureRestTestClient
@@ -116,7 +120,7 @@ class MvcExtendedProblemDetailRandomPortTests {
         private RestTestClient restTestClient;
 
         /**
-         * @see org.springframework.web.accept.InvalidApiVersionException
+         * @see InvalidApiVersionException
          * @see MvcProblemDetailController#invalidApiVersionException()
          */
         @Test
@@ -145,7 +149,7 @@ class MvcExtendedProblemDetailRandomPortTests {
         }
 
         /**
-         * {@link org.springframework.web.accept.NotAcceptableApiVersionException}
+         * {@link NotAcceptableApiVersionException}
          */
         @RestController
         static class NotAcceptableApiVersionController {
@@ -156,7 +160,7 @@ class MvcExtendedProblemDetailRandomPortTests {
         }
 
         /**
-         * @see org.springframework.web.accept.NotAcceptableApiVersionException
+         * @see NotAcceptableApiVersionException
          * @see NotAcceptableApiVersionController#notAcceptableApiVersion()
          */
         @Test
@@ -185,7 +189,7 @@ class MvcExtendedProblemDetailRandomPortTests {
         }
 
         /**
-         * @see org.springframework.web.accept.MissingApiVersionException
+         * @see MissingApiVersionException
          * @see MvcProblemDetailController#missingApiVersionException()
          */
         @Test
@@ -214,8 +218,8 @@ class MvcExtendedProblemDetailRandomPortTests {
     }
 
     /**
-     * @see org.springframework.web.context.request.async.AsyncRequestNotUsableException
-     * @see com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController#asyncRequestNotUsableException()
+     * @see AsyncRequestNotUsableException
+     * @see MvcProblemDetailController#asyncRequestNotUsableException()
      */
     @Test
     void asyncRequestNotUsableException() {

@@ -5,6 +5,7 @@ import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetai
 import com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController;
 import com.github.sbracely.extended.problem.detail.test.mvc.exception.ExtendedErrorResponseException;
 import com.github.sbracely.extended.problem.detail.test.mvc.reuqest.ProblemDetailRequest;
+import com.github.sbracely.extended.problem.detail.test.mvc.service.ProblemDetailService;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncListener;
 import jakarta.servlet.http.Cookie;
@@ -1181,6 +1182,7 @@ class MvcExtendedProblemDetailTests {
     /**
      * @see MethodValidationException
      * @see MvcProblemDetailController#methodValidationException()
+     * @see ProblemDetailService#createProblemDetail(String, ProblemDetailRequest)
      */
     @Test
     void methodValidationException() {
@@ -1198,6 +1200,15 @@ class MvcExtendedProblemDetailTests {
         assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failed");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+                new Error(Error.Type.PARAMETER, "name", "name must not be blank"),
+                new Error(Error.Type.PARAMETER, "name", "name must not be null"),
+                new Error(Error.Type.PARAMETER, "password", "Password and confirm password do not match"),
+                new Error(Error.Type.PARAMETER, "name", "Name cannot be blank"),
+                new Error(Error.Type.PARAMETER, "age", "Age cannot be null"),
+                new Error(Error.Type.PARAMETER, "confirmPassword", "Password and confirm password do not match"),
+                new Error(Error.Type.PARAMETER, "name", "Name length must be between 6-10"),
+                new Error(Error.Type.PARAMETER, null, "Name is not valid")
+        );
     }
 }
