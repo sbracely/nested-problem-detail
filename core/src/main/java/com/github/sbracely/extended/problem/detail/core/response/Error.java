@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail.core;
+package com.github.sbracely.extended.problem.detail.core.response;
 
 import org.jspecify.annotations.Nullable;
 

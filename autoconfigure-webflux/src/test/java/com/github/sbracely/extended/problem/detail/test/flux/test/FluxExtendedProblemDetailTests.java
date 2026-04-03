@@ -1,7 +1,7 @@
 package com.github.sbracely.extended.problem.detail.test.flux.test;
 
-import com.github.sbracely.extended.problem.detail.core.Error;
-import com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail;
+import com.github.sbracely.extended.problem.detail.core.response.Error;
+import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.test.flux.config.MethodValidationConfiguration;
 import com.github.sbracely.extended.problem.detail.test.flux.controller.FluxExtendedProblemDetailController;
 import com.github.sbracely.extended.problem.detail.test.flux.exception.ExtendedErrorResponseException;

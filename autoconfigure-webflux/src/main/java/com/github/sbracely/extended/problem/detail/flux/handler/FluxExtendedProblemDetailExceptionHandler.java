@@ -1,26 +1,20 @@
 package com.github.sbracely.extended.problem.detail.flux.handler;
 
-import com.github.sbracely.extended.problem.detail.core.Error;
-import com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail;
-import org.jspecify.annotations.Nullable;
+import com.github.sbracely.extended.problem.detail.core.response.Error;
+import com.github.sbracely.extended.problem.detail.core.converter.ErrorConverter;
+import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.method.MethodValidationException;
-import org.springframework.validation.method.ParameterErrors;
-import org.springframework.validation.method.ParameterValidationResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +39,7 @@ import java.util.List;
  * </p>
  *
  * @see ResponseEntityExceptionHandler
- * @see MvcExtendedProblemDetailExceptionHandler WebMVC version of exception handler
+ * @see ErrorConverter
  * @since 0.0.1-SNAPSHOT
  */
 @RestControllerAdvice
@@ -70,7 +64,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     protected Mono<ResponseEntity<Object>> handleWebExchangeBindException(WebExchangeBindException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
         ProblemDetail body = ex.getBody();
         BindingResult bindingResult = ex.getBindingResult();
-        List<Error> errors = bindingResult.getAllErrors().stream().map(this::ObjectErrorConvertToError).toList();
+        List<Error> errors = bindingResult.getAllErrors().stream().map(ErrorConverter::objectErrorConvertToError).toList();
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(body);
         extendedProblemDetail.setErrors(errors);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
@@ -92,76 +86,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        List<Error> errorList = new ArrayList<>();
-        ex.visitResults(new HandlerMethodValidationException.Visitor() {
-
-            @Override
-            public void cookieValue(CookieValue cookieValue, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.COOKIE, getParameterName(result));
-            }
-
-            @Override
-            public void matrixVariable(MatrixVariable matrixVariable, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.PARAMETER, getParameterName(result));
-            }
-
-            @Override
-            public void modelAttribute(@Nullable ModelAttribute modelAttribute, ParameterErrors errors) {
-                processParameterErrors(errors);
-            }
-
-            @Override
-            public void pathVariable(PathVariable pathVariable, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.PARAMETER, getParameterName(result));
-            }
-
-            @Override
-            public void requestBody(RequestBody requestBody, ParameterErrors errors) {
-                processParameterErrors(errors);
-            }
-
-            @Override
-            public void requestBodyValidationResult(RequestBody requestBody, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.PARAMETER, null);
-            }
-
-            @Override
-            public void requestHeader(RequestHeader requestHeader, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.HEADER, getParameterName(result));
-            }
-
-            @Override
-            public void requestParam(@Nullable RequestParam requestParam, ParameterValidationResult result) {
-                processParameterValidationResult(result, Error.Type.PARAMETER, getParameterName(result));
-            }
-
-            @Override
-            public void requestPart(RequestPart requestPart, ParameterErrors errors) {
-                processParameterErrors(errors);
-            }
-
-            @Override
-            public void other(ParameterValidationResult result) {
-                result.getResolvableErrors().forEach(error ->
-                        log.warn("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage()));
-            }
-
-            private @Nullable String getParameterName(ParameterValidationResult result) {
-                return result.getMethodParameter().getParameterName();
-            }
-
-            private void processParameterValidationResult(ParameterValidationResult result,
-                                                          Error.Type errorType,
-                                                          @Nullable String parameterName) {
-                result.getResolvableErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
-                        .map(defaultMessage -> new Error(errorType, parameterName, defaultMessage))
-                        .forEach(errorList::add);
-            }
-
-            private void processParameterErrors(ParameterErrors errors) {
-                errors.getAllErrors().stream().map(FluxExtendedProblemDetailExceptionHandler.this::ObjectErrorConvertToError).forEach(errorList::add);
-            }
-        });
+        List<Error> errorList = ErrorConverter.processHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(ex.getBody());
         extendedProblemDetail.setErrors(errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
@@ -169,48 +94,12 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
 
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
-        List<Error> errors = methodValidationExceptionConvertToError(ex);
+        List<Error> errors = ErrorConverter.methodValidationExceptionConvertToError(ex);
         String method = ex.getMethod().getName();
         log.warn("handleMethodValidationException method = {}, errors = {}", method, errors, ex);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, exchange);
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(body);
         extendedProblemDetail.setErrors(errors);
         return handleExceptionInternal(ex, extendedProblemDetail, null, status, exchange);
-    }
-
-    private List<Error> methodValidationExceptionConvertToError(MethodValidationException ex) {
-        List<Error> errors = new ArrayList<>();
-        ex.getParameterValidationResults().forEach(parameterValidationResult -> {
-            if (parameterValidationResult instanceof ParameterErrors parameterErrors) {
-                parameterErrors.getAllErrors().stream().map(this::ObjectErrorConvertToError).forEach(errors::add);
-            } else {
-                String parameterName = parameterValidationResult.getMethodParameter().getParameterName();
-                parameterValidationResult.getResolvableErrors().stream().map(messageSourceResolvable ->
-                        new Error(Error.Type.PARAMETER, parameterName, messageSourceResolvable.getDefaultMessage())
-                ).forEach(errors::add);
-            }
-        });
-        ex.getCrossParameterValidationResults().stream().map(parameterValidationResult ->
-                new Error(Error.Type.PARAMETER, null, parameterValidationResult.getDefaultMessage())
-        ).forEach(errors::add);
-        return errors;
-    }
-
-    /**
-     * Converts an ObjectError to an Error object.
-     * <p>
-     * If the ObjectError is a FieldError, extracts the field name.
-     * Sets the error type to PARAMETER by default.
-     * </p>
-     *
-     * @param objectError the ObjectError to convert
-     * @return Error object with field and message information
-     */
-    private Error ObjectErrorConvertToError(ObjectError objectError) {
-        String target = null;
-        if (objectError instanceof FieldError fieldError) {
-            target = fieldError.getField();
-        }
-        return new Error(Error.Type.PARAMETER, target, objectError.getDefaultMessage());
     }
 }

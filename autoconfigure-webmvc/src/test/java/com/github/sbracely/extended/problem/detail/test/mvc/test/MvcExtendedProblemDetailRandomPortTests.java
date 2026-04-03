@@ -1,6 +1,6 @@
 package com.github.sbracely.extended.problem.detail.test.mvc.test;
 
-import com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail;
+import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;

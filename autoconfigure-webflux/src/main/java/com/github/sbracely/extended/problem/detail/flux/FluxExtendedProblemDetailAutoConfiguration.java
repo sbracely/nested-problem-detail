@@ -1,5 +1,6 @@
 package com.github.sbracely.extended.problem.detail.flux;
 
+import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.flux.handler.FluxExtendedProblemDetailExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -55,14 +56,14 @@ public class FluxExtendedProblemDetailAutoConfiguration {
      *     <li>{@link org.springframework.web.method.annotation.HandlerMethodValidationException} - Controller method parameter validation failure</li>
      * </ul>
      * <p>
-     * The handler encapsulates validation error information into {@link com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail}
+     * The handler encapsulates validation error information into {@link ExtendedProblemDetail}
      * and returns it, including detailed field-level error information. This handler is based on the Reactor pattern
      * and returns {@link reactor.core.publisher.Mono} type.
      * </p>
      *
      * @return WebFlux Extended Problem Detail Exception Handler instance
      * @see FluxExtendedProblemDetailExceptionHandler
-     * @see com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail
+     * @see ExtendedProblemDetail
      */
     @Bean
     @ConditionalOnMissingBean
