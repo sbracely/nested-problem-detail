@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail.test.flux.test;
+package com.github.sbracely.extended.problem.detail.test.flux.test.controller;
 
 import com.github.sbracely.extended.problem.detail.core.logging.ExtendedProblemDetailLog;
 import com.github.sbracely.extended.problem.detail.core.response.Error;
@@ -7,10 +7,8 @@ import com.github.sbracely.extended.problem.detail.test.flux.config.MethodValida
 import com.github.sbracely.extended.problem.detail.test.flux.controller.FluxExtendedProblemDetailController;
 import com.github.sbracely.extended.problem.detail.test.flux.exception.ExtendedErrorResponseException;
 import com.github.sbracely.extended.problem.detail.test.flux.request.ProblemDetailRequest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +54,9 @@ import static org.springframework.http.MediaType.*;
 
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "PT10M")
-class FluxExtendedProblemDetailTests {
+class FluxControllerTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(FluxExtendedProblemDetailTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(FluxControllerTests.class);
 
     @Autowired
     private WebTestClient webTestClient;

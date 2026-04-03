@@ -55,8 +55,8 @@ extended-problem-detail/
 │       ├── response/                  # Response model classes
 │       │   ├── ExtendedProblemDetail.java  # Extended ProblemDetail with error list
 │       │   └── Error.java            # Individual error details (record)
-│       └── converter/                 # Converter utilities
-│           └── ErrorConverter.java    # Converts validation errors to Error objects
+│       └── logging/                   # Logging utilities
+│           └── ExtendedProblemDetailLog.java  # Configurable logger for validation exceptions
 ├── autoconfigure-webmvc/              # WebMVC auto-configuration
 │   └── src/main/java/.../mvc/
 │       ├── MvcExtendedProblemDetailAutoConfiguration.java
@@ -393,7 +393,7 @@ When adding new features:
 
 1. **Core Module**: Add shared classes to `core` module
    - Response models go in `core/response/`
-   - Converter utilities go in `core/converter/`
+   - Logging utilities go in `core/logging/`
 2. **WebMVC Support**: Implement handlers in `autoconfigure-webmvc`
 3. **WebFlux Support**: Implement handlers in `autoconfigure-webflux`
 4. **Tests**: Add corresponding tests in each module's test directory

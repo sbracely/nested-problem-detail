@@ -109,6 +109,18 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
     }
 
+    /**
+     * Handles method validation exceptions.
+     * <p>
+     * Converts method-level validation errors into a list of Error objects,
+     * logs the validation failure, and wraps them in an ExtendedProblemDetail response.
+     * </p>
+     *
+     * @param ex       the MethodValidationException that was thrown
+     * @param status   the HTTP status code
+     * @param exchange the current server web exchange
+     * @return Mono containing ResponseEntity with the ExtendedProblemDetail with validation errors
+     */
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
         List<Error> errors = methodValidationExceptionToErrors(ex);

@@ -92,7 +92,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <excludes>
-                        <exclude>com.github.sbracely.extended.problem.detail.test.flux.FluxExtendedProblemDetailApplicationTest.java</exclude>
+                        <exclude>com.github.sbracely.extended.problem.detail.test.flux.FluxApplicationTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail.test.mvc.test;
+package com.github.sbracely.extended.problem.detail.test.mvc.test.controller;
 
 import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController;
@@ -42,9 +42,9 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONTENT_TOO_LARGE;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MvcExtendedProblemDetailRandomPortTests {
+class MvcControllerRandomPortTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(MvcExtendedProblemDetailRandomPortTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(MvcControllerRandomPortTests.class);
 
     @LocalServerPort
     private int port;

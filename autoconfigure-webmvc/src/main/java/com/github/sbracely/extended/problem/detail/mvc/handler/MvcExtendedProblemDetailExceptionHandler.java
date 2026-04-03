@@ -155,6 +155,19 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
         return null;
     }
 
+    /**
+     * Handles method validation exceptions.
+     * <p>
+     * Converts method-level validation errors into a list of Error objects,
+     * logs the validation failure, and wraps them in an ExtendedProblemDetail response.
+     * </p>
+     *
+     * @param ex      the MethodValidationException that was thrown
+     * @param headers the HTTP headers to be used in the response
+     * @param status  the HTTP status code
+     * @param request the current web request
+     * @return ResponseEntity containing the ExtendedProblemDetail with validation errors
+     */
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodValidationException(MethodValidationException ex,
                                                                                HttpHeaders headers,

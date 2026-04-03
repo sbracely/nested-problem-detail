@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FluxExtendedProblemDetailApplicationTest {
+public class FluxApplicationTest {
 
     public static void main(String[] args) {
-        SpringApplication.run(FluxExtendedProblemDetailApplicationTest.class, args);
+        SpringApplication.run(FluxApplicationTest.class, args);
     }
 
 }

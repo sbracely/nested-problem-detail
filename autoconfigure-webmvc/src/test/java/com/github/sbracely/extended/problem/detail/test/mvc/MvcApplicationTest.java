@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MvcExtendedProblemDetailApplicationTest {
+public class MvcApplicationTest {
 
     public static void main(String[] args) {
-        SpringApplication.run(MvcExtendedProblemDetailApplicationTest.class, args);
+        SpringApplication.run(MvcApplicationTest.class, args);
     }
 
 }

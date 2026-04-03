@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail.test.mvc.test;
+package com.github.sbracely.extended.problem.detail.test.mvc.test.controller;
 
 import com.github.sbracely.extended.problem.detail.core.logging.ExtendedProblemDetailLog;
 import com.github.sbracely.extended.problem.detail.core.response.Error;
@@ -75,9 +75,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MvcExtendedProblemDetailTests {
+class MvcControllerTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(MvcExtendedProblemDetailTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(MvcControllerTests.class);
 
     @Autowired
     private MockMvcTester mockMvcTester;
