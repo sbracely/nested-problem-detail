@@ -96,7 +96,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
         List<Error> errors = ErrorConverter.methodValidationExceptionConvertToError(ex);
         String method = ex.getMethod().getName();
-        log.warn("handleMethodValidationException method = {}, errors = {}", method, errors, ex);
+        log.debug("handleMethodValidationException method = {}, errors = {}", method, errors, ex);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, exchange);
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(body);
         extendedProblemDetail.setErrors(errors);
