@@ -15,7 +15,7 @@
         <!-- Core module -->
         <dependency>
             <groupId>com.github.sbracely</groupId>
-            <artifactId>extended-problem-detail-response</artifactId>
+            <artifactId>extended-problem-detail-core</artifactId>
         </dependency>
 
         <!-- Compile dependencies - provided by starter -->

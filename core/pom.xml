@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>extended-problem-detail-response</artifactId>
+    <artifactId>extended-problem-detail-core</artifactId>
     <name>Extended Problem Detail Response</name>
     <description>Core response module providing ExtendedProblemDetail and Error model classes for field-level error information</description>
 

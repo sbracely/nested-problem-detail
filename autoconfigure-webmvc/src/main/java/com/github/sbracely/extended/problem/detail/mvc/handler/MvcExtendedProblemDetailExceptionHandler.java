@@ -1,7 +1,7 @@
 package com.github.sbracely.extended.problem.detail.mvc.handler;
 
-import com.github.sbracely.extended.problem.detail.response.Error;
-import com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail;
+import com.github.sbracely.extended.problem.detail.core.Error;
+import com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

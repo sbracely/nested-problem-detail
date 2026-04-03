@@ -55,14 +55,14 @@ public class FluxExtendedProblemDetailAutoConfiguration {
      *     <li>{@link org.springframework.web.method.annotation.HandlerMethodValidationException} - Controller method parameter validation failure</li>
      * </ul>
      * <p>
-     * The handler encapsulates validation error information into {@link com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail}
+     * The handler encapsulates validation error information into {@link com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail}
      * and returns it, including detailed field-level error information. This handler is based on the Reactor pattern
      * and returns {@link reactor.core.publisher.Mono} type.
      * </p>
      *
      * @return WebFlux Extended Problem Detail Exception Handler instance
      * @see FluxExtendedProblemDetailExceptionHandler
-     * @see com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail
+     * @see com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail
      */
     @Bean
     @ConditionalOnMissingBean

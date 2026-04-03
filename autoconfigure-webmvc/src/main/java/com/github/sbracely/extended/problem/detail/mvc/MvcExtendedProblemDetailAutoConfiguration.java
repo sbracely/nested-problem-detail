@@ -56,13 +56,13 @@ public class MvcExtendedProblemDetailAutoConfiguration {
      *     <li>{@link org.springframework.web.bind.support.WebExchangeBindException} - Data binding exception</li>
      * </ul>
      * <p>
-     * The handler encapsulates validation error information into {@link com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail}
+     * The handler encapsulates validation error information into {@link com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail}
      * and returns it, including detailed field-level error information.
      * </p>
      *
      * @return WebMVC Extended Problem Detail Exception Handler instance
      * @see MvcExtendedProblemDetailExceptionHandler
-     * @see com.github.sbracely.extended.problem.detail.response.ExtendedProblemDetail
+     * @see com.github.sbracely.extended.problem.detail.core.ExtendedProblemDetail
      */
     @Bean
     @ConditionalOnMissingBean

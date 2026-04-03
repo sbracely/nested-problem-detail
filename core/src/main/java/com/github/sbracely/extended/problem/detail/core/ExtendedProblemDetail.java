@@ -1,4 +1,4 @@
-package com.github.sbracely.extended.problem.detail.response;
+package com.github.sbracely.extended.problem.detail.core;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.ProblemDetail;

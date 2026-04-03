@@ -38,7 +38,7 @@
     </properties>
 
     <modules>
-        <module>response</module>
+        <module>core</module>
         <module>autoconfigure-webmvc</module>
         <module>autoconfigure-webflux</module>
         <module>starter-webmvc</module>
@@ -49,7 +49,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.github.sbracely</groupId>
-                <artifactId>extended-problem-detail-response</artifactId>
+                <artifactId>extended-problem-detail-core</artifactId>
                 <version>${extended-problem-detail.version}</version>
             </dependency>
             <dependency>
