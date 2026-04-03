@@ -50,10 +50,13 @@ Traditional Spring Boot validation error responses often lack detailed field-lev
 
 ```
 extended-problem-detail/
-├── response/                          # Core response classes
-│   └── src/main/java/.../response/
-│       ├── ExtendedProblemDetail.java # Extended ProblemDetail with error list
-│       └── Error.java                 # Individual error details
+├── core/                              # Core module
+│   └── src/main/java/.../core/
+│       ├── response/                  # Response model classes
+│       │   ├── ExtendedProblemDetail.java  # Extended ProblemDetail with error list
+│       │   └── Error.java            # Individual error details (record)
+│       └── converter/                 # Converter utilities
+│           └── ErrorConverter.java    # Converts validation errors to Error objects
 ├── autoconfigure-webmvc/              # WebMVC auto-configuration
 │   └── src/main/java/.../mvc/
 │       ├── MvcExtendedProblemDetailAutoConfiguration.java
@@ -75,11 +78,11 @@ extended-problem-detail/
 ```
 starter-webmvc
     └── autoconfigure-webmvc
-            └── response
+            └── core
 
 starter-webflux
     └── autoconfigure-webflux
-            └── response
+            └── core
 ```
 
 ## Quick Start
@@ -141,12 +144,12 @@ When a validation error occurs, the response will include detailed field informa
   "errors": [
     {
       "type": "PARAMETER",
-      "field": "email",
+      "target": "email",
       "message": "must be a well-formed email address"
     },
     {
       "type": "PARAMETER",
-      "field": "age",
+      "target": "age",
       "message": "must be greater than or equal to 18"
     }
   ]
@@ -314,13 +317,11 @@ public class ExtendedProblemDetail extends ProblemDetail {
 
 ### Error
 
-Represents individual error information:
+Represents individual error information as a Java record:
 
 ```java
-public class Error {
-    private Type type;      // PARAMETER, COOKIE, HEADER, or BUSINESS
-    private String target;  // Target of the error (field name, resource name, etc.)
-    private String message; // Error message
+public record Error(Type type, String target, String message) {
+    public enum Type { PARAMETER, COOKIE, HEADER, BUSINESS }
 }
 ```
 
@@ -388,7 +389,9 @@ autoconfigure-webmvc/src/test/java/.../test/mvc/
 
 When adding new features:
 
-1. **Response Module**: Add shared classes to `response` module
+1. **Core Module**: Add shared classes to `core` module
+   - Response models go in `core/response/`
+   - Converter utilities go in `core/converter/`
 2. **WebMVC Support**: Implement handlers in `autoconfigure-webmvc`
 3. **WebFlux Support**: Implement handlers in `autoconfigure-webflux`
 4. **Tests**: Add corresponding tests in each module's test directory
