@@ -12,9 +12,10 @@ import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncListener;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,10 +65,11 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
-@Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
 class MvcExtendedProblemDetailTests {
+
+    private static final Logger logger = LoggerFactory.getLogger(MvcExtendedProblemDetailTests.class);
 
     @Autowired
     private MockMvcTester mockMvcTester;
@@ -88,7 +90,7 @@ class MvcExtendedProblemDetailTests {
                 .hasHeader(ALLOW, GET.name());
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
@@ -112,7 +114,7 @@ class MvcExtendedProblemDetailTests {
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
@@ -137,7 +139,7 @@ class MvcExtendedProblemDetailTests {
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
@@ -160,7 +162,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -183,7 +185,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -206,7 +208,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -229,7 +231,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -271,7 +273,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -294,7 +296,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -317,7 +319,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -340,7 +342,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -368,7 +370,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -397,7 +399,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -422,7 +424,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -447,7 +449,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -472,7 +474,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -501,7 +503,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -528,7 +530,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -554,7 +556,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -579,7 +581,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -608,7 +610,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -633,7 +635,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -658,7 +660,7 @@ class MvcExtendedProblemDetailTests {
                     .hasContentType(APPLICATION_PROBLEM_JSON);
             ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                     .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
@@ -681,7 +683,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
@@ -710,7 +712,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(SERVICE_UNAVAILABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(SERVICE_UNAVAILABLE.value());
@@ -733,7 +735,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getDetail()).isNull();
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
@@ -756,7 +758,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -782,7 +784,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -810,7 +812,7 @@ class MvcExtendedProblemDetailTests {
                     .hasContentType(APPLICATION_PROBLEM_JSON);
             ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                     .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail.getDetail()).containsOnlyOnce("Missing parameters: ")
                     .contains("param1", "param2");
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
@@ -833,7 +835,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -856,7 +858,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -904,7 +906,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -938,7 +940,7 @@ class MvcExtendedProblemDetailTests {
                                 .matches(h -> h.contains(GET.name()) && h.contains(POST.name())));
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
@@ -963,7 +965,7 @@ class MvcExtendedProblemDetailTests {
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
@@ -988,7 +990,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
@@ -1011,7 +1013,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
@@ -1034,7 +1036,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1059,7 +1061,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
@@ -1082,7 +1084,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1105,7 +1107,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1128,7 +1130,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -1151,7 +1153,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -1176,7 +1178,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -1199,7 +1201,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1224,7 +1226,7 @@ class MvcExtendedProblemDetailTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        log.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isNull();
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());

@@ -14,9 +14,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.hibernate.validator.constraints.Length;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.TypeMismatchException;
@@ -61,10 +62,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-@Slf4j
 @RestController
 @RequestMapping("/mvc-extended-problem-detail")
 public class MvcProblemDetailController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MvcProblemDetailController.class);
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
@@ -80,7 +82,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/http-request-method-not-supported-exception")
     public void httpRequestMethodNotSupportedException() {
-        log.info("httpRequestMethodNotSupportedException");
+        logger.info("httpRequestMethodNotSupportedException");
     }
 
     /**
@@ -88,7 +90,7 @@ public class MvcProblemDetailController {
      */
     @PutMapping(path = "/http-media-type-not-supported-exception", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void httpMediaTypeNotSupportedException(ProblemDetailRequest problemDetailRequest) {
-        log.info("httpMediaTypeNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("httpMediaTypeNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
     }
 
     /**
@@ -96,7 +98,7 @@ public class MvcProblemDetailController {
      */
     @PutMapping(path = "/http-media-type-not-acceptable-exception", produces = MediaType.APPLICATION_JSON_VALUE)
     public void httpMediaTypeNotAcceptableException(ProblemDetailRequest problemDetailRequest) {
-        log.info("httpMediaTypeNotAcceptableException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("httpMediaTypeNotAcceptableException, problemDetailRequest: {}", problemDetailRequest);
     }
 
     /**
@@ -104,7 +106,7 @@ public class MvcProblemDetailController {
      */
     @DeleteMapping("/missing-path-variable-exception")
     public void missingPathVariableException(@PathVariable Integer id) {
-        log.info("missingPathVariableException, id: {}", id);
+        logger.info("missingPathVariableException, id: {}", id);
     }
 
     /**
@@ -112,7 +114,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/missing-servlet-request-parameter-exception")
     public void missingServletRequestParameterException(@RequestParam Integer id) {
-        log.info("missingServletRequestParameterException, id: {}", id);
+        logger.info("missingServletRequestParameterException, id: {}", id);
     }
 
     /**
@@ -120,7 +122,7 @@ public class MvcProblemDetailController {
      */
     @PutMapping("/missing-servlet-request-part-exception")
     public void missingServletRequestPartException(@RequestPart MultipartFile file) {
-        log.info("missingServletRequestPartException, file: {}", file);
+        logger.info("missingServletRequestPartException, file: {}", file);
     }
 
     /**
@@ -128,7 +130,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/servlet-request-binding-exception")
     public void servletRequestBindingException() throws ServletRequestBindingException {
-        log.info("servletRequestBindingException");
+        logger.info("servletRequestBindingException");
         throw new ServletRequestBindingException("binding error");
     }
 
@@ -137,7 +139,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping(path = "/unsatisfied-servlet-request-parameter-exception", params = {"type=1", "exist", "!debug"})
     public void unsatisfiedServletRequestParameterException() {
-        log.info("unsatisfiedServletRequestParameterException");
+        logger.info("unsatisfiedServletRequestParameterException");
     }
 
     /**
@@ -145,7 +147,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/org-spring-web-bind-missing-request-value-exception")
     public void orgSpringWebBindMissingRequestValueException() throws org.springframework.web.bind.MissingRequestValueException {
-        log.info("orgSpringWebBindMissingRequestValueException");
+        logger.info("orgSpringWebBindMissingRequestValueException");
         throw new org.springframework.web.bind.MissingRequestValueException("missing request value", true);
     }
 
@@ -155,7 +157,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/missing-matrix-variable-exception/{id}")
     public void missingMatrixVariableException(@PathVariable String id, @MatrixVariable List<String> list) {
-        log.info("missingMatrixVariableException, id: {}, list: {}", id, list);
+        logger.info("missingMatrixVariableException, id: {}, list: {}", id, list);
     }
 
     /**
@@ -163,7 +165,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/missing-request-cookie-exception")
     public void missingRequestCookieException(@CookieValue String cookieValue) {
-        log.info("missingRequestCookieException, cookieValue: {}", cookieValue);
+        logger.info("missingRequestCookieException, cookieValue: {}", cookieValue);
     }
 
     /**
@@ -171,7 +173,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/missing-request-header-exception")
     public void missingRequestHeaderException(@RequestHeader String header) {
-        log.info("missingRequestHeaderException, header: {}", header);
+        logger.info("missingRequestHeaderException, header: {}", header);
     }
 
     /**
@@ -179,7 +181,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/method-argument-not-valid-exception")
     public void methodArgumentNotValidException(@RequestBody @Validated ProblemDetailRequest problemDetailRequest) {
-        log.info("methodArgumentNotValidException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("methodArgumentNotValidException, problemDetailRequest: {}", problemDetailRequest);
     }
 
     /**
@@ -188,7 +190,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-cookie-value")
     public void handlerMethodValidationExceptionCookieValue(@CookieValue @Length(min = 2, message = "Name length must be at least 2") String name) {
-        log.info("handlerMethodValidationExceptionCookieValue, name: {}", name);
+        logger.info("handlerMethodValidationExceptionCookieValue, name: {}", name);
     }
 
     /**
@@ -198,7 +200,7 @@ public class MvcProblemDetailController {
     @GetMapping("/handler-method-validation-exception-matrix-variable/{id}")
     public void handlerMethodValidationExceptionMatrixVariable(@PathVariable String id,
                                                                @MatrixVariable @Size(max = 2, message = "Maximum size is 2") List<String> list) {
-        log.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
+        logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
     }
 
     /**
@@ -207,7 +209,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-model-attribute")
     public void handlerMethodValidationExceptionModelAttribute(@CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
-        log.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
     }
 
     /**
@@ -216,7 +218,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
     public void handlerMethodValidationExceptionPathVariable(@PathVariable @Length(min = 2, message = "ID minimum length is 2") String id) {
-        log.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
+        logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
     }
 
     /**
@@ -225,7 +227,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/handler-method-validation-exception-request-body")
     public void handlerMethodValidationExceptionRequestBody(@RequestBody @CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
-        log.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
     }
 
     /**
@@ -234,7 +236,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
     public void handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
-        log.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
+        logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
     }
 
     /**
@@ -243,7 +245,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-request-header")
     public void handlerMethodValidationExceptionRequestHeader(@RequestHeader @Length(min = 2, message = "Minimum length is 2") String headerValue) {
-        log.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
+        logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
     }
 
     /**
@@ -253,7 +255,7 @@ public class MvcProblemDetailController {
     @GetMapping("/handler-method-validation-exception-request-param")
     public void handlerMethodValidationExceptionRequestParam(@NotBlank(message = "Parameter cannot be empty") String param,
                                                              @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
-        log.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
+        logger.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
     }
 
     /**
@@ -263,7 +265,7 @@ public class MvcProblemDetailController {
     @GetMapping("/handler-method-validation-exception-request-part")
     public void handlerMethodValidationExceptionRequestPart(@RequestPart(required = false) @CheckMultipartFile(extensionIncludeMessage = "File type not supported",
             extensionInclude = "txt", requiredMessage = "File cannot be empty") MultipartFile file) {
-        log.info("handlerMethodValidationExceptionRequestPart, file: {}", file);
+        logger.info("handlerMethodValidationExceptionRequestPart, file: {}", file);
     }
 
     /**
@@ -276,7 +278,7 @@ public class MvcProblemDetailController {
                                                       @RequestAttribute(required = false) @NotBlank(message = "requestAttribute cannot be empty")
                                                       String requestAttribute,
                                                       @Value("") @NotBlank(message = "value cannot be empty") String value) {
-        log.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
+        logger.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
     }
 
     /**
@@ -284,7 +286,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/async-request-timeout-exception")
     public DeferredResult<Void> asyncRequestTimeoutException() {
-        log.info("asyncRequestTimeoutException");
+        logger.info("asyncRequestTimeoutException");
         return new DeferredResult<>(1L);
     }
 
@@ -293,7 +295,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/error-response-exception")
     public void errorResponseException() {
-        log.info("errorResponseException");
+        logger.info("errorResponseException");
         throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
     }
 
@@ -302,7 +304,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/extended-error-response-exception")
     public void extendedErrorResponseException() {
-        log.info("businessException");
+        logger.info("businessException");
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail();
         extendedProblemDetail.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         extendedProblemDetail.setDetail("Payment failed");
@@ -317,7 +319,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/response-status-exception")
     public void responseStatusException() {
-        log.info("responseStatusException");
+        logger.info("responseStatusException");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "exception");
     }
 
@@ -326,7 +328,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/server-web-input-exception")
     public void serverWebInputException() {
-        log.info("serverWebInputException");
+        logger.info("serverWebInputException");
         throw new ServerWebInputException("server web input error");
     }
 
@@ -335,7 +337,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping(path = "/unsatisfied-request-parameter-exception", params = {"type=1", "exist", "!debug"})
     public void unsatisfiedRequestParameterException() {
-        log.info("unsatisfiedRequestParameterException");
+        logger.info("unsatisfiedRequestParameterException");
     }
 
     /**
@@ -344,7 +346,7 @@ public class MvcProblemDetailController {
     @GetMapping("/org-springframework-web-server-missing-request-value-exception")
     public void orgSpringframeworkWebServerMissingRequestValueException(HttpServletRequest httpServletRequest,
                                                                         String id) throws Exception {
-        log.info("missingRequestValueException, id: {}", id);
+        logger.info("missingRequestValueException, id: {}", id);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         Optional.ofNullable(handlerExecutionChain)
                 .map(HandlerExecutionChain::getHandler)
@@ -363,7 +365,7 @@ public class MvcProblemDetailController {
     public void webExchangeBindException(HttpServletRequest httpServletRequest,
                                          @RequestBody @Validated ProblemDetailRequest problemDetailRequest,
                                          BindingResult bindingResult) throws Exception {
-        log.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         Optional.ofNullable(handlerExecutionChain)
                 .map(HandlerExecutionChain::getHandler)
@@ -380,7 +382,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/invalid-api-version-exception")
     public void invalidApiVersionException() {
-        log.info("invalidApiVersionException");
+        logger.info("invalidApiVersionException");
     }
 
     /**
@@ -388,7 +390,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/missing-api-version-exception")
     public void missingApiVersionException() {
-        log.info("missingApiVersionException");
+        logger.info("missingApiVersionException");
     }
 
     /**
@@ -397,7 +399,7 @@ public class MvcProblemDetailController {
     @RequestMapping("/method-not-allowed-exception")
     public void methodNotAllowedException(HttpMethod httpMethod) {
         List<HttpMethod> supportedMethods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
-        log.info("methodNotAllowedException, httpMethod: {}", httpMethod);
+        logger.info("methodNotAllowedException, httpMethod: {}", httpMethod);
         if (supportedMethods.contains(httpMethod)) {
             return;
         }
@@ -409,7 +411,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/not-acceptable-status-exception")
     public void notAcceptableStatusException() {
-        log.info("notAcceptableStatusException");
+        logger.info("notAcceptableStatusException");
         throw new NotAcceptableStatusException(List.of(MediaType.APPLICATION_JSON));
     }
 
@@ -418,7 +420,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/content-too-large-exception")
     public void contentTooLargeException(@RequestPart MultipartFile file) {
-        log.info("contentTooLargeException, file: {}", file);
+        logger.info("contentTooLargeException, file: {}", file);
         throw new ContentTooLargeException(new RuntimeException("content too large"));
     }
 
@@ -427,7 +429,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/unsupported-media-type-status-exception")
     public void unsupportedMediaTypeStatusException() {
-        log.info("unsupportedMediaTypeStatusException");
+        logger.info("unsupportedMediaTypeStatusException");
         throw new UnsupportedMediaTypeStatusException("unsupported media type");
     }
 
@@ -436,7 +438,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/server-error-exception")
     public void serverErrorException() {
-        log.info("serverErrorException");
+        logger.info("serverErrorException");
         throw new ServerErrorException("server error", new RuntimeException());
     }
 
@@ -445,7 +447,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/payload-too-large-exception")
     public void payloadTooLargeException(@RequestPart MultipartFile file) {
-        log.info("payloadTooLargeException, file: {}", file);
+        logger.info("payloadTooLargeException, file: {}", file);
         PayloadTooLargeException payloadTooLarge = new PayloadTooLargeException(new RuntimeException("payload too large"));
         payloadTooLarge.setDetail("payload too large");
         throw payloadTooLarge;
@@ -456,7 +458,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/max-upload-size-exceeded-exception")
     public void maxUploadSizeExceedededException(@RequestPart MultipartFile file) {
-        log.info("maxUploadSizeExceedededException, file: {}", file);
+        logger.info("maxUploadSizeExceedededException, file: {}", file);
     }
 
     /**
@@ -464,7 +466,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/conversion-not-supported-exception")
     public void conversionNotSupportedException(HttpServletRequest httpServletRequest, String data) throws Exception {
-        log.info("conversionNotSupportedException, data: {}", data);
+        logger.info("conversionNotSupportedException, data: {}", data);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         if (null == handlerExecutionChain) {
             throw new MissingServletRequestParameterException("data", "String");
@@ -473,7 +475,7 @@ public class MvcProblemDetailController {
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
         SimpleTypeConverter simpleTypeConverter = new SimpleTypeConverter();
         ProblemDetailRequest problemDetailRequest = simpleTypeConverter.convertIfNecessary(data, ProblemDetailRequest.class, methodParameters[0]);
-        log.info("conversionNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("conversionNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
     }
 
     /**
@@ -481,7 +483,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/method-argument-conversion-not-supported-exception")
     public void methodArgumentConversionNotSupportedException(@RequestParam ProblemDetailRequest error) {
-        log.info("methodArgumentConversionNotSupportedException, error: {}", error);
+        logger.info("methodArgumentConversionNotSupportedException, error: {}", error);
     }
 
     /**
@@ -489,7 +491,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/type-mismatch-exception")
     public void typeMismatchException() {
-        log.info("typeMismatchException");
+        logger.info("typeMismatchException");
         throw new TypeMismatchException("test", Integer.class);
     }
 
@@ -498,7 +500,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/method-argument-type-mismatch-exception")
     public void methodArgumentTypeMismatchException(Integer integer) {
-        log.info("methodArgumentTypeMismatchException, integer: {}", integer);
+        logger.info("methodArgumentTypeMismatchException, integer: {}", integer);
     }
 
     /**
@@ -506,7 +508,7 @@ public class MvcProblemDetailController {
      */
     @PostMapping("/http-message-not-readable-exception")
     public void httpMessageNotReadableException(@RequestBody ProblemDetailRequest data) {
-        log.info("httpMessageNotReadableException, data: {}", data);
+        logger.info("httpMessageNotReadableException, data: {}", data);
     }
 
     /**
@@ -515,7 +517,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/http-message-not-writable-exception")
     public ProblemDetailResponse httpMessageNotWritableException() {
-        log.info("httpMessageNotWritableException");
+        logger.info("httpMessageNotWritableException");
         return new ProblemDetailResponse();
     }
 
@@ -525,7 +527,7 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/method-validation-exception")
     public void methodValidationException() {
-        log.info("methodValidationException");
+        logger.info("methodValidationException");
         ProblemDetailRequest problemDetailRequest = new ProblemDetailRequest();
         problemDetailRequest.setPassword("a");
         problemDetailRequest.setName("");
@@ -537,21 +539,21 @@ public class MvcProblemDetailController {
      */
     @GetMapping("/async-request-not-usable-exception")
     public SseEmitter asyncRequestNotUsableException() {
-        log.info("asyncRequestNotUsableException");
+        logger.info("asyncRequestNotUsableException");
         SseEmitter emitter = new SseEmitter(5000L);
         CompletableFuture.runAsync(() -> {
             try {
                 for (int i = 0; i < 10; i++) {
                     Thread.sleep(100);
-                    log.info("asyncRequestNotUsableException, emitter send: {}", i);
+                    logger.info("asyncRequestNotUsableException, emitter send: {}", i);
                     emitter.send("event " + i);
                 }
                 emitter.complete();
             } catch (InterruptedException e) {
-                log.error("Thread sleep interrupted", e);
+                logger.error("Thread sleep interrupted", e);
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                log.error("Emitter error: {}", e.getClass().getSimpleName());
+                logger.error("Emitter error: {}", e.getClass().getSimpleName());
                 emitter.completeWithError(e);
             }
         });

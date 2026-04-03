@@ -2,9 +2,10 @@ package com.github.sbracely.extended.problem.detail.test.mvc.test;
 
 import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.test.mvc.controller.MvcProblemDetailController;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
@@ -40,9 +41,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONTENT_TOO_LARGE;
 
-@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MvcExtendedProblemDetailRandomPortTests {
+
+    private static final Logger logger = LoggerFactory.getLogger(MvcExtendedProblemDetailRandomPortTests.class);
 
     @LocalServerPort
     private int port;
@@ -90,7 +92,7 @@ class MvcExtendedProblemDetailRandomPortTests {
             assertThat(response.getStatusCode()).isEqualTo(CONTENT_TOO_LARGE);
             assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
             ExtendedProblemDetail extendedProblemDetail = response.getBody();
-            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail).isNotNull();
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
@@ -137,7 +139,7 @@ class MvcExtendedProblemDetailRandomPortTests {
                     .expectBody(ExtendedProblemDetail.class)
                     .returnResult();
             ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
-            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail).isNotNull();
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
@@ -155,7 +157,7 @@ class MvcExtendedProblemDetailRandomPortTests {
         static class NotAcceptableApiVersionController {
             @GetMapping(path = "/not-acceptable-api-version", version = "1")
             void notAcceptableApiVersion() {
-                log.info("notAcceptableApiVersion");
+                logger.info("notAcceptableApiVersion");
             }
         }
 
@@ -177,7 +179,7 @@ class MvcExtendedProblemDetailRandomPortTests {
                     .expectBody(ExtendedProblemDetail.class)
                     .returnResult();
             ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
-            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail).isNotNull();
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
@@ -205,7 +207,7 @@ class MvcExtendedProblemDetailRandomPortTests {
                     .expectBody(ExtendedProblemDetail.class)
                     .returnResult();
             ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
-            log.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
             assertThat(extendedProblemDetail).isNotNull();
             assertThat(extendedProblemDetail.getType()).isNull();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
@@ -243,7 +245,7 @@ class MvcExtendedProblemDetailRandomPortTests {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            log.error("Thread sleep interrupted", e);
+            logger.error("Thread sleep interrupted", e);
             Thread.currentThread().interrupt();
         }
     }

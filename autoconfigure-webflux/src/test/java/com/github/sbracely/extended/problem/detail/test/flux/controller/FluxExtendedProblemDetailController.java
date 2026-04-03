@@ -10,8 +10,9 @@ import com.github.sbracely.extended.problem.detail.test.flux.request.valid.annoc
 import com.github.sbracely.extended.problem.detail.test.flux.service.ProblemDetailService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,10 +32,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/flux-extended-problem-detail")
 public class FluxExtendedProblemDetailController {
+
+    private static final Logger logger = LoggerFactory.getLogger(FluxExtendedProblemDetailController.class);
 
     private final ProblemDetailService problemDetailService;
 
@@ -47,7 +49,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/method-not-allowed-exception")
     public Mono<Void> methodNotAllowedException() {
-        log.info("methodNotAllowedException");
+        logger.info("methodNotAllowedException");
         return Mono.empty();
     }
 
@@ -56,7 +58,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping(path = "/not-acceptable-status-exception", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Void> notAcceptableStatusException() {
-        log.info("notAcceptableStatusException");
+        logger.info("notAcceptableStatusException");
         return Mono.empty();
     }
 
@@ -65,7 +67,7 @@ public class FluxExtendedProblemDetailController {
      */
     @PostMapping(path = "/unsupported-media-type-status-exception", consumes = MediaType.APPLICATION_XML_VALUE)
     public Mono<Void> unsupportedMediaTypeStatusException() {
-        log.info("unsupportedMediaTypeStatusException");
+        logger.info("unsupportedMediaTypeStatusException");
         return Mono.empty();
     }
 
@@ -74,7 +76,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/missing-request-value-exception")
     public Mono<Void> missingRequestValueException(@RequestParam String id) {
-        log.info("missingRequestValueException, id: {}", id);
+        logger.info("missingRequestValueException, id: {}", id);
         return Mono.empty();
     }
 
@@ -83,7 +85,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping(path = "/unsatisfied-request-parameter-exception", params = {"type=1", "exist", "!debug"})
     public Mono<Void> unsatisfiedRequestParameterException() {
-        log.info("unsatisfiedRequestParameterException");
+        logger.info("unsatisfiedRequestParameterException");
         return Mono.empty();
     }
 
@@ -92,7 +94,7 @@ public class FluxExtendedProblemDetailController {
      */
     @PostMapping("/web-exchange-bind-exception")
     public Mono<Void> webExchangeBindException(@RequestBody @Validated ProblemDetailRequest problemDetailRequest) {
-        log.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
         return Mono.empty();
     }
 
@@ -102,7 +104,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-cookie-value")
     public Mono<Void> handlerMethodValidationExceptionCookieValue(@CookieValue @NotBlank(message = "cookie cannot be empty") String cookieValue) {
-        log.info("handlerMethodValidationExceptionCookieValue, cookieValue: {}", cookieValue);
+        logger.info("handlerMethodValidationExceptionCookieValue, cookieValue: {}", cookieValue);
         return Mono.empty();
     }
 
@@ -112,7 +114,7 @@ public class FluxExtendedProblemDetailController {
     @GetMapping("/handler-method-validation-exception-matrix/{id}")
     public Mono<Void> handlerMethodValidationExceptionMatrix(@PathVariable String id,
                                                              @MatrixVariable @Size(max = 2, message = "list maximum size is 2") List<String> list) {
-        log.info("handlerMethodValidationExceptionMatrix, id: {}, list: {}", id, list);
+        logger.info("handlerMethodValidationExceptionMatrix, id: {}, list: {}", id, list);
         return Mono.empty();
     }
 
@@ -121,7 +123,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-model-attribute")
     public Mono<Void> handlerMethodValidationExceptionModelAttribute(@CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
-        log.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
         return Mono.empty();
     }
 
@@ -131,7 +133,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
     public Mono<Void> handlerMethodValidationExceptionPathVariable(@PathVariable @Size(min = 5, message = "id length must be at least 5") String id) {
-        log.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
+        logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
         return Mono.empty();
     }
 
@@ -141,7 +143,7 @@ public class FluxExtendedProblemDetailController {
      */
     @PostMapping("/handler-method-validation-exception-request-body")
     public Mono<Void> handlerMethodValidationExceptionRequestBody(@RequestBody @CheckPassword(message = "Password cannot be empty") ProblemDetailRequest problemDetailRequest) {
-        log.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
         return Mono.empty();
     }
 
@@ -151,7 +153,7 @@ public class FluxExtendedProblemDetailController {
      */
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
     public Mono<Void> handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
-        log.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
+        logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
         return Mono.empty();
     }
 
@@ -161,7 +163,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping(path = "/handler-method-validation-exception-request-header")
     public Mono<Void> handlerMethodValidationExceptionRequestHeader(@RequestHeader @NotBlank(message = "Header cannot be empty") String headerValue) {
-        log.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
+        logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
         return Mono.empty();
     }
 
@@ -172,7 +174,7 @@ public class FluxExtendedProblemDetailController {
     @GetMapping("/handler-method-validation-exception-request-param")
     public Mono<Void> handlerMethodValidationExceptionRequestParam(@RequestParam @NotBlank(message = "Parameter cannot be empty") String param,
                                                                    @RequestParam @Size(min = 5, message = "Length must be at least 5") String value) {
-        log.info("handlerMethodValidationExceptionRequestParam, param: {}, value: {}", param, value);
+        logger.info("handlerMethodValidationExceptionRequestParam, param: {}, value: {}", param, value);
         return Mono.empty();
     }
 
@@ -183,7 +185,7 @@ public class FluxExtendedProblemDetailController {
     @PostMapping("/handler-method-validation-exception-request-part")
     public Mono<Void> handlerMethodValidationExceptionRequestPart(@RequestPart(required = false)
                                                                   @CheckFilePart(requiredMessage = "File cannot be empty") FilePart filePart) {
-        log.info("handlerMethodValidationExceptionRequestPart, filePart: {}", filePart);
+        logger.info("handlerMethodValidationExceptionRequestPart, filePart: {}", filePart);
         return Mono.empty();
     }
 
@@ -196,7 +198,7 @@ public class FluxExtendedProblemDetailController {
             @SessionAttribute(required = false) @NotBlank(message = "sessionAttribute cannot be empty") String sessionAttribute,
             @RequestAttribute(required = false) @NotBlank(message = "requestAttribute cannot be empty") String requestAttribute,
             @Value("") @NotBlank(message = "value cannot be empty") String value) {
-        log.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
+        logger.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
         return Mono.empty();
     }
 
@@ -205,7 +207,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/server-web-input-exception")
     public Mono<Void> serverWebInputException() {
-        log.info("serverWebInputException");
+        logger.info("serverWebInputException");
         throw new ServerWebInputException("server web input error");
     }
 
@@ -214,7 +216,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/server-error-exception")
     public Mono<Void> serverErrorException() {
-        log.info("serverErrorException");
+        logger.info("serverErrorException");
         throw new ServerErrorException("server error", new RuntimeException());
     }
 
@@ -223,7 +225,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/response-status-exception")
     public Mono<Void> responseStatusException() {
-        log.info("responseStatusException");
+        logger.info("responseStatusException");
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "exception");
     }
 
@@ -232,7 +234,7 @@ public class FluxExtendedProblemDetailController {
      */
     @PostMapping("/content-too-large-exception")
     public Mono<Void> contentTooLargeException(@RequestBody byte[] body) {
-        log.info("contentTooLargeException, body.length: {}", body.length);
+        logger.info("contentTooLargeException, body.length: {}", body.length);
         return Mono.empty();
     }
 
@@ -241,7 +243,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/invalid-api-version-exception")
     public Mono<Void> invalidApiVersionException() {
-        log.info("invalidApiVersionException");
+        logger.info("invalidApiVersionException");
         return Mono.empty();
     }
 
@@ -250,7 +252,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/missing-api-version-exception")
     public Mono<Void> missingApiVersionException() {
-        log.info("missingApiVersionException");
+        logger.info("missingApiVersionException");
         return Mono.empty();
     }
 
@@ -259,7 +261,7 @@ public class FluxExtendedProblemDetailController {
      */
     @PostMapping("/payload-too-large-exception")
     public Mono<Void> payloadTooLargeException(@RequestBody byte[] body) {
-        log.info("payloadTooLargeException, body.length: {}", body.length);
+        logger.info("payloadTooLargeException, body.length: {}", body.length);
         throw new PayloadTooLargeException(new RuntimeException("payload too large"));
     }
 
@@ -268,7 +270,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/error-response-exception")
     public Mono<Void> errorResponseException() {
-        log.info("errorResponseException");
+        logger.info("errorResponseException");
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail();
         extendedProblemDetail.setDetail("Error details");
         extendedProblemDetail.setTitle("Error title");
@@ -284,7 +286,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/extended-error-response-exception")
     public Mono<Void> extendedErrorResponseException() {
-        log.info("extendedErrorResponseException");
+        logger.info("extendedErrorResponseException");
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail();
         extendedProblemDetail.setTitle("Payment failed title");
         extendedProblemDetail.setDetail("Payment failed details");
@@ -301,7 +303,7 @@ public class FluxExtendedProblemDetailController {
      */
     @GetMapping("/method-validation-exception")
     public Mono<Void> methodValidationException() {
-        log.info("methodValidationException");
+        logger.info("methodValidationException");
         ProblemDetailRequest problemDetailRequest = new ProblemDetailRequest();
         problemDetailRequest.setPassword("a");
         problemDetailRequest.setName("");

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public final class ErrorConverter {
 
-    private static final Logger log = LoggerFactory.getLogger(ErrorConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ErrorConverter.class);
 
     private ErrorConverter() {
     }
@@ -164,7 +164,7 @@ public final class ErrorConverter {
             @Override
             public void other(ParameterValidationResult result) {
                 result.getResolvableErrors().forEach(error ->
-                        log.warn("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage()));
+                        logger.warn("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage()));
             }
 
             private @Nullable String getParameterName(ParameterValidationResult result) {
