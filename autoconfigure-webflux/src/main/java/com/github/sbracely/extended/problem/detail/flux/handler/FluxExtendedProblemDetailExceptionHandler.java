@@ -143,7 +143,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
             @Override
             public void other(ParameterValidationResult result) {
                 result.getResolvableErrors().forEach(error ->
-                        log.error("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage()));
+                        log.warn("codes: {}, defaultMessage: {}", error.getCodes(), error.getDefaultMessage()));
             }
 
             private @Nullable String getParameterName(ParameterValidationResult result) {
@@ -171,7 +171,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
         List<Error> errors = methodValidationExceptionConvertToError(ex);
         String method = ex.getMethod().getName();
-        log.error("handleMethodValidationException method = {}, errors = {}", method, errors, ex);
+        log.warn("handleMethodValidationException method = {}, errors = {}", method, errors, ex);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, exchange);
         ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(body);
         extendedProblemDetail.setErrors(errors);
