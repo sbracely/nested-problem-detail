@@ -1,6 +1,6 @@
 package io.github.sbracely.extended.problem.detail.flux.error.resolver;
 
-import io.github.sbracely.extended.problem.detail.core.handler.AbstractErrorResolver;
+import io.github.sbracely.extended.problem.detail.core.error.resolver.AbstractErrorResolver;
 import io.github.sbracely.extended.problem.detail.core.logging.ExtendedProblemDetailLog;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
