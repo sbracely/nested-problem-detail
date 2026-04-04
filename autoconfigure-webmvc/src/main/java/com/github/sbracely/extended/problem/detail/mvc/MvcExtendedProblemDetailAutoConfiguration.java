@@ -1,5 +1,6 @@
 package com.github.sbracely.extended.problem.detail.mvc;
 
+import com.github.sbracely.extended.problem.detail.core.handler.ValidationErrorHandler;
 import com.github.sbracely.extended.problem.detail.core.logging.ExtendedProblemDetailLog;
 import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.mvc.handler.MvcExtendedProblemDetailExceptionHandler;
@@ -74,8 +75,15 @@ public class MvcExtendedProblemDetailAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MvcExtendedProblemDetailExceptionHandler requestExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
-        return new MvcExtendedProblemDetailExceptionHandler(extendedProblemDetailLog);
+    public ValidationErrorHandler validationErrorHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+        return new ValidationErrorHandler(extendedProblemDetailLog);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MvcExtendedProblemDetailExceptionHandler requestExceptionHandler(ValidationErrorHandler validationErrorHandler,
+                                                                           ExtendedProblemDetailLog extendedProblemDetailLog) {
+        return new MvcExtendedProblemDetailExceptionHandler(validationErrorHandler, extendedProblemDetailLog);
     }
 
 }

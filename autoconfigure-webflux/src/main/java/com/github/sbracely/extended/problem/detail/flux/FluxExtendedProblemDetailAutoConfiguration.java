@@ -1,5 +1,6 @@
 package com.github.sbracely.extended.problem.detail.flux;
 
+import com.github.sbracely.extended.problem.detail.core.handler.ValidationErrorHandler;
 import com.github.sbracely.extended.problem.detail.core.logging.ExtendedProblemDetailLog;
 import com.github.sbracely.extended.problem.detail.core.response.ExtendedProblemDetail;
 import com.github.sbracely.extended.problem.detail.flux.handler.FluxExtendedProblemDetailExceptionHandler;
@@ -74,8 +75,15 @@ public class FluxExtendedProblemDetailAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public FluxExtendedProblemDetailExceptionHandler requestExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
-        return new FluxExtendedProblemDetailExceptionHandler(extendedProblemDetailLog);
+    public ValidationErrorHandler validationErrorHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+        return new ValidationErrorHandler(extendedProblemDetailLog);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public FluxExtendedProblemDetailExceptionHandler requestExceptionHandler(ValidationErrorHandler validationErrorHandler,
+                                                                            ExtendedProblemDetailLog extendedProblemDetailLog) {
+        return new FluxExtendedProblemDetailExceptionHandler(validationErrorHandler, extendedProblemDetailLog);
     }
 
 }

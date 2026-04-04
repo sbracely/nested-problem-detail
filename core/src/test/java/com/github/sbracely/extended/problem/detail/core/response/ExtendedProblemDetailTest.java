@@ -108,4 +108,55 @@ class ExtendedProblemDetailTest {
         assertThat(str).contains("name");
         assertThat(str).contains("required");
     }
+
+    @Test
+    void shouldCreateFromProblemDetailAndErrors() {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(400);
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setDetail("Validation failed");
+
+        List<Error> errors = List.of(
+                new Error(Error.Type.PARAMETER, "name", "must not be blank"),
+                new Error(Error.Type.HEADER, "X-Token", "must be provided")
+        );
+
+        ExtendedProblemDetail extendedDetail = ExtendedProblemDetail.from(problemDetail, errors);
+
+        assertThat(extendedDetail.getStatus()).isEqualTo(400);
+        assertThat(extendedDetail.getTitle()).isEqualTo("Bad Request");
+        assertThat(extendedDetail.getDetail()).isEqualTo("Validation failed");
+        assertThat(extendedDetail.getErrors()).isEqualTo(errors);
+    }
+
+    @Test
+    void shouldCreateFromProblemDetailWithNullErrors() {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(500);
+        problemDetail.setTitle("Internal Server Error");
+
+        ExtendedProblemDetail extendedDetail = ExtendedProblemDetail.from(problemDetail, null);
+
+        assertThat(extendedDetail.getStatus()).isEqualTo(500);
+        assertThat(extendedDetail.getTitle()).isEqualTo("Internal Server Error");
+        assertThat(extendedDetail.getErrors()).isNull();
+    }
+
+    @Test
+    void shouldCreateFromExtendedProblemDetailAndOverrideErrors() {
+        ExtendedProblemDetail original = new ExtendedProblemDetail();
+        original.setStatus(400);
+        original.setTitle("Bad Request");
+        original.setErrors(List.of(
+                new Error(Error.Type.PARAMETER, "old", "old error")
+        ));
+
+        List<Error> newErrors = List.of(
+                new Error(Error.Type.PARAMETER, "new", "new error")
+        );
+
+        ExtendedProblemDetail extendedDetail = ExtendedProblemDetail.from(original, newErrors);
+
+        assertThat(extendedDetail.getStatus()).isEqualTo(400);
+        assertThat(extendedDetail.getTitle()).isEqualTo("Bad Request");
+        assertThat(extendedDetail.getErrors()).isEqualTo(newErrors);
+    }
 }

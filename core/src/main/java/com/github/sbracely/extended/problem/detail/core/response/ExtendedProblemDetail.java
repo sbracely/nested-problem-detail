@@ -56,6 +56,19 @@ public class ExtendedProblemDetail extends ProblemDetail {
     }
 
     /**
+     * Creates an extended problem detail from an existing ProblemDetail and a list of errors.
+     *
+     * @param problemDetail the ProblemDetail to copy properties from
+     * @param errors        the list of errors to set
+     * @return a new ExtendedProblemDetail instance
+     */
+    public static ExtendedProblemDetail from(ProblemDetail problemDetail, @Nullable List<Error> errors) {
+        ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(problemDetail);
+        extendedProblemDetail.setErrors(errors);
+        return extendedProblemDetail;
+    }
+
+    /**
      * Gets the list of detailed errors.
      *
      * @return the list of errors, or {@code null} if not set
