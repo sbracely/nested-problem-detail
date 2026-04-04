@@ -1,7 +1,7 @@
 package com.github.sbracely.extended.problem.detail.flux;
 
+import com.github.sbracely.extended.problem.detail.core.properties.ExtendedProblemDetailProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.logging.LogLevel;
 
 /**
  * Spring WebFlux Extended Problem Detail Configuration Properties Class.
@@ -37,93 +37,10 @@ import org.springframework.boot.logging.LogLevel;
  * }</pre>
  *
  * @see ConfigurationProperties
- * @see LogLevel
+ * @see ExtendedProblemDetailProperties
  * @since 0.0.1-SNAPSHOT
  */
 @ConfigurationProperties(prefix = "extended.problem-detail")
-public class FluxExtendedProblemDetailProperties {
-
-    /**
-     * Extended problem detail feature enabled status.
-     * <p>
-     * When set to {@code true}, enables extended problem detail exception handling functionality;
-     * when set to {@code false}, disables this feature and uses Spring's default error handling mechanism.
-     * </p>
-     */
-    private boolean enabled = true;
-
-    /**
-     * Log level for validation exception handling.
-     * <p>
-     * Determines the log level used when logging validation exceptions.
-     * Default is {@link LogLevel#DEBUG} as validation failures are normal business scenarios.
-     * Set to {@link LogLevel#OFF} to disable logging.
-     * </p>
-     */
-    private LogLevel logLevel = LogLevel.DEBUG;
-
-    /**
-     * Whether to print exception stack trace in logs.
-     * <p>
-     * When set to {@code true}, exception stack traces will be included in log output.
-     * Default is {@code false} as stack traces can be verbose and validation failures
-     * are typically normal business scenarios that don't require stack trace details.
-     * </p>
-     */
-    private boolean printStackTrace = false;
-
-    /**
-     * Gets the enabled status of the extended problem detail feature.
-     *
-     * @return {@code true} if the feature is enabled, {@code false} if disabled
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Sets the enabled status of the extended problem detail feature.
-     *
-     * @param enabled {@code true} to enable the feature, {@code false} to disable it
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    /**
-     * Gets the log level for validation exception handling.
-     *
-     * @return the log level
-     */
-    public LogLevel getLogLevel() {
-        return logLevel;
-    }
-
-    /**
-     * Sets the log level for validation exception handling.
-     *
-     * @param logLevel the log level to set
-     */
-    public void setLogLevel(LogLevel logLevel) {
-        this.logLevel = logLevel;
-    }
-
-    /**
-     * Gets whether to print exception stack trace in logs.
-     *
-     * @return {@code true} if stack traces should be printed, {@code false} otherwise
-     */
-    public boolean isPrintStackTrace() {
-        return printStackTrace;
-    }
-
-    /**
-     * Sets whether to print exception stack trace in logs.
-     *
-     * @param printStackTrace {@code true} to print stack traces, {@code false} otherwise
-     */
-    public void setPrintStackTrace(boolean printStackTrace) {
-        this.printStackTrace = printStackTrace;
-    }
+public class FluxExtendedProblemDetailProperties extends ExtendedProblemDetailProperties {
 
 }
