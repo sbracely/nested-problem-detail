@@ -53,8 +53,10 @@ import java.util.List;
 @RestControllerAdvice
 public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /** Logger for this exception handler. */
     protected final Log logger = LogFactory.getLog(getClass());
 
+    /** Log configuration for Extended Problem Detail exception handling. */
     protected final ExtendedProblemDetailLog extendedProblemDetailLog;
 
     /**

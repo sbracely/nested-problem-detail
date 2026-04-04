@@ -46,24 +46,16 @@ import org.springframework.context.annotation.Bean;
 public class FluxExtendedProblemDetailAutoConfiguration {
 
     /**
-     * Creates and registers WebFlux Extended Problem Detail Exception Handler Bean.
-     * <p>
-     * This handler inherits from {@link org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler},
-     * specifically designed to handle the following types of exceptions:
-     * </p>
-     * <ul>
-     *     <li>{@link org.springframework.web.bind.support.WebExchangeBindException} - Data binding exception</li>
-     *     <li>{@link org.springframework.web.method.annotation.HandlerMethodValidationException} - Controller method parameter validation failure</li>
-     * </ul>
-     * <p>
-     * The handler encapsulates validation error information into {@link ExtendedProblemDetail}
-     * and returns it, including detailed field-level error information. This handler is based on the Reactor pattern
-     * and returns {@link reactor.core.publisher.Mono} type.
-     * </p>
+     * Creates a new instance of {@link FluxExtendedProblemDetailAutoConfiguration}.
+     */
+    public FluxExtendedProblemDetailAutoConfiguration() {
+    }
+
+    /**
+     * Creates and registers the {@link ExtendedProblemDetailLog} bean.
      *
-     * @return WebFlux Extended Problem Detail Exception Handler instance
-     * @see FluxExtendedProblemDetailExceptionHandler
-     * @see ExtendedProblemDetail
+     * @param properties the WebFlux Extended Problem Detail configuration properties
+     * @return ExtendedProblemDetailLog instance
      */
     @Bean
     @ConditionalOnMissingBean
@@ -71,6 +63,12 @@ public class FluxExtendedProblemDetailAutoConfiguration {
         return new ExtendedProblemDetailLog(properties.getLogLevel(), properties.isPrintStackTrace());
     }
 
+    /**
+     * Creates and registers the {@link FluxExtendedProblemDetailExceptionHandler} bean.
+     *
+     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance
+     * @return WebFlux Extended Problem Detail Exception Handler instance
+     */
     @Bean
     @ConditionalOnMissingBean
     public FluxExtendedProblemDetailExceptionHandler requestExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {

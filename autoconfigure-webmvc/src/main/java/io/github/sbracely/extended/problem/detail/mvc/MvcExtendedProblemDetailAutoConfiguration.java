@@ -46,24 +46,16 @@ import org.springframework.context.annotation.Bean;
 public class MvcExtendedProblemDetailAutoConfiguration {
 
     /**
-     * Creates and registers WebMVC Extended Problem Detail Exception Handler Bean.
-     * <p>
-     * This handler inherits from {@link org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler},
-     * specifically designed to handle the following types of exceptions:
-     * </p>
-     * <ul>
-     *     <li>{@link org.springframework.web.bind.MethodArgumentNotValidException} - @Valid annotation parameter validation failure</li>
-     *     <li>{@link org.springframework.web.method.annotation.HandlerMethodValidationException} - Controller method parameter validation failure</li>
-     *     <li>{@link org.springframework.web.bind.support.WebExchangeBindException} - Data binding exception</li>
-     * </ul>
-     * <p>
-     * The handler encapsulates validation error information into {@link ExtendedProblemDetail}
-     * and returns it, including detailed field-level error information.
-     * </p>
+     * Creates a new instance of {@link MvcExtendedProblemDetailAutoConfiguration}.
+     */
+    public MvcExtendedProblemDetailAutoConfiguration() {
+    }
+
+    /**
+     * Creates and registers the {@link ExtendedProblemDetailLog} bean.
      *
-     * @return WebMVC Extended Problem Detail Exception Handler instance
-     * @see MvcExtendedProblemDetailExceptionHandler
-     * @see ExtendedProblemDetail
+     * @param properties the WebMVC Extended Problem Detail configuration properties
+     * @return ExtendedProblemDetailLog instance
      */
     @Bean
     @ConditionalOnMissingBean
@@ -71,6 +63,12 @@ public class MvcExtendedProblemDetailAutoConfiguration {
         return new ExtendedProblemDetailLog(properties.getLogLevel(), properties.isPrintStackTrace());
     }
 
+    /**
+     * Creates and registers the {@link MvcExtendedProblemDetailExceptionHandler} bean.
+     *
+     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance
+     * @return MVC Extended Problem Detail Exception Handler instance
+     */
     @Bean
     @ConditionalOnMissingBean
     public MvcExtendedProblemDetailExceptionHandler requestExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {

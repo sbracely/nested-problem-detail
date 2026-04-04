@@ -40,6 +40,12 @@ import org.springframework.boot.logging.LogLevel;
 public class ExtendedProblemDetailProperties {
 
     /**
+     * Creates a new instance with default property values.
+     */
+    public ExtendedProblemDetailProperties() {
+    }
+
+    /**
      * Extended problem detail feature enabled status.
      * <p>
      * When set to {@code true}, enables extended problem detail exception handling functionality;

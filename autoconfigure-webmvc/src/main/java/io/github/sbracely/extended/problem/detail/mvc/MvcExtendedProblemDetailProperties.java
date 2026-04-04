@@ -43,4 +43,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "extended.problem-detail")
 public class MvcExtendedProblemDetailProperties extends ExtendedProblemDetailProperties {
 
+    /**
+     * Creates a new instance with default property values.
+     */
+    public MvcExtendedProblemDetailProperties() {
+    }
+
 }
