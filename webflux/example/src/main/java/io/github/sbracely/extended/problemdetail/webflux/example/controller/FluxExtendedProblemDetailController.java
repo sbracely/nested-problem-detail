@@ -2,6 +2,7 @@ package io.github.sbracely.extended.problemdetail.webflux.example.controller;
 
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import io.github.sbracely.extended.problemdetail.webflux.example.config.MethodValidationConfiguration;
 import io.github.sbracely.extended.problemdetail.webflux.example.exception.ExtendedErrorResponseException;
 import io.github.sbracely.extended.problemdetail.webflux.example.request.ProblemDetailRequest;
 import io.github.sbracely.extended.problemdetail.webflux.example.service.ProblemDetailService;

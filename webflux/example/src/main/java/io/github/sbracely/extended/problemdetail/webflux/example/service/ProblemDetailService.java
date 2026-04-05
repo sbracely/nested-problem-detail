@@ -17,10 +17,9 @@ public class ProblemDetailService {
     private static final Logger logger = LoggerFactory.getLogger(ProblemDetailService.class);
 
     @CheckName(nameIndex = 0, problemDetailRequestIndex = 1)
-    public Void createProblemDetail(@NotBlank(message = "name must not be blank")
+    public void createProblemDetail(@NotBlank(message = "name must not be blank")
                                     @NotNull(message = "name must not be null") String name,
                                     @Valid ProblemDetailRequest problemDetailRequest) {
         logger.info("createProblemDetail, name: {}, problemDetailRequest: {}", name, problemDetailRequest);
-        return null;
     }
 }

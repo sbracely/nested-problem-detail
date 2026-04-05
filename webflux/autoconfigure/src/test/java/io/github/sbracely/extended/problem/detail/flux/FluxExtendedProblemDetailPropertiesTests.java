@@ -1,8 +1,8 @@
 package io.github.sbracely.extended.problem.detail.flux;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Configuration;
 

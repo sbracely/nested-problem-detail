@@ -9,7 +9,6 @@
     </parent>
 
     <artifactId>extended-problem-detail-webflux-spring-boot-starter</artifactId>
-    <packaging>pom</packaging>
     <name>Extended Problem Detail Starter for WebFlux</name>
     <description>Spring Boot starter combining all dependencies for extended ProblemDetail exception handling in WebFlux
         applications

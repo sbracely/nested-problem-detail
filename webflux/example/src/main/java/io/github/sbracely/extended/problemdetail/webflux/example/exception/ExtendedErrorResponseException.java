@@ -10,7 +10,4 @@ public class ExtendedErrorResponseException extends ErrorResponseException {
         super(status, body, null);
     }
 
-    public ExtendedErrorResponseException(HttpStatusCode status, ProblemDetail body, Throwable cause) {
-        super(status, body, cause);
-    }
 }
