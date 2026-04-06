@@ -10,9 +10,7 @@
 
     <artifactId>extended-problem-detail-common</artifactId>
     <name>Extended Problem Detail Common</name>
-    <description>Common module providing ExtendedProblemDetail and Error model classes for field-level error
-        information
-    </description>
+    <description>Common module shared by WebMVC and WebFlux implementations, providing the ExtendedProblemDetail response model, field-level Error representation, shared exception resolution logic, and configurable logging support</description>
 
     <dependencies>
         <!-- Compile dependencies -->

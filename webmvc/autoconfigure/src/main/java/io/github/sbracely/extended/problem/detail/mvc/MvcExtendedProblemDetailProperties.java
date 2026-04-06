@@ -15,8 +15,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * </p>
  * <ul>
  *     <li>{@code enabled} - Whether to enable the extended problem detail feature, defaults to {@code true}</li>
- *     <li>{@code log-level} - Log level for validation exceptions, defaults to {@code DEBUG}</li>
- *     <li>{@code print-stack-trace} - Whether to print exception stack trace in logs, defaults to {@code false}</li>
+ *     <li>{@code logging.at-level} - Log level at which exceptions are recorded, defaults to {@code DEBUG}</li>
+ *     <li>{@code logging.print-stack-trace} - Whether to print exception stack trace in logs, defaults to {@code false}</li>
  * </ul>
  * <p>
  * Usage example:
@@ -26,14 +26,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * extended:
  *   problem-detail:
  *     enabled: true
- *     log-level: DEBUG  # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
- *     print-stack-trace: false
+ *     logging:
+ *       at-level: DEBUG  # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+ *       print-stack-trace: false
  * }</pre>
  * <pre>{@code
  * # application.properties
  * extended.problem-detail.enabled=true
- * extended.problem-detail.log-level=DEBUG
- * extended.problem-detail.print-stack-trace=false
+ * extended.problem-detail.logging.at-level=DEBUG
+ * extended.problem-detail.logging.print-stack-trace=false
  * }</pre>
  *
  * @see ConfigurationProperties

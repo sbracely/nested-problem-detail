@@ -59,7 +59,7 @@ public class FluxExtendedProblemDetailAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ExtendedProblemDetailLog extendedProblemDetailLog(FluxExtendedProblemDetailProperties properties) {
-        return new ExtendedProblemDetailLog(properties.getLogLevel(), properties.isPrintStackTrace());
+        return new ExtendedProblemDetailLog(properties.getLogging().getAtLevel(), properties.getLogging().isPrintStackTrace());
     }
 
     /**

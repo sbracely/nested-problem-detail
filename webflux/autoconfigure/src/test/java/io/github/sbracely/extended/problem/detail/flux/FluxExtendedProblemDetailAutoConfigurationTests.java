@@ -66,13 +66,13 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
     void shouldConfigureWithCustomProperties() {
         this.contextRunner
                 .withPropertyValues(
-                        "extended.problem-detail.log-level=WARN",
-                        "extended.problem-detail.print-stack-trace=true"
+                        "extended.problem-detail.logging.at-level=WARN",
+                        "extended.problem-detail.logging.print-stack-trace=true"
                 )
                 .run(context -> {
                     FluxExtendedProblemDetailProperties properties = context.getBean(FluxExtendedProblemDetailProperties.class);
-                    assertThat(properties.getLogLevel().name()).isEqualTo("WARN");
-                    assertThat(properties.isPrintStackTrace()).isTrue();
+                    assertThat(properties.getLogging().getAtLevel().name()).isEqualTo("WARN");
+                    assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
                 });
     }
 

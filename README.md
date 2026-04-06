@@ -1,82 +1,46 @@
 # Extended Problem Detail
 
-A Spring Boot Starter that provides enhanced ProblemDetail exception handling with field-level error information,
-following [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) (Problem Details for HTTP APIs).
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0%2B-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://openjdk.org/)
 
-## Features
+A Spring Boot starter that extends [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `ProblemDetail` responses with
+field-level validation error details. Supports both Spring WebMVC and Spring WebFlux.
 
-- Extends Spring Framework's `ProblemDetail` with detailed field-level error information
-- Automatic exception handling for validation errors
-- Support for both Spring WebMVC and Spring WebFlux
-- Configurable logging levels and stack trace printing
-- Easy integration with Spring Boot auto-configuration
+## Requirements
 
-## Modules
-
-| Module                        | Description                                                          |
-|-------------------------------|----------------------------------------------------------------------|
-| `core`                        | Core module containing response classes and validation error handler |
-| `autoconfigure-webmvc`        | Auto-configuration for Spring WebMVC applications                    |
-| `autoconfigure-webflux`       | Auto-configuration for Spring WebFlux applications                   |
-| `spring-boot-starter-webmvc`  | Starter for WebMVC applications (includes all dependencies)          |
-| `spring-boot-starter-webflux` | Starter for WebFlux applications (includes all dependencies)         |
+- Java 17+
+- Spring Boot 4.0.5+
 
 ## Installation
 
-### WebMVC Application
-
-Add the following dependency to your `pom.xml`:
+### WebMVC
 
 ```xml
 
 <dependency>
     <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-spring-boot-starter-webmvc</artifactId>
-    <version>1.0.0</version>
+    <artifactId>extended-problem-detail-webmvc-spring-boot-starter</artifactId>
+    <version>1.0.1</version>
 </dependency>
 ```
 
-### WebFlux Application
-
-Add the following dependency to your `pom.xml`:
+### WebFlux
 
 ```xml
 
 <dependency>
     <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-spring-boot-starter-webflux</artifactId>
-    <version>1.0.0</version>
+    <artifactId>extended-problem-detail-webflux-spring-boot-starter</artifactId>
+    <version>1.0.1</version>
 </dependency>
 ```
 
-## Configuration
+No additional configuration is required. The exception handler registers automatically.
 
-### Application Properties
+## Response Format
 
-```yaml
-extended:
-  problem-detail:
-    enabled: true              # Enable/disable the feature (default: true)
-    log-level: DEBUG           # Log level for validation exceptions (default: DEBUG)
-    print-stack-trace: false   # Print exception stack trace (default: false)
-```
-
-Or using `application.properties`:
-
-```properties
-extended.problem-detail.enabled=true
-extended.problem-detail.log-level=DEBUG
-extended.problem-detail.print-stack-trace=false
-```
-
-## Usage
-
-Once the starter is added to your project, it automatically handles validation exceptions and returns extended problem
-detail responses.
-
-### Example Response
-
-When a validation error occurs, the response will include detailed error information:
+When a validation exception occurs, the response extends the standard RFC 9457 body with an `errors` array:
 
 ```json
 {
@@ -100,38 +64,181 @@ When a validation error occurs, the response will include detailed error informa
 }
 ```
 
-### Error Types
+### Error Object Fields
 
-The `errors` array contains objects with the following properties:
+| Field     | Description                                                            |
+|-----------|------------------------------------------------------------------------|
+| `type`    | Error source: `PARAMETER`, `COOKIE`, `HEADER`, or `BUSINESS`           |
+| `target`  | Field name, parameter name, or other identifier of the offending input |
+| `message` | Human-readable description of the constraint violation                 |
 
-| Field     | Description                                                       |
-|-----------|-------------------------------------------------------------------|
-| `type`    | Error source type: `PARAMETER`, `COOKIE`, `HEADER`, or `BUSINESS` |
-| `target`  | The field name or resource that caused the error                  |
-| `message` | Human-readable error message                                      |
+### Handled Exceptions
 
-### Supported Exceptions
+| Exception                          | Trigger                                           |
+|------------------------------------|---------------------------------------------------|
+| `MethodArgumentNotValidException`  | `@Valid` on a `@RequestBody` or `@ModelAttribute` |
+| `HandlerMethodValidationException` | `@Validated` on controller method parameters      |
+| `WebExchangeBindException`         | Binding failure on a `@ModelAttribute`            |
+| `MethodValidationException`        | Bean-level method validation via `@Validated`     |
 
-The following exceptions are automatically handled:
+## Configuration
 
-- `MethodArgumentNotValidException` - Validation failures for `@Valid` annotated arguments
-- `HandlerMethodValidationException` - Method parameter validation failures
-- `WebExchangeBindException` - Data binding exceptions
-- `MethodValidationException` - Method-level validation errors
+```yaml
+extended:
+  problem-detail:
+    enabled: true        # Set to false to disable the auto-configured handler (default: true)
+    logging:
+      at-level: INFO     # Level used to log caught exceptions: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF (default: INFO)
+      print-stack-trace: false  # Include full stack trace in the log entry (default: false)
+```
 
-## Requirements
+Equivalent `application.properties`:
 
-- Java 17+
-- Spring Boot 4.0.5+
+```properties
+extended.problem-detail.enabled=true
+extended.problem-detail.logging.at-level=INFO
+extended.problem-detail.logging.print-stack-trace=false
+```
 
-## License
+## Customization
 
-This project is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+### Throwing a Business Exception
 
-## Contributing
+For business-level errors, extend `ErrorResponseException` and populate the `ProblemDetail` body directly:
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+```java
+public class OrderNotFoundException extends ErrorResponseException {
 
-## Author
+    public OrderNotFoundException(String orderId) {
+        super(HttpStatus.NOT_FOUND,
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Order not found: " + orderId),
+                null);
+    }
+}
+```
 
-- **sbrace** - [sbrace0822@gmail.com](mailto:sbrace0822@gmail.com)
+To include structured `errors` in the response, use `ExtendedProblemDetail`:
+
+```java
+public class OrderNotFoundException extends ErrorResponseException {
+
+    public OrderNotFoundException(String orderId) {
+        ExtendedProblemDetail body = new ExtendedProblemDetail(
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Order not found: " + orderId));
+        body.setErrors(List.of(new Error(Error.Type.BUSINESS, "orderId", "Order not found: " + orderId)));
+        super(HttpStatus.NOT_FOUND, body, null);
+    }
+}
+```
+
+### Extending the Exception Handler
+
+The auto-configured handler is registered as a `@ConditionalOnMissingBean`. Declaring your own subclass as a
+Spring bean replaces it entirely.
+
+Extend `MvcExtendedProblemDetailExceptionHandler` (WebMVC) or `FluxExtendedProblemDetailExceptionHandler` (WebFlux).
+The base class exposes `logger` and `extendedProblemDetailLog` for use in overriding methods.
+
+**Override a handler already covered by the base class:**
+
+```java
+@RestControllerAdvice
+public class CustomExceptionHandler extends MvcExtendedProblemDetailExceptionHandler {
+
+    public CustomExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+        super(extendedProblemDetailLog);
+    }
+
+    // Override to customise the response for 405 Method Not Allowed
+    @Override
+    protected @Nullable ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHttpRequestMethodNotSupported");
+        return super.handleHttpRequestMethodNotSupported(ex, headers, status, request);
+    }
+}
+```
+
+**Add a handler for an exception type not covered by the base class:**
+
+```java
+@RestControllerAdvice
+public class CustomExceptionHandler extends MvcExtendedProblemDetailExceptionHandler {
+
+    public CustomExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+        super(extendedProblemDetailLog);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleAccessDenied");
+        ProblemDetail body = createProblemDetail(ex, HttpStatus.FORBIDDEN,
+                "Access denied", null, null, request);
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+}
+```
+
+### Customizing `HandlerMethodValidationException` Resolution
+
+`HandlerMethodValidationException` is resolved via the Visitor pattern. Each parameter annotation type has a
+dedicated `resolveXxx` method in `ExtendedProblemDetailErrorResolver` that you can override to change how errors
+are built.
+
+Example — override `resolveCookieValue` to use the annotation's `name` attribute as the error target:
+
+```java
+@RestControllerAdvice
+public class CustomExceptionHandler extends MvcExtendedProblemDetailExceptionHandler {
+
+    public CustomExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+        super(extendedProblemDetailLog);
+    }
+
+    @Override
+    protected void resolveCookieValue(HandlerMethodValidationException ex,
+                                      CookieValue cookieValue,
+                                      ParameterValidationResult result,
+                                      List<Error> errorList) {
+        String target = cookieValue.name().isEmpty()
+                ? result.getMethodParameter().getParameterName()
+                : cookieValue.name();
+        addParameterErrors(result, Error.Type.COOKIE, target, errorList);
+    }
+}
+```
+
+All available override points:
+
+| Method                               | Parameter annotation       |
+|--------------------------------------|----------------------------|
+| `resolveCookieValue`                 | `@CookieValue`             |
+| `resolveMatrixVariable`              | `@MatrixVariable`          |
+| `resolveModelAttribute`              | `@ModelAttribute`          |
+| `resolvePathVariable`                | `@PathVariable`            |
+| `resolveRequestBody`                 | `@RequestBody` (object)    |
+| `resolveRequestBodyValidationResult` | `@RequestBody` (scalar)    |
+| `resolveRequestHeader`               | `@RequestHeader`           |
+| `resolveRequestParam`                | `@RequestParam`            |
+| `resolveRequestPart`                 | `@RequestPart`             |
+| `resolveOther`                       | other / unrecognized types |
+
+## Modules
+
+| Artifact                                              | Description                                |
+|-------------------------------------------------------|--------------------------------------------|
+| `extended-problem-detail-common`                      | Common module shared by WebMVC and WebFlux |
+| `extended-problem-detail-webmvc-autoconfigure`        | WebMVC auto-configuration                  |
+| `extended-problem-detail-webflux-autoconfigure`       | WebFlux auto-configuration                 |
+| `extended-problem-detail-webmvc-spring-boot-starter`  | WebMVC starter (use this in your project)  |
+| `extended-problem-detail-webflux-spring-boot-starter` | WebFlux starter (use this in your project) |
+
+## Related Links
+
+- [RFC 9457 - Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc9457)
+- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+- [Spring Framework - ProblemDetail](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ProblemDetail.html)
+

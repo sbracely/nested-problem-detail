@@ -13,9 +13,7 @@
     <version>1.0.1</version>
     <packaging>pom</packaging>
     <name>Extended Problem Detail</name>
-    <description>Parent POM for Extended Problem Detail - Spring Boot Starter providing enhanced ProblemDetail exception
-        handling with field-level error information
-    </description>
+    <description>Spring Boot starter that extends ProblemDetail (RFC 9457) with field-level validation error details, supporting both WebMVC and WebFlux</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>
     <licenses>
         <license>

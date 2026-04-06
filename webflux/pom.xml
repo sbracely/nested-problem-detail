@@ -11,7 +11,7 @@
     <artifactId>extended-problem-detail-webflux</artifactId>
     <packaging>pom</packaging>
     <name>Extended Problem Detail WebFlux</name>
-    <description>Parent module for Extended Problem Detail WebFlux support</description>
+    <description>Parent module aggregating the Spring WebFlux auto-configuration, starter, and example for Extended Problem Detail</description>
 
     <modules>
         <module>autoconfigure</module>

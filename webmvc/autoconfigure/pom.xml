@@ -10,9 +10,7 @@
 
     <artifactId>extended-problem-detail-webmvc-autoconfigure</artifactId>
     <name>Extended Problem Detail WebMVC AutoConfiguration</name>
-    <description>Spring Boot auto-configuration module providing extended ProblemDetail exception handling for Spring
-        WebMVC applications
-    </description>
+    <description>Spring Boot auto-configuration that registers the Extended Problem Detail exception handler for Spring WebMVC, mapping validation exceptions to RFC 9457 responses with field-level error details</description>
 
     <dependencies>
         <!-- Core module -->

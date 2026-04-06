@@ -10,9 +10,7 @@
 
     <artifactId>extended-problem-detail-webmvc-spring-boot-starter</artifactId>
     <name>Extended Problem Detail WebMVC Starter</name>
-    <description>Spring Boot starter combining all dependencies for extended ProblemDetail exception handling in WebMVC
-        applications
-    </description>
+    <description>Spring Boot starter for Extended Problem Detail on Spring WebMVC — add this dependency to enable RFC 9457 responses with field-level validation error details</description>
 
     <properties>
         <spring.boot.skip>true</spring.boot.skip>

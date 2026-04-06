@@ -11,7 +11,7 @@
     <artifactId>extended-problem-detail-webmvc</artifactId>
     <packaging>pom</packaging>
     <name>Extended Problem Detail WebMVC</name>
-    <description>module for Extended Problem Detail WebMVC support</description>
+    <description>Parent module aggregating the Spring WebMVC auto-configuration, starter, and example for Extended Problem Detail</description>
 
     <modules>
         <module>autoconfigure</module>

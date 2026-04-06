@@ -59,7 +59,7 @@ public class MvcExtendedProblemDetailAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ExtendedProblemDetailLog extendedProblemDetailLog(MvcExtendedProblemDetailProperties properties) {
-        return new ExtendedProblemDetailLog(properties.getLogLevel(), properties.isPrintStackTrace());
+        return new ExtendedProblemDetailLog(properties.getLogging().getAtLevel(), properties.getLogging().isPrintStackTrace());
     }
 
     /**

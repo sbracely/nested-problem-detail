@@ -18,17 +18,17 @@ class ExtendedProblemDetailPropertiesTest {
     }
 
     @Test
-    void shouldHaveDefaultLogLevelValue() {
+    void shouldHaveDefaultLogAtLevelValue() {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
-        assertThat(properties.getLogLevel()).isEqualTo(LogLevel.DEBUG);
+        assertThat(properties.getLogging().getAtLevel()).isEqualTo(LogLevel.INFO);
     }
 
     @Test
     void shouldHaveDefaultPrintStackTraceValue() {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
-        assertThat(properties.isPrintStackTrace()).isFalse();
+        assertThat(properties.getLogging().isPrintStackTrace()).isFalse();
     }
 
     @Test
@@ -41,21 +41,21 @@ class ExtendedProblemDetailPropertiesTest {
     }
 
     @Test
-    void shouldSetLogLevelValue() {
+    void shouldSetLogAtLevelValue() {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
-        properties.setLogLevel(LogLevel.ERROR);
+        properties.getLogging().setAtLevel(LogLevel.ERROR);
 
-        assertThat(properties.getLogLevel()).isEqualTo(LogLevel.ERROR);
+        assertThat(properties.getLogging().getAtLevel()).isEqualTo(LogLevel.ERROR);
     }
 
     @Test
     void shouldSetPrintStackTraceValue() {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
-        properties.setPrintStackTrace(true);
+        properties.getLogging().setPrintStackTrace(true);
 
-        assertThat(properties.isPrintStackTrace()).isTrue();
+        assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
     }
 
     @Test
@@ -63,8 +63,8 @@ class ExtendedProblemDetailPropertiesTest {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
         for (LogLevel level : LogLevel.values()) {
-            properties.setLogLevel(level);
-            assertThat(properties.getLogLevel()).isEqualTo(level);
+            properties.getLogging().setAtLevel(level);
+            assertThat(properties.getLogging().getAtLevel()).isEqualTo(level);
         }
     }
 }

@@ -23,8 +23,8 @@ class MvcExtendedProblemDetailPropertiesTests {
         this.contextRunner.run(context -> {
             MvcExtendedProblemDetailProperties properties = context.getBean(MvcExtendedProblemDetailProperties.class);
             assertThat(properties.isEnabled()).isTrue();
-            assertThat(properties.getLogLevel()).isEqualTo(LogLevel.DEBUG);
-            assertThat(properties.isPrintStackTrace()).isFalse();
+            assertThat(properties.getLogging().getAtLevel()).isEqualTo(LogLevel.INFO);
+            assertThat(properties.getLogging().isPrintStackTrace()).isFalse();
         });
     }
 
@@ -39,22 +39,22 @@ class MvcExtendedProblemDetailPropertiesTests {
     }
 
     @Test
-    void shouldBindLogLevelProperty() {
+    void shouldBindLogAtLevelProperty() {
         this.contextRunner
-                .withPropertyValues("extended.problem-detail.log-level=INFO")
+                .withPropertyValues("extended.problem-detail.logging.at-level=INFO")
                 .run(context -> {
                     MvcExtendedProblemDetailProperties properties = context.getBean(MvcExtendedProblemDetailProperties.class);
-                    assertThat(properties.getLogLevel()).isEqualTo(LogLevel.INFO);
+                    assertThat(properties.getLogging().getAtLevel()).isEqualTo(LogLevel.INFO);
                 });
     }
 
     @Test
     void shouldBindPrintStackTraceProperty() {
         this.contextRunner
-                .withPropertyValues("extended.problem-detail.print-stack-trace=true")
+                .withPropertyValues("extended.problem-detail.logging.print-stack-trace=true")
                 .run(context -> {
                     MvcExtendedProblemDetailProperties properties = context.getBean(MvcExtendedProblemDetailProperties.class);
-                    assertThat(properties.isPrintStackTrace()).isTrue();
+                    assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
                 });
     }
 
@@ -63,14 +63,14 @@ class MvcExtendedProblemDetailPropertiesTests {
         this.contextRunner
                 .withPropertyValues(
                         "extended.problem-detail.enabled=false",
-                        "extended.problem-detail.log-level=ERROR",
-                        "extended.problem-detail.print-stack-trace=true"
+                        "extended.problem-detail.logging.at-level=ERROR",
+                        "extended.problem-detail.logging.print-stack-trace=true"
                 )
                 .run(context -> {
                     MvcExtendedProblemDetailProperties properties = context.getBean(MvcExtendedProblemDetailProperties.class);
                     assertThat(properties.isEnabled()).isFalse();
-                    assertThat(properties.getLogLevel()).isEqualTo(LogLevel.ERROR);
-                    assertThat(properties.isPrintStackTrace()).isTrue();
+                    assertThat(properties.getLogging().getAtLevel()).isEqualTo(LogLevel.ERROR);
+                    assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
                 });
     }
 

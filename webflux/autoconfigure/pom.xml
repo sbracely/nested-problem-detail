@@ -9,9 +9,7 @@
     </parent>
     <artifactId>extended-problem-detail-webflux-autoconfigure</artifactId>
     <name>Extended Problem Detail WebFlux AutoConfiguration</name>
-    <description>Spring Boot auto-configuration module providing extended ProblemDetail exception handling for Spring
-        WebFlux applications
-    </description>
+    <description>Spring Boot auto-configuration that registers the Extended Problem Detail exception handler for Spring WebFlux, mapping validation exceptions to RFC 9457 responses with field-level error details</description>
 
     <dependencies>
         <!-- Core module -->

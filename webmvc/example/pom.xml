@@ -12,7 +12,7 @@
     <artifactId>extended-problem-detail-webmvc-example</artifactId>
     <version>1.0.1</version>
     <name>Extended Problem Detail WebMVC Example</name>
-    <description>Example application demonstrating Extended Problem Detail usage in WebMVC</description>
+    <description>Example Spring WebMVC application demonstrating Extended Problem Detail exception handling and customization</description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
