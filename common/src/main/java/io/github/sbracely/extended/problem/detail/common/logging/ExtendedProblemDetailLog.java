@@ -31,6 +31,20 @@ public final class ExtendedProblemDetailLog {
     }
 
     /**
+     * Logs a message with placeholder support.
+     * <p>
+     * Supports SLF4J-style placeholders: {@code log(logger, "Error processing {}", name)}
+     * </p>
+     *
+     * @param logger  the logger to use
+     * @param message the message with optional placeholders
+     * @param args    the arguments to replace placeholders
+     */
+    public void log(Log logger, String message, @Nullable Object... args) {
+        log(logger, null, message, args);
+    }
+
+    /**
      * Logs a message with placeholder support and optional exception.
      * <p>
      * Supports SLF4J-style placeholders: {@code log(logger, ex, "Error processing {}", name)}

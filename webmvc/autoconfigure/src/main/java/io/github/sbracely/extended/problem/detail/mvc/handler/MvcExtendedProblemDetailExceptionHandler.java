@@ -242,7 +242,6 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @return list of Error objects representing all errors
      */
     protected List<Error> resolveWebExchangeBindException(WebExchangeBindException ex) {
-        extendedProblemDetailLog.log(logger, ex, "resolveWebExchangeBindException");
         return resolveBindingResult(ex.getBindingResult());
     }
 

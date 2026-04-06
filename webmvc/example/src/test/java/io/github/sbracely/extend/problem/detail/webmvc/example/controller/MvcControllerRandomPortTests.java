@@ -40,6 +40,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONTENT_TOO_LARGE;
 
+@AutoConfigureTestRestTemplate
+@AutoConfigureRestTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MvcControllerRandomPortTests {
 
@@ -83,12 +85,11 @@ class MvcControllerRandomPortTests {
      * @see MaxUploadSizeExceededException
      */
     @Nested
-    @AutoConfigureTestRestTemplate
     @TestPropertySource(properties = "spring.servlet.multipart.max-file-size=1")
     class MaxUploadSizeExceededExceptionTests {
 
         @Autowired
-        private TestRestTemplate restTemplate;
+        private TestRestTemplate testRestTemplate;
 
         /**
          * @see MaxUploadSizeExceededException
@@ -112,7 +113,7 @@ class MvcControllerRandomPortTests {
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
             String uri = BASE_PATH + "/max-upload-size-exceeded";
-            ResponseEntity<ExtendedProblemDetail> response = restTemplate.postForEntity(
+            ResponseEntity<ExtendedProblemDetail> response = testRestTemplate.postForEntity(
                     "http://localhost:" + port + uri,
                     new HttpEntity<>(body, headers),
                     ExtendedProblemDetail.class

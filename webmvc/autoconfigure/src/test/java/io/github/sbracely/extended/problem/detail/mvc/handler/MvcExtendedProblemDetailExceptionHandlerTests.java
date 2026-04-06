@@ -4,6 +4,7 @@ import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblem
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -90,9 +91,11 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ResponseEntity<Object> response = handler.handleMethodArgumentNotValid(
                     ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
+            assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
             ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(body).isNotNull();
             assertThat(body.getErrors()).hasSize(2);
             assertThat(body.getErrors().get(0).target()).isEqualTo("field1");
             assertThat(body.getErrors().get(0).message()).isEqualTo("Field1 is required");
@@ -109,7 +112,9 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ResponseEntity<Object> response = handler.handleMethodArgumentNotValid(
                     ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
+            assertThat(response).isNotNull();
             ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(body).isNotNull();
             assertThat(body.getErrors()).hasSize(1);
             assertThat(body.getErrors().get(0).target()).isNull();
             assertThat(body.getErrors().get(0).message()).isEqualTo("Object error");
@@ -124,7 +129,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMethodArgumentNotValid(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleMethodArgumentNotValid"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMethodArgumentNotValid"), isNull());
         }
     }
 
@@ -142,9 +147,11 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ResponseEntity<Object> response = handler.handleHandlerMethodValidationException(
                     ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
+            assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
             ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(body).isNotNull();
             assertThat(body.getErrors()).isNotEmpty();
         }
 
@@ -155,8 +162,8 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHandlerMethodValidationException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(matches("handleHandlerMethodValidationException \\[exception#[0-9a-f]+]"), (Throwable) isNull());
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("handleHandlerMethodValidationException \\[exception#[0-9a-f]+]"), isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
         }
     }
 
@@ -175,11 +182,13 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
                     buildMethodValidationException(List.of(parameterErrors), Collections.emptyList());
 
             ResponseEntity<Object> response = handler.handleMethodValidationException(
-                    ex, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, webRequest);
+                    ex, new HttpHeaders(), HttpStatus.UNPROCESSABLE_CONTENT, webRequest);
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+            assertThat(response).isNotNull();
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
             assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
             ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(body).isNotNull();
             assertThat(body.getErrors()).hasSize(1);
             assertThat(body.getErrors().get(0).target()).isEqualTo("name");
             assertThat(body.getErrors().get(0).message()).isEqualTo("Name is required");
@@ -193,9 +202,9 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             org.springframework.validation.method.MethodValidationException ex =
                     buildMethodValidationException(List.of(parameterErrors), Collections.emptyList());
 
-            h.handleMethodValidationException(ex, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, webRequest);
+            h.handleMethodValidationException(ex, new HttpHeaders(), HttpStatus.UNPROCESSABLE_CONTENT, webRequest);
 
-            verify(mockLogger).debug(eq("handleMethodValidationException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMethodValidationException"), isNull());
         }
     }
 
@@ -215,9 +224,11 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ResponseEntity<Object> response = handler.handleErrorResponseException(
                     ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
+            assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
             ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(body).isNotNull();
             assertThat(body.getErrors()).hasSize(1);
             assertThat(body.getErrors().get(0).target()).isEqualTo("email");
             assertThat(body.getErrors().get(0).message()).isEqualTo("Invalid email");
@@ -231,6 +242,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ResponseEntity<Object> response = handler.handleErrorResponseException(
                     ex, new HttpHeaders(), HttpStatus.CONFLICT, webRequest);
 
+            assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
             // non-WebExchangeBindException: body is standard ProblemDetail, not ExtendedProblemDetail
             assertThat(response.getBody()).isNotInstanceOf(ExtendedProblemDetail.class);
@@ -245,7 +257,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleErrorResponseException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleErrorResponseException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleErrorResponseException"), isNull());
         }
     }
 
@@ -272,7 +284,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleAsyncRequestNotUsableException(ex, webRequest);
 
-            verify(mockLogger).debug(eq("handleAsyncRequestNotUsableException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleAsyncRequestNotUsableException"), isNull());
         }
     }
 
@@ -539,7 +551,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), isNull());
         }
 
         @Test
@@ -561,7 +573,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveMatrixVariable"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveMatrixVariable"), isNull());
         }
 
         @Test
@@ -588,7 +600,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveModelAttribute"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveModelAttribute"), isNull());
         }
 
         @Test
@@ -610,7 +622,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolvePathVariable"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolvePathVariable"), isNull());
         }
 
         @Test
@@ -637,7 +649,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBody"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBody"), isNull());
         }
 
         @Test
@@ -662,7 +674,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBodyValidationResult"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBodyValidationResult"), isNull());
         }
 
         @Test
@@ -684,7 +696,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestHeader"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestHeader"), isNull());
         }
 
         @Test
@@ -704,7 +716,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
         }
 
         @Test
@@ -731,7 +743,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestPart"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestPart"), isNull());
         }
 
         @Test
@@ -752,7 +764,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveOther"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveOther"), isNull());
         }
     }
 
@@ -770,7 +782,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHttpRequestMethodNotSupported(ex, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED, webRequest);
 
-            verify(mockLogger).debug(eq("handleHttpRequestMethodNotSupported"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleHttpRequestMethodNotSupported"), isNull());
         }
 
         @Test
@@ -781,7 +793,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHttpMediaTypeNotSupported(ex, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE, webRequest);
 
-            verify(mockLogger).debug(eq("handleHttpMediaTypeNotSupported"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleHttpMediaTypeNotSupported"), isNull());
         }
 
         @Test
@@ -792,7 +804,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHttpMediaTypeNotAcceptable(ex, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, webRequest);
 
-            verify(mockLogger).debug(eq("handleHttpMediaTypeNotAcceptable"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleHttpMediaTypeNotAcceptable"), isNull());
         }
 
         @Test
@@ -802,7 +814,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMissingPathVariable(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
 
-            verify(mockLogger).debug(eq("handleMissingPathVariable"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMissingPathVariable"), isNull());
         }
 
         @Test
@@ -812,7 +824,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMissingServletRequestParameter(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleMissingServletRequestParameter"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMissingServletRequestParameter"), isNull());
         }
 
         @Test
@@ -822,7 +834,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMissingServletRequestPart(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleMissingServletRequestPart"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMissingServletRequestPart"), isNull());
         }
 
         @Test
@@ -832,7 +844,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleServletRequestBindingException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleServletRequestBindingException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleServletRequestBindingException"), isNull());
         }
 
         @Test
@@ -842,7 +854,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleNoHandlerFoundException(ex, new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
 
-            verify(mockLogger).debug(eq("handleNoHandlerFoundException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleNoHandlerFoundException"), isNull());
         }
 
         @Test
@@ -852,7 +864,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleNoResourceFoundException(ex, new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
 
-            verify(mockLogger).debug(eq("handleNoResourceFoundException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleNoResourceFoundException"), isNull());
         }
 
         @Test
@@ -862,7 +874,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleAsyncRequestTimeoutException(ex, new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE, webRequest);
 
-            verify(mockLogger).debug(eq("handleAsyncRequestTimeoutException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleAsyncRequestTimeoutException"), isNull());
         }
 
         @Test
@@ -870,9 +882,9 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             MaxUploadSizeExceededException ex = new MaxUploadSizeExceededException(1024L);
 
-            h.handleMaxUploadSizeExceededException(ex, new HttpHeaders(), HttpStatus.PAYLOAD_TOO_LARGE, webRequest);
+            h.handleMaxUploadSizeExceededException(ex, new HttpHeaders(), HttpStatus.CONTENT_TOO_LARGE, webRequest);
 
-            verify(mockLogger).debug(eq("handleMaxUploadSizeExceededException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMaxUploadSizeExceededException"), isNull());
         }
 
         @Test
@@ -882,7 +894,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleConversionNotSupported(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
 
-            verify(mockLogger).debug(eq("handleConversionNotSupported"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleConversionNotSupported"), isNull());
         }
 
         @Test
@@ -892,7 +904,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleTypeMismatch(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleTypeMismatch"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleTypeMismatch"), isNull());
         }
 
         @Test
@@ -903,7 +915,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHttpMessageNotReadable(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(eq("handleHttpMessageNotReadable"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleHttpMessageNotReadable"), isNull());
         }
 
         @Test
@@ -913,7 +925,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHttpMessageNotWritable(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
 
-            verify(mockLogger).debug(eq("handleHttpMessageNotWritable"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleHttpMessageNotWritable"), isNull());
         }
     }
 
@@ -957,7 +969,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMethodArgumentNotValid(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).info(eq("handleMethodArgumentNotValid"), (Throwable) isNull());
+            verify(mockLogger).info(eq("handleMethodArgumentNotValid"), isNull());
         }
 
         @Test
@@ -969,7 +981,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMethodArgumentNotValid(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).warn(eq("handleMethodArgumentNotValid"), (Throwable) isNull());
+            verify(mockLogger).warn(eq("handleMethodArgumentNotValid"), isNull());
         }
 
         @Test
@@ -981,7 +993,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleMethodArgumentNotValid(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).error(eq("handleMethodArgumentNotValid"), (Throwable) isNull());
+            verify(mockLogger).error(eq("handleMethodArgumentNotValid"), isNull());
         }
 
         @Test
@@ -993,7 +1005,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), isNull());
         }
     }
 
@@ -1037,13 +1049,13 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
     }
 
     private org.springframework.validation.method.MethodValidationException buildMethodValidationException(
-            List<? extends ParameterValidationResult> results,
-            List<? extends MessageSourceResolvable> crossResults) {
+            List<ParameterValidationResult> results,
+            List<MessageSourceResolvable> crossResults) {
         MethodValidationResult mvr = MethodValidationResult.create(
                 new TestBean(),
                 getTestMethod(),
-                (List<ParameterValidationResult>) results,
-                (List<MessageSourceResolvable>) crossResults);
+                results,
+                crossResults);
         return new org.springframework.validation.method.MethodValidationException(mvr);
     }
 
@@ -1054,7 +1066,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
                 new TestBean(), getTestMethod(), List.of(placeholder));
         return new HandlerMethodValidationException(mvr) {
             @Override
-            public void visitResults(Visitor visitor) {
+            public void visitResults(@NonNull Visitor visitor) {
                 visitorConsumer.accept(visitor);
             }
         };

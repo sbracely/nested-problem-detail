@@ -43,7 +43,7 @@ class ExtendedProblemDetailLogTest {
     void shouldLogInfoLevel() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.INFO, false);
 
-        log.log(logger, null, "Info message");
+        log.log(logger, "Info message");
 
         verify(logger).info("Info message", (Throwable) null);
     }
@@ -52,7 +52,7 @@ class ExtendedProblemDetailLogTest {
     void shouldLogWarnLevel() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.WARN, false);
 
-        log.log(logger, null, "Warning message");
+        log.log(logger, "Warning message");
 
         verify(logger).warn("Warning message", (Throwable) null);
     }
@@ -71,7 +71,7 @@ class ExtendedProblemDetailLogTest {
     void shouldNotLogWhenLevelIsOff() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.OFF, true);
 
-        log.log(logger, null, "This should not be logged");
+        log.log(logger, "This should not be logged");
 
         verifyNoInteractions(logger);
     }
@@ -80,7 +80,7 @@ class ExtendedProblemDetailLogTest {
     void shouldHandleMultiplePlaceholders() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.DEBUG, false);
 
-        log.log(logger, null, "Error: {} - Code: {} - Status: {}", "validation", 400, "BAD_REQUEST");
+        log.log(logger, "Error: {} - Code: {} - Status: {}", "validation", 400, "BAD_REQUEST");
 
         verify(logger).debug("Error: validation - Code: 400 - Status: BAD_REQUEST", (Throwable) null);
     }
@@ -89,7 +89,7 @@ class ExtendedProblemDetailLogTest {
     void shouldHandleNullExceptionWithStackTraceEnabled() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.DEBUG, true);
 
-        log.log(logger, null, "Message without exception");
+        log.log(logger, "Message without exception");
 
         verify(logger).debug("Message without exception", (Throwable) null);
     }
@@ -98,7 +98,7 @@ class ExtendedProblemDetailLogTest {
     void shouldLogLevel() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.TRACE, false);
 
-        log.log(logger, null, "Trace message");
+        log.log(logger, "Trace message");
 
         verify(logger).trace("Trace message", (Throwable) null);
     }

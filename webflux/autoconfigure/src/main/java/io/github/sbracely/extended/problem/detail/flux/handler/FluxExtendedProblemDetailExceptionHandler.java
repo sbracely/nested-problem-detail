@@ -133,7 +133,6 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @return list of Error objects representing all errors
      */
     protected List<Error> resolveWebExchangeBindException(WebExchangeBindException ex) {
-        extendedProblemDetailLog.log(logger, ex, "resolveWebExchangeBindException");
         return resolveBindingResult(ex.getBindingResult());
     }
 
@@ -152,8 +151,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, true, true,
-                "handleHandlerMethodValidationException [exception#{}]", Integer.toHexString(System.identityHashCode(ex)));
+        extendedProblemDetailLog.log(logger, ex, true, true, "handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);

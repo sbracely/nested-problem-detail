@@ -4,6 +4,7 @@ import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblem
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,9 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.matches;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -89,6 +88,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
                         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
                         assertThat(responseEntity.getBody()).isInstanceOf(ExtendedProblemDetail.class);
                         ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        assertThat(body).isNotNull();
                         assertThat(body.getErrors()).hasSize(2);
                         assertThat(body.getErrors().get(0).target()).isEqualTo("field1");
                         assertThat(body.getErrors().get(0).message()).isEqualTo("Field1 is required");
@@ -110,6 +110,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             StepVerifier.create(result)
                     .assertNext(responseEntity -> {
                         ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        assertThat(body).isNotNull();
                         assertThat(body.getErrors()).hasSize(1);
                         assertThat(body.getErrors().get(0).target()).isNull();
                         assertThat(body.getErrors().get(0).message()).isEqualTo("Object error message");
@@ -124,11 +125,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             bindingResult.addError(new FieldError("testBean", "field1", "error"));
             WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
 
-            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange);
+            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            // handleWebExchangeBindException + resolveWebExchangeBindException each log once
-            verify(mockLogger).debug(eq("handleWebExchangeBindException"), (Throwable) isNull());
-            verify(mockLogger).debug(eq("resolveWebExchangeBindException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleWebExchangeBindException"), isNull());
         }
     }
 
@@ -151,6 +151,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
                         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
                         assertThat(responseEntity.getBody()).isInstanceOf(ExtendedProblemDetail.class);
                         ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        assertThat(body).isNotNull();
                         assertThat(body.getErrors()).isNotEmpty();
                     })
                     .verifyComplete();
@@ -161,10 +162,11 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             HandlerMethodValidationException ex = buildExceptionVisitingRequestParam("param", "must not be null");
 
-            h.handleHandlerMethodValidationException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange);
+            h.handleHandlerMethodValidationException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).debug(matches("handleHandlerMethodValidationException \\[exception#[0-9a-f]+]"), (Throwable) isNull());
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("handleHandlerMethodValidationException"), isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
         }
     }
 
@@ -183,13 +185,15 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
                     buildMethodValidationException(List.of(parameterErrors), Collections.emptyList());
 
             Mono<ResponseEntity<Object>> result = handler.handleMethodValidationException(
-                    ex, HttpStatus.UNPROCESSABLE_ENTITY, exchange);
+                    ex, HttpStatus.UNPROCESSABLE_CONTENT, exchange);
 
             StepVerifier.create(result)
                     .assertNext(responseEntity -> {
-                        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+                        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
                         assertThat(responseEntity.getBody()).isInstanceOf(ExtendedProblemDetail.class);
                         ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        assertThat(body).isNotNull();
+                        assertThat(body.getErrors()).isNotEmpty();
                         assertThat(body.getErrors()).hasSize(1);
                         assertThat(body.getErrors().get(0).target()).isEqualTo("name");
                         assertThat(body.getErrors().get(0).message()).isEqualTo("Name is required");
@@ -205,9 +209,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             org.springframework.validation.method.MethodValidationException ex =
                     buildMethodValidationException(List.of(parameterErrors), Collections.emptyList());
 
-            h.handleMethodValidationException(ex, HttpStatus.UNPROCESSABLE_ENTITY, exchange);
+            h.handleMethodValidationException(ex, HttpStatus.UNPROCESSABLE_CONTENT, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleMethodValidationException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMethodValidationException"), isNull());
         }
     }
 
@@ -285,18 +290,6 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             assertThat(errors.get(0).type()).isEqualTo(Error.Type.PARAMETER);
             assertThat(errors.get(0).target()).isEqualTo("field");
             assertThat(errors.get(0).message()).isEqualTo("Field error");
-        }
-
-        @Test
-        void shouldLogResolveWebExchangeBindException() {
-            FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
-            BindingResult bindingResult = new BeanPropertyBindingResult(new TestBean(), "testBean");
-            bindingResult.addError(new FieldError("testBean", "field", "error"));
-            WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
-
-            h.resolveWebExchangeBindException(ex);
-
-            verify(mockLogger).debug(eq("resolveWebExchangeBindException"), (Throwable) isNull());
         }
     }
 
@@ -465,7 +458,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), isNull());
         }
 
         @Test
@@ -487,7 +480,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveMatrixVariable"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveMatrixVariable"), isNull());
         }
 
         @Test
@@ -514,7 +507,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveModelAttribute"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveModelAttribute"), isNull());
         }
 
         @Test
@@ -536,7 +529,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolvePathVariable"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolvePathVariable"), isNull());
         }
 
         @Test
@@ -563,7 +556,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBody"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBody"), isNull());
         }
 
         @Test
@@ -588,7 +581,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBodyValidationResult"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestBodyValidationResult"), isNull());
         }
 
         @Test
@@ -610,7 +603,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestHeader"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestHeader"), isNull());
         }
 
         @Test
@@ -630,7 +623,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
         }
 
         @Test
@@ -657,7 +650,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestPart"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestPart"), isNull());
         }
 
         @Test
@@ -678,7 +671,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             h.resolveHandlerMethodValidationException(ex);
 
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveOther"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveOther"), isNull());
         }
     }
 
@@ -694,9 +687,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             MethodNotAllowedException ex = new MethodNotAllowedException(HttpMethod.GET, Set.of(HttpMethod.POST));
 
-            h.handleMethodNotAllowedException(ex, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED, exchange);
+            h.handleMethodNotAllowedException(ex, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleMethodNotAllowedException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMethodNotAllowedException"), isNull());
         }
 
         @Test
@@ -704,9 +698,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             NotAcceptableStatusException ex = new NotAcceptableStatusException(List.of(MediaType.APPLICATION_JSON));
 
-            h.handleNotAcceptableStatusException(ex, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, exchange);
+            h.handleNotAcceptableStatusException(ex, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleNotAcceptableStatusException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleNotAcceptableStatusException"), isNull());
         }
 
         @Test
@@ -715,20 +710,22 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             UnsupportedMediaTypeStatusException ex = new UnsupportedMediaTypeStatusException(
                     MediaType.TEXT_PLAIN, List.of(MediaType.APPLICATION_JSON));
 
-            h.handleUnsupportedMediaTypeStatusException(ex, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE, exchange);
+            h.handleUnsupportedMediaTypeStatusException(ex, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleUnsupportedMediaTypeStatusException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleUnsupportedMediaTypeStatusException"), isNull());
         }
 
         @Test
         void shouldLogHandleMissingRequestValueException() {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             MissingRequestValueException ex = new MissingRequestValueException(
-                    "param", String.class, "query parameter", null);
+                    "param", String.class, "query parameter", createMethodParameter());
 
-            h.handleMissingRequestValueException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange);
+            h.handleMissingRequestValueException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleMissingRequestValueException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleMissingRequestValueException"), isNull());
         }
 
         @Test
@@ -739,9 +736,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             UnsatisfiedRequestParameterException ex = new UnsatisfiedRequestParameterException(
                     List.of("param1=value1"), params);
 
-            h.handleUnsatisfiedRequestParameterException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange);
+            h.handleUnsatisfiedRequestParameterException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleUnsatisfiedRequestParameterException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleUnsatisfiedRequestParameterException"), isNull());
         }
 
         @Test
@@ -749,9 +747,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             ServerWebInputException ex = new ServerWebInputException("Invalid input");
 
-            h.handleServerWebInputException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange);
+            h.handleServerWebInputException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleServerWebInputException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleServerWebInputException"), isNull());
         }
 
         @Test
@@ -759,9 +758,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             ServerErrorException ex = new ServerErrorException("Internal error", (Throwable) null);
 
-            h.handleServerErrorException(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, exchange);
+            h.handleServerErrorException(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleServerErrorException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleServerErrorException"), isNull());
         }
 
         @Test
@@ -769,9 +769,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             ResponseStatusException ex = new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found");
 
-            h.handleResponseStatusException(ex, new HttpHeaders(), HttpStatus.NOT_FOUND, exchange);
+            h.handleResponseStatusException(ex, new HttpHeaders(), HttpStatus.NOT_FOUND, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleResponseStatusException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleResponseStatusException"), isNull());
         }
 
         @Test
@@ -780,9 +781,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             org.springframework.web.ErrorResponseException ex =
                     new org.springframework.web.ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR);
 
-            h.handleErrorResponseException(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, exchange);
+            h.handleErrorResponseException(ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, exchange)
+                    .block();
 
-            verify(mockLogger).debug(eq("handleErrorResponseException"), (Throwable) isNull());
+            verify(mockLogger).debug(eq("handleErrorResponseException"), isNull());
         }
     }
 
@@ -800,10 +802,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             bindingResult.addError(new FieldError("testBean", "field", "error"));
             WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
 
-            h.resolveWebExchangeBindException(ex);
+            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            // printStackTrace=true and exception is not null → log with exception
-            verify(mockLogger).debug(eq("resolveWebExchangeBindException"), eq(ex));
+            verify(mockLogger).debug(eq("handleWebExchangeBindException"), eq(ex));
         }
 
         @Test
@@ -813,7 +815,8 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             bindingResult.addError(new FieldError("testBean", "field", "error"));
             WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
 
-            h.resolveWebExchangeBindException(ex);
+            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
             verifyNoInteractions(mockLogger);
         }
@@ -825,9 +828,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             bindingResult.addError(new FieldError("testBean", "field", "error"));
             WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
 
-            h.resolveWebExchangeBindException(ex);
+            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).info(eq("resolveWebExchangeBindException"), (Throwable) isNull());
+            verify(mockLogger).info(eq("handleWebExchangeBindException"), isNull());
         }
 
         @Test
@@ -837,9 +841,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             bindingResult.addError(new FieldError("testBean", "field", "error"));
             WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
 
-            h.resolveWebExchangeBindException(ex);
+            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).warn(eq("resolveWebExchangeBindException"), (Throwable) isNull());
+            verify(mockLogger).warn(eq("handleWebExchangeBindException"), isNull());
         }
 
         @Test
@@ -849,9 +854,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             bindingResult.addError(new FieldError("testBean", "field", "error"));
             WebExchangeBindException ex = new WebExchangeBindException(createMethodParameter(), bindingResult);
 
-            h.resolveWebExchangeBindException(ex);
+            h.handleWebExchangeBindException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
 
-            verify(mockLogger).error(eq("resolveWebExchangeBindException"), (Throwable) isNull());
+            verify(mockLogger).error(eq("handleWebExchangeBindException"), isNull());
         }
 
         @Test
@@ -864,7 +870,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             h.resolveHandlerMethodValidationException(ex);
 
             // logCorrelated uses single-arg debug(String) — no Throwable, even with printStackTrace=true
-            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), (Throwable) isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), isNull());
         }
     }
 
@@ -931,13 +937,13 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
      * and getCrossParameterValidationResults() to the provided lists.
      */
     private org.springframework.validation.method.MethodValidationException buildMethodValidationException(
-            List<? extends ParameterValidationResult> results,
-            List<? extends MessageSourceResolvable> crossResults) {
+            List<ParameterValidationResult> results,
+            List<MessageSourceResolvable> crossResults) {
         MethodValidationResult mvr = MethodValidationResult.create(
                 new TestBean(),
                 getTestMethod(),
-                (List<ParameterValidationResult>) results,
-                (List<MessageSourceResolvable>) crossResults);
+                results,
+                crossResults);
         return new org.springframework.validation.method.MethodValidationException(mvr);
     }
 
@@ -953,7 +959,7 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
                 new TestBean(), getTestMethod(), List.of(placeholder));
         return new HandlerMethodValidationException(mvr) {
             @Override
-            public void visitResults(Visitor visitor) {
+            public void visitResults(@NonNull Visitor visitor) {
                 visitorConsumer.accept(visitor);
             }
         };
