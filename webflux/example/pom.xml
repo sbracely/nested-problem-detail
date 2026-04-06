@@ -10,7 +10,8 @@
     </parent>
 
     <artifactId>extended-problem-detail-webflux-example</artifactId>
-    <name>webflux-example</name>
+    <version>1.0.1</version>
+    <name>Extended Problem Detail WebFlux Example</name>
     <description>webflux-example</description>
 
     <properties>
@@ -24,7 +25,7 @@
         <dependency>
             <groupId>io.github.sbracely</groupId>
             <artifactId>extended-problem-detail-webflux-spring-boot-starter</artifactId>
-            <version>1.0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

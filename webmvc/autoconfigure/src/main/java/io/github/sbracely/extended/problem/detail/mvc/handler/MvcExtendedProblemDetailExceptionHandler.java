@@ -6,8 +6,12 @@ import io.github.sbracely.extended.problem.detail.common.response.ExtendedProble
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.ConversionNotSupportedException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -15,13 +19,24 @@ import org.springframework.validation.method.MethodValidationException;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.ErrorResponseException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +87,48 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
         this.extendedProblemDetailLog = extendedProblemDetailLog;
     }
 
+    @Override
+    protected @Nullable ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHttpRequestMethodNotSupported");
+        return super.handleHttpRequestMethodNotSupported(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHttpMediaTypeNotSupported");
+        return super.handleHttpMediaTypeNotSupported(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHttpMediaTypeNotAcceptable");
+        return super.handleHttpMediaTypeNotAcceptable(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleMissingPathVariable");
+        return super.handleMissingPathVariable(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleMissingServletRequestParameter");
+        return super.handleMissingServletRequestParameter(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleMissingServletRequestPart");
+        return super.handleMissingServletRequestPart(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleServletRequestBindingException");
+        return super.handleServletRequestBindingException(ex, headers, status, request);
+    }
+
     /**
      * Handles method argument not valid exceptions.
      * <p>
@@ -87,6 +144,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      */
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleMethodArgumentNotValid");
         List<Error> errors = resolveMethodArgumentNotValidException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
@@ -107,9 +165,28 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      */
     @Override
     public @Nullable ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleNoHandlerFoundException");
+        return super.handleNoHandlerFoundException(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleNoResourceFoundException");
+        return super.handleNoResourceFoundException(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleAsyncRequestTimeoutException(AsyncRequestTimeoutException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleAsyncRequestTimeoutException");
+        return super.handleAsyncRequestTimeoutException(ex, headers, status, request);
     }
 
     /**
@@ -128,6 +205,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
     @Override
     protected @Nullable ResponseEntity<Object> handleErrorResponseException(
             ErrorResponseException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleErrorResponseException");
         if (ex instanceof WebExchangeBindException exchangeBindException) {
             List<Error> errors = resolveWebExchangeBindException(exchangeBindException);
             exchangeBindException.updateAndGetBody(getMessageSource(), request.getLocale());
@@ -137,21 +215,34 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
         return handleExceptionInternal(ex, null, headers, status, request);
     }
 
-    /**
-     * Handles async request not usable exceptions.
-     * <p>
-     * Logs the exception and returns null to let Spring handle it with default error handling.
-     * </p>
-     *
-     * @param ex      the AsyncRequestNotUsableException that was thrown
-     * @param request the current web request
-     * @return null to use default error handling
-     */
     @Override
-    protected @Nullable ResponseEntity<Object> handleAsyncRequestNotUsableException(
-            AsyncRequestNotUsableException ex, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleAsyncRequestNotUsableException");
-        return null;
+    protected @Nullable ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleMaxUploadSizeExceededException");
+        return super.handleMaxUploadSizeExceededException(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleConversionNotSupported(ConversionNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleConversionNotSupported");
+        return super.handleConversionNotSupported(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleTypeMismatch");
+        return super.handleTypeMismatch(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHttpMessageNotReadable");
+        return super.handleHttpMessageNotReadable(ex, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleHttpMessageNotWritable");
+        return super.handleHttpMessageNotWritable(ex, headers, status, request);
     }
 
     /**
@@ -172,13 +263,30 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
                                                                                HttpHeaders headers,
                                                                                HttpStatus status,
                                                                                WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleMethodValidationException");
         List<Error> errors = resolveMethodValidationException(ex);
-        String method = ex.getMethod().getName();
-        extendedProblemDetailLog.log(logger, ex, "handleMethodValidationException method = {}, errors = {}", method, errors);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, request);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(body, errors);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
     }
+
+    /**
+     * Handles async request not usable exceptions.
+     * <p>
+     * Logs the exception and returns null to let Spring handle it with default error handling.
+     * </p>
+     *
+     * @param ex      the AsyncRequestNotUsableException that was thrown
+     * @param request the current web request
+     * @return null to use default error handling
+     */
+    @Override
+    protected @Nullable ResponseEntity<Object> handleAsyncRequestNotUsableException(
+            AsyncRequestNotUsableException ex, WebRequest request) {
+        extendedProblemDetailLog.log(logger, ex, "handleAsyncRequestNotUsableException");
+        return null;
+    }
+
 
     // ==================== Error Resolving Methods ====================
 
@@ -203,6 +311,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @return list of Error objects representing all errors
      */
     protected List<Error> resolveWebExchangeBindException(WebExchangeBindException ex) {
+        extendedProblemDetailLog.log(logger, ex, "resolveWebExchangeBindException");
         return resolveBindingResult(ex.getBindingResult());
     }
 
@@ -282,6 +391,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList   the list to populate with errors
      */
     protected void resolveCookieValue(HandlerMethodValidationException ex, CookieValue cookieValue, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveCookieValue");
         addParameterErrors(result, Error.Type.COOKIE,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -299,6 +409,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList      the list to populate with errors
      */
     protected void resolveMatrixVariable(HandlerMethodValidationException ex, MatrixVariable matrixVariable, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveMatrixVariable");
         addParameterErrors(result, Error.Type.PARAMETER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -316,6 +427,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList      the list to populate with errors
      */
     protected void resolveModelAttribute(HandlerMethodValidationException ex, @Nullable ModelAttribute modelAttribute, ParameterErrors errors, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveModelAttribute");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -334,6 +446,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList    the list to populate with errors
      */
     protected void resolvePathVariable(HandlerMethodValidationException ex, PathVariable pathVariable, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolvePathVariable");
         addParameterErrors(result, Error.Type.PARAMETER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -351,6 +464,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList   the list to populate with errors
      */
     protected void resolveRequestBody(HandlerMethodValidationException ex, RequestBody requestBody, ParameterErrors errors, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestBody");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -369,6 +483,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList   the list to populate with errors
      */
     protected void resolveRequestBodyValidationResult(HandlerMethodValidationException ex, RequestBody requestBody, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestBodyValidationResult");
         addParameterErrors(result, Error.Type.PARAMETER, null, errorList);
     }
 
@@ -385,6 +500,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList     the list to populate with errors
      */
     protected void resolveRequestHeader(HandlerMethodValidationException ex, RequestHeader requestHeader, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestHeader");
         addParameterErrors(result, Error.Type.HEADER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -402,6 +518,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList    the list to populate with errors
      */
     protected void resolveRequestParam(HandlerMethodValidationException ex, @Nullable RequestParam requestParam, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestParam");
         addParameterErrors(result, Error.Type.PARAMETER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -419,6 +536,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList   the list to populate with errors
      */
     protected void resolveRequestPart(HandlerMethodValidationException ex, RequestPart requestPart, ParameterErrors errors, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestPart");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -436,9 +554,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param errorList the list to populate with errors
      */
     protected void resolveOther(HandlerMethodValidationException ex, ParameterValidationResult result, List<Error> errorList) {
-        result.getResolvableErrors().forEach(error ->
-                extendedProblemDetailLog.log(logger, null, "codes: {}, defaultMessage: {}",
-                        error.getCodes(), error.getDefaultMessage()));
+        extendedProblemDetailLog.log(logger, ex, "resolveOther");
     }
 
     /**

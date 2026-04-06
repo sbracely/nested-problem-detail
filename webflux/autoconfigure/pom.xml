@@ -8,7 +8,7 @@
         <version>1.0.1</version>
     </parent>
     <artifactId>extended-problem-detail-webflux-autoconfigure</artifactId>
-    <name>Extended Problem Detail AutoConfiguration for WebFlux</name>
+    <name>Extended Problem Detail WebFlux AutoConfiguration</name>
     <description>Spring Boot auto-configuration module providing extended ProblemDetail exception handling for Spring
         WebFlux applications
     </description>

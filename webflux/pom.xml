@@ -10,12 +10,13 @@
 
     <artifactId>extended-problem-detail-webflux</artifactId>
     <packaging>pom</packaging>
-    <name>Extended Problem Detail WebFlux Parent</name>
+    <name>Extended Problem Detail WebFlux</name>
     <description>Parent module for Extended Problem Detail WebFlux support</description>
 
     <modules>
         <module>autoconfigure</module>
         <module>starter</module>
+        <module>example</module>
     </modules>
 
     <dependencyManagement>

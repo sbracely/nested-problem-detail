@@ -9,10 +9,14 @@
     </parent>
 
     <artifactId>extended-problem-detail-webflux-spring-boot-starter</artifactId>
-    <name>Extended Problem Detail Starter for WebFlux</name>
+    <name>Extended Problem Detail WebFlux Starter</name>
     <description>Spring Boot starter combining all dependencies for extended ProblemDetail exception handling in WebFlux
         applications
     </description>
+
+    <properties>
+        <spring.boot.skip>true</spring.boot.skip>
+    </properties>
 
     <dependencies>
         <dependency>

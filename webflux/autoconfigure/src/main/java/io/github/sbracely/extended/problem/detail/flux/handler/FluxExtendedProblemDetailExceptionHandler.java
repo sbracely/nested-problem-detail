@@ -14,11 +14,12 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.method.MethodValidationException;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.validation.method.ParameterValidationResult;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.*;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -69,6 +70,36 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
         this.extendedProblemDetailLog = extendedProblemDetailLog;
     }
 
+    @Override
+    protected Mono<ResponseEntity<Object>> handleMethodNotAllowedException(MethodNotAllowedException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleMethodNotAllowedException");
+        return super.handleMethodNotAllowedException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleNotAcceptableStatusException(NotAcceptableStatusException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleNotAcceptableStatusException");
+        return super.handleNotAcceptableStatusException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleUnsupportedMediaTypeStatusException(UnsupportedMediaTypeStatusException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleUnsupportedMediaTypeStatusException");
+        return super.handleUnsupportedMediaTypeStatusException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleMissingRequestValueException(MissingRequestValueException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleMissingRequestValueException");
+        return super.handleMissingRequestValueException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleUnsatisfiedRequestParameterException(UnsatisfiedRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleUnsatisfiedRequestParameterException");
+        return super.handleUnsatisfiedRequestParameterException(ex, headers, status, exchange);
+    }
+
     /**
      * Handles web exchange bind exceptions.
      * <p>
@@ -84,6 +115,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleWebExchangeBindException(WebExchangeBindException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleWebExchangeBindException");
         List<Error> errors = resolveWebExchangeBindException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
@@ -104,9 +136,34 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleServerWebInputException(ServerWebInputException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleServerWebInputException");
+        return super.handleServerWebInputException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleServerErrorException(ServerErrorException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleServerErrorException");
+        return super.handleServerErrorException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleResponseStatusException(ResponseStatusException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleResponseStatusException");
+        return super.handleResponseStatusException(ex, headers, status, exchange);
+    }
+
+    @Override
+    protected Mono<ResponseEntity<Object>> handleErrorResponseException(ErrorResponseException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleErrorResponseException");
+        return super.handleErrorResponseException(ex, headers, status, exchange);
     }
 
     /**
@@ -123,9 +180,8 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
+        extendedProblemDetailLog.log(logger, ex, "handleMethodValidationException");
         List<Error> errors = resolveMethodValidationException(ex);
-        String method = ex.getMethod().getName();
-        extendedProblemDetailLog.log(logger, ex, "handleMethodValidationException method = {}, errors = {}", method, errors);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, exchange);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(body, errors);
         return handleExceptionInternal(ex, extendedProblemDetail, null, status, exchange);
@@ -140,6 +196,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @return list of Error objects representing all errors
      */
     protected List<Error> resolveWebExchangeBindException(WebExchangeBindException ex) {
+        extendedProblemDetailLog.log(logger, ex, "resolveWebExchangeBindException");
         return resolveBindingResult(ex.getBindingResult());
     }
 
@@ -219,6 +276,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList   the list to populate with errors
      */
     protected void resolveCookieValue(HandlerMethodValidationException ex, CookieValue cookieValue, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveCookieValue");
         addParameterErrors(result, Error.Type.COOKIE,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -236,6 +294,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList      the list to populate with errors
      */
     protected void resolveMatrixVariable(HandlerMethodValidationException ex, MatrixVariable matrixVariable, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveMatrixVariable");
         addParameterErrors(result, Error.Type.PARAMETER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -253,6 +312,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList      the list to populate with errors
      */
     protected void resolveModelAttribute(HandlerMethodValidationException ex, @Nullable ModelAttribute modelAttribute, ParameterErrors errors, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveModelAttribute");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -271,6 +331,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList    the list to populate with errors
      */
     protected void resolvePathVariable(HandlerMethodValidationException ex, PathVariable pathVariable, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolvePathVariable");
         addParameterErrors(result, Error.Type.PARAMETER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -288,6 +349,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList   the list to populate with errors
      */
     protected void resolveRequestBody(HandlerMethodValidationException ex, RequestBody requestBody, ParameterErrors errors, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestBody");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -306,6 +368,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList   the list to populate with errors
      */
     protected void resolveRequestBodyValidationResult(HandlerMethodValidationException ex, RequestBody requestBody, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestBodyValidationResult");
         addParameterErrors(result, Error.Type.PARAMETER, null, errorList);
     }
 
@@ -322,6 +385,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList     the list to populate with errors
      */
     protected void resolveRequestHeader(HandlerMethodValidationException ex, RequestHeader requestHeader, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestHeader");
         addParameterErrors(result, Error.Type.HEADER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -339,6 +403,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList    the list to populate with errors
      */
     protected void resolveRequestParam(HandlerMethodValidationException ex, @Nullable RequestParam requestParam, ParameterValidationResult result, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestParam");
         addParameterErrors(result, Error.Type.PARAMETER,
                 result.getMethodParameter().getParameterName(), errorList);
     }
@@ -356,6 +421,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList   the list to populate with errors
      */
     protected void resolveRequestPart(HandlerMethodValidationException ex, RequestPart requestPart, ParameterErrors errors, List<Error> errorList) {
+        extendedProblemDetailLog.log(logger, ex, "resolveRequestPart");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -373,9 +439,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param errorList the list to populate with errors
      */
     protected void resolveOther(HandlerMethodValidationException ex, ParameterValidationResult result, List<Error> errorList) {
-        result.getResolvableErrors().forEach(error ->
-                extendedProblemDetailLog.log(logger, null, "codes: {}, defaultMessage: {}",
-                        error.getCodes(), error.getDefaultMessage()));
+        extendedProblemDetailLog.log(logger, ex, "resolveOther");
     }
 
     /**

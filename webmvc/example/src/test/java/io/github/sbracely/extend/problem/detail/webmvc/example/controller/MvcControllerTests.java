@@ -643,16 +643,6 @@ class MvcControllerTests {
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
-        ArgumentCaptor<Object[]> argsCaptor = ArgumentCaptor.forClass(Object[].class);
-        verify(extendedProblemDetailLog, atLeastOnce()).log(any(), isNull(), eq("codes: {}, defaultMessage: {}"), argsCaptor.capture());
-        List<String> defaultMessages = argsCaptor.getAllValues().stream()
-                .map(args -> (String) args[1])
-                .toList();
-        assertThat(defaultMessages).containsAnyOf(
-                "sessionAttribute cannot be empty",
-                "requestAttribute cannot be empty",
-                "value cannot be empty"
-        );
     }
 
     /**

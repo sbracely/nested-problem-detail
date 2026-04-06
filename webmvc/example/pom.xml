@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>extended-problem-detail-webmvc-example</artifactId>
+    <version>1.0.1</version>
     <name>Extended Problem Detail WebMVC Example</name>
     <description>Example application demonstrating Extended Problem Detail usage in WebMVC</description>
 
@@ -24,7 +25,7 @@
         <dependency>
             <groupId>io.github.sbracely</groupId>
             <artifactId>extended-problem-detail-webmvc-spring-boot-starter</artifactId>
-            <version>1.0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

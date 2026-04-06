@@ -12,7 +12,7 @@
     <artifactId>extended-problem-detail</artifactId>
     <version>1.0.1</version>
     <packaging>pom</packaging>
-    <name>Extended Problem Detail Parent</name>
+    <name>Extended Problem Detail</name>
     <description>Parent POM for Extended Problem Detail - Spring Boot Starter providing enhanced ProblemDetail exception
         handling with field-level error information
     </description>
