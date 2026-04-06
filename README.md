@@ -7,11 +7,6 @@
 A Spring Boot starter that extends [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `ProblemDetail` responses with
 field-level validation error details. Supports both Spring WebMVC and Spring WebFlux.
 
-## Requirements
-
-- Java 17+
-- Spring Boot 4.0.5+
-
 ## Installation
 
 ### WebMVC
@@ -239,6 +234,5 @@ All available override points:
 ## Related Links
 
 - [RFC 9457 - Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc9457)
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 - [Spring Framework - ProblemDetail](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ProblemDetail.html)
 
