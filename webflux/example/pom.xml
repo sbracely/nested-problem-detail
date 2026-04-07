@@ -12,7 +12,9 @@
     <artifactId>extended-problem-detail-webflux-example</artifactId>
     <version>1.0.1</version>
     <name>Extended Problem Detail WebFlux Example</name>
-    <description>Example Spring WebFlux application demonstrating Extended Problem Detail exception handling and customization</description>
+    <description>Example Spring WebFlux application demonstrating Extended Problem Detail exception handling and
+        customization
+    </description>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -34,6 +36,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>2.8.6</version>
         </dependency>
 
         <dependency>

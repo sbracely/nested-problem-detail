@@ -8,6 +8,7 @@ import io.github.sbracely.extended.problem.detail.webflux.example.request.Proble
 import io.github.sbracely.extended.problem.detail.webflux.example.service.ProblemDetailService;
 import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckFilePart;
 import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckPassword;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/flux-extended-problem-detail")
+@Tag(name = "WebFlux Example", description = "Endpoints that intentionally trigger different WebFlux and validation exceptions.")
 public class FluxExtendedProblemDetailController {
 
     private static final Logger logger = LoggerFactory.getLogger(FluxExtendedProblemDetailController.class);

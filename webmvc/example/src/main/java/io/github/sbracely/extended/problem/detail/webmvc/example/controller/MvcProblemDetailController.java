@@ -10,6 +10,7 @@ import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotatio
 import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.CheckPassword;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -63,6 +64,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/mvc-extended-problem-detail")
+@Tag(name = "WebMVC Example", description = "Endpoints that intentionally trigger different MVC and validation exceptions.")
 public class MvcProblemDetailController {
 
     private static final Logger logger = LoggerFactory.getLogger(MvcProblemDetailController.class);

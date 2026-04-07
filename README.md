@@ -41,6 +41,20 @@ No additional configuration is required. The exception handler registers automat
 | Minimum Java | `17+` | Project source and public API target Java 17 or newer |
 | Verified in this repository | Spring Boot `4.0.5` / Java `25.0.2` | Current test run passes with this combination |
 
+## Example OpenAPI Documents
+
+Both example applications now expose OpenAPI documents at runtime:
+
+- WebMVC example: `/v3/api-docs`, `/v3/api-docs.yaml`, and `/swagger-ui/index.html`
+- WebFlux example: `/v3/api-docs`, `/v3/api-docs.yaml`, and `/swagger-ui/index.html`
+
+The runtime OpenAPI documents focus on the `application/problem+json` exception payload and the
+`ExtendedProblemDetail` / `Error` structure. For concrete request parameters and ways to trigger each
+error response, refer to the example controller tests in each module.
+
+When the example applications are running, `/swagger-ui/index.html` provides interactive "Try it out"
+requests against the live example endpoints.
+
 ## Response Format
 
 When a validation exception occurs, the response extends the standard RFC 9457 body with an `errors` array:
