@@ -6,8 +6,8 @@ import io.github.sbracely.extended.problem.detail.webmvc.example.request.Problem
 import io.github.sbracely.extended.problem.detail.webmvc.example.response.ProblemDetailResponse;
 import io.github.sbracely.extended.problem.detail.webmvc.example.response.serializer.ProblemDetailResponseSerializer;
 import io.github.sbracely.extended.problem.detail.webmvc.example.service.ProblemDetailService;
-import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annocation.CheckMultipartFile;
-import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annocation.CheckPassword;
+import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.CheckMultipartFile;
+import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.CheckPassword;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import jakarta.servlet.http.HttpServletRequest;

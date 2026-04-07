@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.valid.validator;
 
 import io.github.sbracely.extended.problem.detail.webmvc.example.request.ProblemDetailRequest;
-import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annocation.CheckName;
+import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.CheckName;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.constraintvalidation.SupportedValidationTarget;

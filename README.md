@@ -33,6 +33,14 @@ field-level validation error details. Supports both Spring WebMVC and Spring Web
 
 No additional configuration is required. The exception handler registers automatically.
 
+## Compatibility
+
+| Scope | Version | Notes |
+|------|---------|-------|
+| Minimum Spring Boot | `4.0+` | Starter API is built against Spring Boot 4.x |
+| Minimum Java | `17+` | Project source and public API target Java 17 or newer |
+| Verified in this repository | Spring Boot `4.0.5` / Java `25.0.2` | Current test run passes with this combination |
+
 ## Response Format
 
 When a validation exception occurs, the response extends the standard RFC 9457 body with an `errors` array:
@@ -118,10 +126,14 @@ To include structured `errors` in the response, use `ExtendedProblemDetail`:
 public class OrderNotFoundException extends ErrorResponseException {
 
     public OrderNotFoundException(String orderId) {
+        super(HttpStatus.NOT_FOUND, createBody(orderId), null);
+    }
+
+    private static ExtendedProblemDetail createBody(String orderId) {
         ExtendedProblemDetail body = new ExtendedProblemDetail(
                 ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Order not found: " + orderId));
         body.setErrors(List.of(new Error(Error.Type.BUSINESS, "orderId", "Order not found: " + orderId)));
-        super(HttpStatus.NOT_FOUND, body, null);
+        return body;
     }
 }
 ```

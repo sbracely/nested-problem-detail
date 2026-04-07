@@ -1,6 +1,6 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.valid.validator;
 
-import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annocation.CheckMultipartFile;
+import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.CheckMultipartFile;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -2,22 +2,19 @@ package io.github.sbracely.extended.problem.detail.common.logging;
 
 import org.apache.commons.logging.Log;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.logging.LogLevel;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link ExtendedProblemDetailLog} class.
  */
-@ExtendWith(MockitoExtension.class)
 class ExtendedProblemDetailLogTest {
 
-    @Mock
-    private Log logger;
+    private final RecordingLog logger = new RecordingLog();
 
     @Test
     void shouldLogStackTraceDebugWith() {
@@ -26,7 +23,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, exception, "Error occurred: {}", "details");
 
-        verify(logger).debug("Error occurred: details", exception);
+        assertThat(logger.events()).containsExactly(new LogEvent("debug", "Error occurred: details", exception));
     }
 
     @Test
@@ -36,7 +33,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, exception, "Error occurred: {}", "details");
 
-        verify(logger).debug("Error occurred: details", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("debug", "Error occurred: details", null));
     }
 
     @Test
@@ -45,7 +42,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, "Info message");
 
-        verify(logger).info("Info message", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("info", "Info message", null));
     }
 
     @Test
@@ -54,7 +51,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, "Warning message");
 
-        verify(logger).warn("Warning message", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("warn", "Warning message", null));
     }
 
     @Test
@@ -64,7 +61,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, exception, "Error message");
 
-        verify(logger).error("Error message", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("error", "Error message", null));
     }
 
     @Test
@@ -73,7 +70,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, "This should not be logged");
 
-        verifyNoInteractions(logger);
+        assertThat(logger.events()).isEmpty();
     }
 
     @Test
@@ -82,7 +79,8 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, "Error: {} - Code: {} - Status: {}", "validation", 400, "BAD_REQUEST");
 
-        verify(logger).debug("Error: validation - Code: 400 - Status: BAD_REQUEST", (Throwable) null);
+        assertThat(logger.events()).containsExactly(
+                new LogEvent("debug", "Error: validation - Code: 400 - Status: BAD_REQUEST", null));
     }
 
     @Test
@@ -91,7 +89,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, "Message without exception");
 
-        verify(logger).debug("Message without exception", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("debug", "Message without exception", null));
     }
 
     @Test
@@ -100,7 +98,7 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, "Trace message");
 
-        verify(logger).trace("Trace message", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("trace", "Trace message", null));
     }
 
     @Test
@@ -110,6 +108,112 @@ class ExtendedProblemDetailLogTest {
 
         log.log(logger, exception, "Fatal error occurred");
 
-        verify(logger).fatal("Fatal error occurred", (Throwable) null);
+        assertThat(logger.events()).containsExactly(new LogEvent("fatal", "Fatal error occurred", null));
+    }
+
+    private record LogEvent(String level, String message, Throwable throwable) {
+    }
+
+    private static final class RecordingLog implements Log {
+
+        private final List<LogEvent> events = new ArrayList<>();
+
+        List<LogEvent> events() {
+            return events;
+        }
+
+        private void add(String level, Object message, Throwable throwable) {
+            events.add(new LogEvent(level, String.valueOf(message), throwable));
+        }
+
+        @Override
+        public boolean isDebugEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isErrorEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isFatalEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isInfoEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isTraceEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isWarnEnabled() {
+            return true;
+        }
+
+        @Override
+        public void trace(Object message) {
+            add("trace", message, null);
+        }
+
+        @Override
+        public void trace(Object message, Throwable t) {
+            add("trace", message, t);
+        }
+
+        @Override
+        public void debug(Object message) {
+            add("debug", message, null);
+        }
+
+        @Override
+        public void debug(Object message, Throwable t) {
+            add("debug", message, t);
+        }
+
+        @Override
+        public void info(Object message) {
+            add("info", message, null);
+        }
+
+        @Override
+        public void info(Object message, Throwable t) {
+            add("info", message, t);
+        }
+
+        @Override
+        public void warn(Object message) {
+            add("warn", message, null);
+        }
+
+        @Override
+        public void warn(Object message, Throwable t) {
+            add("warn", message, t);
+        }
+
+        @Override
+        public void error(Object message) {
+            add("error", message, null);
+        }
+
+        @Override
+        public void error(Object message, Throwable t) {
+            add("error", message, t);
+        }
+
+        @Override
+        public void fatal(Object message) {
+            add("fatal", message, null);
+        }
+
+        @Override
+        public void fatal(Object message, Throwable t) {
+            add("fatal", message, t);
+        }
     }
 }

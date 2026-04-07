@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.valid.validator;
 
 import io.github.sbracely.extended.problem.detail.webflux.example.request.ProblemDetailRequest;
-import io.github.sbracely.extended.problem.detail.webflux.example.valid.annocation.CheckPassword;
+import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckPassword;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

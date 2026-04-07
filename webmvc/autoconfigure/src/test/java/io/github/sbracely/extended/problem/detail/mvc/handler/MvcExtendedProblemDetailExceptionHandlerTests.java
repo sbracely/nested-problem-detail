@@ -8,18 +8,18 @@ import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.http.MockHttpInputMessage;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -33,6 +33,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
@@ -43,35 +44,36 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link MvcExtendedProblemDetailExceptionHandler}.
  *
  * @since 1.0.0
  */
-@ExtendWith(MockitoExtension.class)
 class MvcExtendedProblemDetailExceptionHandlerTests {
 
-    @Mock
-    private Log mockLogger;
+    private RecordingLog mockLogger;
 
     private MvcExtendedProblemDetailExceptionHandler handler;
     private WebRequest webRequest;
 
     @BeforeEach
     void setUp() {
+        mockLogger = new RecordingLog();
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.DEBUG, false);
         handler = new MvcExtendedProblemDetailExceptionHandler(log);
-        webRequest = mock(WebRequest.class);
-        lenient().when(webRequest.getLocale()).thenReturn(Locale.ENGLISH);
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test");
+        request.addPreferredLocale(Locale.ENGLISH);
+        webRequest = new ServletWebRequest(request, new MockHttpServletResponse());
     }
 
     // =====================================================================
@@ -454,12 +456,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
         @Test
         void shouldAddMultipleErrors() {
-            ParameterValidationResult result = mock(ParameterValidationResult.class);
-            MessageSourceResolvable r1 = mock(MessageSourceResolvable.class);
-            MessageSourceResolvable r2 = mock(MessageSourceResolvable.class);
-            when(r1.getDefaultMessage()).thenReturn("error1");
-            when(r2.getDefaultMessage()).thenReturn("error2");
-            when(result.getResolvableErrors()).thenReturn(List.of(r1, r2));
+            ParameterValidationResult result = buildParameterValidationResult(List.of("error1", "error2"));
             List<Error> errorList = new java.util.ArrayList<>();
 
             handler.addParameterErrors(result, Error.Type.PARAMETER, "field", errorList);
@@ -511,8 +508,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
         @Test
         void shouldResolveCrossParameterValidationResults() {
-            MessageSourceResolvable crossParamResolvable = mock(MessageSourceResolvable.class);
-            when(crossParamResolvable.getDefaultMessage()).thenReturn("cross param error");
+            MessageSourceResolvable crossParamResolvable = messageSourceResolvable("cross param error");
             org.springframework.validation.method.MethodValidationException ex =
                     buildMethodValidationException(Collections.emptyList(), List.of(crossParamResolvable));
 
@@ -535,7 +531,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldResolveCookieValue() {
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.cookieValue(mock(CookieValue.class), buildParameterValidationResult("must not be blank")));
+                    visitor.cookieValue(annotation(CookieValue.class), buildParameterValidationResult("must not be blank")));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
 
@@ -547,7 +543,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         void shouldLogResolveCookieValue() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.cookieValue(mock(CookieValue.class), buildParameterValidationResult("error")));
+                    visitor.cookieValue(annotation(CookieValue.class), buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -557,7 +553,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldResolveMatrixVariable() {
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.matrixVariable(mock(MatrixVariable.class), buildParameterValidationResult("invalid")));
+                    visitor.matrixVariable(annotation(MatrixVariable.class), buildParameterValidationResult("invalid")));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
 
@@ -569,7 +565,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         void shouldLogResolveMatrixVariable() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.matrixVariable(mock(MatrixVariable.class), buildParameterValidationResult("error")));
+                    visitor.matrixVariable(annotation(MatrixVariable.class), buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -606,7 +602,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldResolvePathVariable() {
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.pathVariable(mock(PathVariable.class), buildParameterValidationResult("must be positive")));
+                    visitor.pathVariable(annotation(PathVariable.class), buildParameterValidationResult("must be positive")));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
 
@@ -618,7 +614,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         void shouldLogResolvePathVariable() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.pathVariable(mock(PathVariable.class), buildParameterValidationResult("error")));
+                    visitor.pathVariable(annotation(PathVariable.class), buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -630,7 +626,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ParameterErrors parameterErrors = buildParameterErrors(
                     List.of(new FieldError("bean", "bodyField", "invalid")));
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestBody(mock(RequestBody.class), parameterErrors));
+                    visitor.requestBody(annotation(RequestBody.class), parameterErrors));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
 
@@ -645,7 +641,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ParameterErrors parameterErrors = buildParameterErrors(
                     List.of(new FieldError("bean", "f", "error")));
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestBody(mock(RequestBody.class), parameterErrors));
+                    visitor.requestBody(annotation(RequestBody.class), parameterErrors));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -655,7 +651,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldResolveRequestBodyValidationResult() {
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestBodyValidationResult(mock(RequestBody.class),
+                    visitor.requestBodyValidationResult(annotation(RequestBody.class),
                             buildParameterValidationResult("must not be null")));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
@@ -669,7 +665,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         void shouldLogResolveRequestBodyValidationResult() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestBodyValidationResult(mock(RequestBody.class),
+                    visitor.requestBodyValidationResult(annotation(RequestBody.class),
                             buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
@@ -680,7 +676,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldResolveRequestHeader() {
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestHeader(mock(RequestHeader.class), buildParameterValidationResult("must not be blank")));
+                    visitor.requestHeader(annotation(RequestHeader.class), buildParameterValidationResult("must not be blank")));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
 
@@ -692,7 +688,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         void shouldLogResolveRequestHeader() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, false);
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestHeader(mock(RequestHeader.class), buildParameterValidationResult("error")));
+                    visitor.requestHeader(annotation(RequestHeader.class), buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -724,7 +720,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ParameterErrors parameterErrors = buildParameterErrors(
                     List.of(new FieldError("bean", "file", "required")));
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestPart(mock(RequestPart.class), parameterErrors));
+                    visitor.requestPart(annotation(RequestPart.class), parameterErrors));
 
             List<Error> errors = handler.resolveHandlerMethodValidationException(ex);
 
@@ -739,7 +735,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             ParameterErrors parameterErrors = buildParameterErrors(
                     List.of(new FieldError("bean", "f", "error")));
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.requestPart(mock(RequestPart.class), parameterErrors));
+                    visitor.requestPart(annotation(RequestPart.class), parameterErrors));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -1001,7 +997,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, true);
             // logCorrelated always logs a single-arg message (no Throwable), regardless of printStackTrace setting.
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
-                    visitor.cookieValue(mock(CookieValue.class), buildParameterValidationResult("error")));
+                    visitor.cookieValue(annotation(CookieValue.class), buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
 
@@ -1033,19 +1029,24 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
     }
 
     private ParameterValidationResult buildParameterValidationResult(String message) {
-        ParameterValidationResult pvr = mock(ParameterValidationResult.class);
-        MessageSourceResolvable resolvable = mock(MessageSourceResolvable.class);
-        lenient().when(resolvable.getDefaultMessage()).thenReturn(message);
-        lenient().when(pvr.getResolvableErrors()).thenReturn(List.of(resolvable));
-        lenient().when(pvr.getMethodParameter()).thenReturn(createMethodParameter());
-        return pvr;
+        return buildParameterValidationResult(List.of(message));
+    }
+
+    private ParameterValidationResult buildParameterValidationResult(List<String> messages) {
+        return new ParameterValidationResult(
+                createMethodParameter(),
+                null,
+                messages.stream().map(this::messageSourceResolvable).toList(),
+                null,
+                null,
+                null,
+                (error, sourceType) -> null);
     }
 
     private ParameterErrors buildParameterErrors(List<ObjectError> objectErrors) {
-        ParameterErrors parameterErrors = mock(ParameterErrors.class);
-        lenient().when(parameterErrors.getAllErrors()).thenReturn(objectErrors);
-        lenient().when(parameterErrors.getMethodParameter()).thenReturn(createMethodParameter());
-        return parameterErrors;
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new TestBean(), "testBean");
+        objectErrors.forEach(bindingResult::addError);
+        return new ParameterErrors(createMethodParameter(), bindingResult.getTarget(), bindingResult, null, null, null);
     }
 
     private org.springframework.validation.method.MethodValidationException buildMethodValidationException(
@@ -1076,7 +1077,53 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
             String paramName, String message) {
         ParameterValidationResult pvr = buildParameterValidationResult(message);
         return buildExceptionVisiting(visitor ->
-                visitor.requestParam(mock(RequestParam.class), pvr));
+                visitor.requestParam(annotation(RequestParam.class), pvr));
+    }
+
+    private MessageSourceResolvable messageSourceResolvable(String message) {
+        return new DefaultMessageSourceResolvable(new String[0], message);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <A extends Annotation> A annotation(Class<A> type) {
+        return (A) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type}, (proxy, method, args) -> {
+            if (method.getDeclaringClass() == Object.class) {
+                return switch (method.getName()) {
+                    case "toString" -> type.getName();
+                    case "hashCode" -> 0;
+                    case "equals" -> proxy == args[0];
+                    default -> null;
+                };
+            }
+            if (method.getName().equals("annotationType")) {
+                return type;
+            }
+            return method.getDefaultValue();
+        });
+    }
+
+    private static LogVerifier verify(RecordingLog log) {
+        return new LogVerifier(log);
+    }
+
+    private static MessageExpectation eq(String expected) {
+        return actual -> actual.equals(expected);
+    }
+
+    private static ThrowableExpectation eq(Throwable expected) {
+        return actual -> actual == expected;
+    }
+
+    private static MessageExpectation matches(String regex) {
+        return actual -> actual.matches(regex);
+    }
+
+    private static ThrowableExpectation isNull() {
+        return actual -> actual == null;
+    }
+
+    private static void verifyNoInteractions(RecordingLog log) {
+        assertThat(log.events()).isEmpty();
     }
 
     private Method getTestMethod() {
@@ -1116,6 +1163,175 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
                     throw new RuntimeException("Failed to inject mock logger", e2);
                 }
             }
+        }
+    }
+
+    @FunctionalInterface
+    interface MessageExpectation {
+        boolean matches(String actual);
+    }
+
+    @FunctionalInterface
+    interface ThrowableExpectation {
+        boolean matches(Throwable actual);
+    }
+
+    record LogEvent(String level, String message, Throwable throwable) {
+    }
+
+    static final class LogVerifier {
+
+        private final RecordingLog log;
+
+        LogVerifier(RecordingLog log) {
+            this.log = log;
+        }
+
+        void trace(String message, Throwable throwable) {
+            assertLogged("trace", actual -> actual.equals(message), actual -> actual == throwable);
+        }
+
+        void debug(String message, Throwable throwable) {
+            assertLogged("debug", actual -> actual.equals(message), actual -> actual == throwable);
+        }
+
+        void debug(MessageExpectation message, ThrowableExpectation throwable) {
+            assertLogged("debug", message::matches, throwable::matches);
+        }
+
+        void info(String message, Throwable throwable) {
+            assertLogged("info", actual -> actual.equals(message), actual -> actual == throwable);
+        }
+
+        void info(MessageExpectation message, ThrowableExpectation throwable) {
+            assertLogged("info", message::matches, throwable::matches);
+        }
+
+        void warn(String message, Throwable throwable) {
+            assertLogged("warn", actual -> actual.equals(message), actual -> actual == throwable);
+        }
+
+        void warn(MessageExpectation message, ThrowableExpectation throwable) {
+            assertLogged("warn", message::matches, throwable::matches);
+        }
+
+        void error(String message, Throwable throwable) {
+            assertLogged("error", actual -> actual.equals(message), actual -> actual == throwable);
+        }
+
+        void error(MessageExpectation message, ThrowableExpectation throwable) {
+            assertLogged("error", message::matches, throwable::matches);
+        }
+
+        private void assertLogged(String level, MessageExpectation message, ThrowableExpectation throwable) {
+            boolean found = log.events().stream()
+                    .anyMatch(event -> event.level().equals(level)
+                            && message.matches(event.message())
+                            && throwable.matches(event.throwable()));
+            assertThat(found).isTrue();
+        }
+    }
+
+    static final class RecordingLog implements Log {
+
+        private final List<LogEvent> events = new ArrayList<>();
+
+        List<LogEvent> events() {
+            return events;
+        }
+
+        private void add(String level, Object message, Throwable throwable) {
+            events.add(new LogEvent(level, String.valueOf(message), throwable));
+        }
+
+        @Override
+        public boolean isDebugEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isErrorEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isFatalEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isInfoEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isTraceEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isWarnEnabled() {
+            return true;
+        }
+
+        @Override
+        public void trace(Object message) {
+            add("trace", message, null);
+        }
+
+        @Override
+        public void trace(Object message, Throwable t) {
+            add("trace", message, t);
+        }
+
+        @Override
+        public void debug(Object message) {
+            add("debug", message, null);
+        }
+
+        @Override
+        public void debug(Object message, Throwable t) {
+            add("debug", message, t);
+        }
+
+        @Override
+        public void info(Object message) {
+            add("info", message, null);
+        }
+
+        @Override
+        public void info(Object message, Throwable t) {
+            add("info", message, t);
+        }
+
+        @Override
+        public void warn(Object message) {
+            add("warn", message, null);
+        }
+
+        @Override
+        public void warn(Object message, Throwable t) {
+            add("warn", message, t);
+        }
+
+        @Override
+        public void error(Object message) {
+            add("error", message, null);
+        }
+
+        @Override
+        public void error(Object message, Throwable t) {
+            add("error", message, t);
+        }
+
+        @Override
+        public void fatal(Object message) {
+            add("fatal", message, null);
+        }
+
+        @Override
+        public void fatal(Object message, Throwable t) {
+            add("fatal", message, t);
         }
     }
 

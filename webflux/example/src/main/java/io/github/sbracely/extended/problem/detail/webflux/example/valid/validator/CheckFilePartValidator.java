@@ -1,6 +1,6 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.valid.validator;
 
-import io.github.sbracely.extended.problem.detail.webflux.example.valid.annocation.CheckFilePart;
+import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckFilePart;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

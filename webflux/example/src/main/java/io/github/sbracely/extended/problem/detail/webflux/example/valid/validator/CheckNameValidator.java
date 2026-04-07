@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.valid.validator;
 
 import io.github.sbracely.extended.problem.detail.webflux.example.request.ProblemDetailRequest;
-import io.github.sbracely.extended.problem.detail.webflux.example.valid.annocation.CheckName;
+import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckName;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.constraintvalidation.SupportedValidationTarget;

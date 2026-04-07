@@ -6,8 +6,8 @@ import io.github.sbracely.extended.problem.detail.webflux.example.config.MethodV
 import io.github.sbracely.extended.problem.detail.webflux.example.exception.ExtendedErrorResponseException;
 import io.github.sbracely.extended.problem.detail.webflux.example.request.ProblemDetailRequest;
 import io.github.sbracely.extended.problem.detail.webflux.example.service.ProblemDetailService;
-import io.github.sbracely.extended.problem.detail.webflux.example.valid.annocation.CheckFilePart;
-import io.github.sbracely.extended.problem.detail.webflux.example.valid.annocation.CheckPassword;
+import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckFilePart;
+import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.CheckPassword;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;

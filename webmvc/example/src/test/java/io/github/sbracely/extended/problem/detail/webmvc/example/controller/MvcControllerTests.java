@@ -23,7 +23,6 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.web.MockAsyncContext;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -54,7 +53,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -70,8 +68,6 @@ class MvcControllerTests {
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
     @Autowired
     private MockMvcTester mockMvcTester;
-    @MockitoSpyBean
-    private ExtendedProblemDetailLog extendedProblemDetailLog;
 
     /**
      * @see HttpRequestMethodNotSupportedException

@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example.valid.annocation;
+package io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation;
 
 import io.github.sbracely.extended.problem.detail.webmvc.example.valid.validator.ConfirmPasswordValidator;
 import jakarta.validation.Constraint;
