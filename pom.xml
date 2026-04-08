@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
-        <relativePath/>
-    </parent>
+
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail</artifactId>
     <version>1.0.1</version>
     <packaging>pom</packaging>
+
     <name>Extended Problem Detail</name>
-    <description>Spring Boot starter that extends ProblemDetail (RFC 9457) with field-level validation error details, supporting both WebMVC and WebFlux</description>
+    <description>Spring Boot starter that extends ProblemDetail (RFC 9457) with field-level validation error details, supporting both WebMVC and WebFlux across Boot 3 and Boot 4</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>
     <licenses>
         <license>
@@ -33,10 +30,11 @@
         <tag>HEAD</tag>
         <url>https://github.com/sbracely/extended-problem-detail</url>
     </scm>
+
     <modules>
         <module>common</module>
-        <module>webmvc</module>
-        <module>webflux</module>
+        <module>boot3</module>
+        <module>boot4</module>
     </modules>
 
     <properties>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.sbracely</groupId>
+        <artifactId>extended-problem-detail-boot3</artifactId>
+        <version>1.0.1</version>
+    </parent>
+
+    <artifactId>extended-problem-detail-boot3-webmvc</artifactId>
+    <packaging>pom</packaging>
+    <name>Extended Problem Detail Boot 3 WebMVC</name>
+    <description>Aggregator for Spring Boot 3 WebMVC modules of Extended Problem Detail</description>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <modules>
+        <module>autoconfigure</module>
+        <module>starter</module>
+        <module>example</module>
+    </modules>
+</project>

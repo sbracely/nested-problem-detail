@@ -1,32 +1,56 @@
 # Extended Problem Detail
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0%2B-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5%2B%20%7C%204.0%2B-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://openjdk.org/)
 
 A Spring Boot starter that extends [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `ProblemDetail` responses with
-field-level validation error details. Supports both Spring WebMVC and Spring WebFlux.
+field-level validation error details. Supports Spring Boot 3 and 4, for both Spring WebMVC and Spring WebFlux.
 
 ## Installation
 
-### WebMVC
+Choose the starter that matches both your Spring Boot major version and web stack.
+
+### Spring Boot 3 WebMVC
 
 ```xml
 
 <dependency>
     <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-webmvc-spring-boot-starter</artifactId>
+    <artifactId>extended-problem-detail-boot3-webmvc-spring-boot-starter</artifactId>
     <version>1.0.1</version>
 </dependency>
 ```
 
-### WebFlux
+### Spring Boot 3 WebFlux
 
 ```xml
 
 <dependency>
     <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-webflux-spring-boot-starter</artifactId>
+    <artifactId>extended-problem-detail-boot3-webflux-spring-boot-starter</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+
+### Spring Boot 4 WebMVC
+
+```xml
+
+<dependency>
+    <groupId>io.github.sbracely</groupId>
+    <artifactId>extended-problem-detail-boot4-webmvc-spring-boot-starter</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+
+### Spring Boot 4 WebFlux
+
+```xml
+
+<dependency>
+    <groupId>io.github.sbracely</groupId>
+    <artifactId>extended-problem-detail-boot4-webflux-spring-boot-starter</artifactId>
     <version>1.0.1</version>
 </dependency>
 ```
@@ -37,9 +61,10 @@ No additional configuration is required. The exception handler registers automat
 
 | Scope | Version | Notes |
 |------|---------|-------|
-| Minimum Spring Boot | `4.0+` | Starter API is built against Spring Boot 4.x |
+| Spring Boot 3 line | `3.5.x` | Use `extended-problem-detail-boot3-*` artifacts |
+| Spring Boot 4 line | `4.0.x` | Use `extended-problem-detail-boot4-*` artifacts |
 | Minimum Java | `17+` | Project source and public API target Java 17 or newer |
-| Verified in this repository | Spring Boot `4.0.5` / Java `25.0.2` | Current test run passes with this combination |
+| Verified in this repository | Spring Boot `3.5.13` and `4.0.5` / Java `25.0.2` | Current reactor test run covers both lines |
 
 ## Example OpenAPI Documents
 
@@ -249,15 +274,21 @@ All available override points:
 
 ## Modules
 
-| Artifact                                              | Description                                |
-|-------------------------------------------------------|--------------------------------------------|
-| `extended-problem-detail-common`                      | Common module shared by WebMVC and WebFlux |
-| `extended-problem-detail-webmvc-autoconfigure`        | WebMVC auto-configuration                  |
-| `extended-problem-detail-webflux-autoconfigure`       | WebFlux auto-configuration                 |
-| `extended-problem-detail-webmvc-spring-boot-starter`  | WebMVC starter (use this in your project)  |
-| `extended-problem-detail-webflux-spring-boot-starter` | WebFlux starter (use this in your project) |
+| Artifact                                                   | Description |
+|------------------------------------------------------------|-------------|
+| `extended-problem-detail-common`                           | Shared response model used by both Boot lines |
+| `extended-problem-detail-boot3-common`                     | Shared Boot 3 support layer |
+| `extended-problem-detail-boot3-webmvc-autoconfigure`       | Boot 3 WebMVC auto-configuration |
+| `extended-problem-detail-boot3-webmvc-spring-boot-starter` | Boot 3 WebMVC starter |
+| `extended-problem-detail-boot3-webflux-autoconfigure`      | Boot 3 WebFlux auto-configuration |
+| `extended-problem-detail-boot3-webflux-spring-boot-starter`| Boot 3 WebFlux starter |
+| `extended-problem-detail-boot4-common`                     | Shared Boot 4 support layer |
+| `extended-problem-detail-boot4-webmvc-autoconfigure`       | Boot 4 WebMVC auto-configuration |
+| `extended-problem-detail-boot4-webmvc-spring-boot-starter` | Boot 4 WebMVC starter |
+| `extended-problem-detail-boot4-webflux-autoconfigure`      | Boot 4 WebFlux auto-configuration |
+| `extended-problem-detail-boot4-webflux-spring-boot-starter`| Boot 4 WebFlux starter |
 
-The root, `webmvc`, and `webflux` POMs are reactor-only aggregators and are not published to Maven Central.
+The root, `boot3`, `boot4`, `webmvc`, and `webflux` aggregator POMs are reactor-only and are not published to Maven Central.
 
 ## Related Links
 
