@@ -26,6 +26,9 @@ class OpenApiDocsTests {
                 .getResponseBody();
         assertThat(body)
                 .contains("\"openapi\":\"3.1.0\"")
+                .contains("\"components\":{\"schemas\":")
+                .contains("\"Error\":{\"type\":\"object\"")
+                .contains("\"ExtendedProblemDetail\":{\"type\":\"object\"")
                 .contains("/flux-extended-problem-detail/method-not-allowed-exception")
                 .contains("Extended Problem Detail WebFlux Example API")
                 .contains("\"application/problem+json\"")
@@ -49,6 +52,10 @@ class OpenApiDocsTests {
                 .getResponseBody();
         assertThat(body)
                 .contains("openapi: 3.1.0")
+                .contains("components:")
+                .contains("schemas:")
+                .contains("ExtendedProblemDetail:")
+                .contains("Error:")
                 .contains("/flux-extended-problem-detail/method-not-allowed-exception")
                 .contains("Extended Problem Detail WebFlux Example API")
                 .contains("application/problem+json:")

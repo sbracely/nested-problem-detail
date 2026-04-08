@@ -93,7 +93,7 @@ class MvcControllerRandomPortTests {
 
         /**
          * @see MaxUploadSizeExceededException
-         * @see MvcProblemDetailController#maxUploadSizeExceedededException(MultipartFile)
+         * @see MvcProblemDetailController#maxUploadSizeExceededException(MultipartFile)
          */
         @Test
         void maxUploadSizeExceededException() {

@@ -54,6 +54,7 @@ public class OpenApiConfiguration {
     @Bean
     OpenApiCustomizer webFluxErrorResponseCustomizer() {
         return openApi -> {
+            ensureProblemSchemas(openApi);
             if (openApi.getPaths() == null) {
                 return;
             }
@@ -73,16 +74,34 @@ public class OpenApiConfiguration {
         };
     }
 
+    private static void ensureProblemSchemas(OpenAPI openApi) {
+        Components components = openApi.getComponents();
+        if (components == null) {
+            components = new Components();
+            openApi.setComponents(components);
+        }
+        components.addSchemas("Error", errorSchema());
+        components.addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema());
+    }
+
     private static Schema<?> errorSchema() {
         return new ObjectSchema()
                 .description("Detailed error entry inside the Extended Problem Detail response.")
-                .addProperty("type", new StringSchema()
-                        .description("Source of the error.")
-                        ._enum(List.of("PARAMETER", "COOKIE", "HEADER", "BUSINESS")))
+                .addProperty("type", errorTypeSchema())
                 .addProperty("target", new StringSchema()
                         .description("Field, parameter, cookie, header, or business target associated with the error."))
                 .addProperty("message", new StringSchema()
                         .description("Human-readable explanation of the error."));
+    }
+
+    private static StringSchema errorTypeSchema() {
+        StringSchema schema = new StringSchema();
+        schema.description("Source of the error.");
+        schema.addEnumItemObject("PARAMETER");
+        schema.addEnumItemObject("COOKIE");
+        schema.addEnumItemObject("HEADER");
+        schema.addEnumItemObject("BUSINESS");
+        return schema;
     }
 
     private static Schema<?> extendedProblemDetailSchema() {
@@ -100,9 +119,16 @@ public class OpenApiConfiguration {
                 .addProperty("instance", new StringSchema()
                         .format("uri")
                         .description("URI identifying the specific occurrence."))
-                .addProperty("errors", new ArraySchema()
-                        .description("Detailed validation or business errors.")
-                        .items(new Schema<>().$ref(ERROR_SCHEMA_REF)));
+                .addProperty("errors", errorListSchema());
+    }
+
+    private static ArraySchema errorListSchema() {
+        ArraySchema schema = new ArraySchema();
+        schema.description("Detailed validation or business errors.");
+        Schema<Object> itemSchema = new Schema<>();
+        itemSchema.$ref(ERROR_SCHEMA_REF);
+        schema.items(itemSchema);
+        return schema;
     }
 
     private static ApiResponse response(String description, Example example) {
@@ -194,15 +220,16 @@ public class OpenApiConfiguration {
             case "missingRequestValueException" ->
                     new ErrorResponseSpec("400", "400 missing request value error", genericBadRequestProblemDetailExample(),
                             "GET /flux-extended-problem-detail/missing-request-value-exception without id");
-            case "contentTooLargeException", "payloadTooLargeException" ->
+            case "contentTooLargeException" ->
                     new ErrorResponseSpec("413", "413 content too large error",
                             problemExample("Content too large", "Content Too Large", 413, null,
-                                    operationId.equals("contentTooLargeException")
-                                            ? "/flux-extended-problem-detail/content-too-large-exception"
-                                            : "/flux-extended-problem-detail/payload-too-large-exception"),
-                            operationId.equals("contentTooLargeException")
-                                    ? "POST /flux-extended-problem-detail/content-too-large-exception with a 1MB request body"
-                                    : "POST /flux-extended-problem-detail/payload-too-large-exception with body text");
+                                    "/flux-extended-problem-detail/content-too-large-exception"),
+                            "POST /flux-extended-problem-detail/content-too-large-exception with a 1MB request body");
+            case "payloadTooLargeException" ->
+                    new ErrorResponseSpec("413", "413 content too large error",
+                            problemExample("Content too large", "Content Too Large", 413, null,
+                                    "/flux-extended-problem-detail/payload-too-large-exception"),
+                            "POST /flux-extended-problem-detail/payload-too-large-exception with body text");
             case "serverWebInputException" ->
                     new ErrorResponseSpec("400", "400 server web input error",
                             problemExample("Server web input error", "Bad Request", 400, "server web input error",

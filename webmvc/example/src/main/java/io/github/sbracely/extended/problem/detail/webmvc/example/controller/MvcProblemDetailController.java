@@ -397,14 +397,11 @@ public class MvcProblemDetailController {
     /**
      * @see MethodNotAllowedException
      */
-    @RequestMapping("/method-not-allowed-exception")
-    public void methodNotAllowedException(HttpMethod httpMethod) {
+    @DeleteMapping("/method-not-allowed-exception")
+    public void methodNotAllowedException() {
         List<HttpMethod> supportedMethods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
-        logger.info("methodNotAllowedException, httpMethod: {}", httpMethod);
-        if (supportedMethods.contains(httpMethod)) {
-            return;
-        }
-        throw new MethodNotAllowedException(httpMethod, supportedMethods);
+        logger.info("methodNotAllowedException");
+        throw new MethodNotAllowedException(HttpMethod.DELETE, supportedMethods);
     }
 
     /**
@@ -458,8 +455,8 @@ public class MvcProblemDetailController {
      * @see MaxUploadSizeExceededException
      */
     @PostMapping("/max-upload-size-exceeded-exception")
-    public void maxUploadSizeExceedededException(@RequestPart MultipartFile file) {
-        logger.info("maxUploadSizeExceedededException, file: {}", file);
+    public void maxUploadSizeExceededException(@RequestPart MultipartFile file) {
+        logger.info("maxUploadSizeExceededException, file: {}", file);
     }
 
     /**

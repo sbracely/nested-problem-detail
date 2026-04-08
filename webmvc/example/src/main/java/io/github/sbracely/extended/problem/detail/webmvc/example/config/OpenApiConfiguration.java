@@ -54,6 +54,7 @@ public class OpenApiConfiguration {
     @Bean
     OpenApiCustomizer webMvcErrorResponseCustomizer() {
         return openApi -> {
+            ensureProblemSchemas(openApi);
             if (openApi.getPaths() == null) {
                 return;
             }
@@ -73,16 +74,34 @@ public class OpenApiConfiguration {
         };
     }
 
+    private static void ensureProblemSchemas(OpenAPI openApi) {
+        Components components = openApi.getComponents();
+        if (components == null) {
+            components = new Components();
+            openApi.setComponents(components);
+        }
+        components.addSchemas("Error", errorSchema());
+        components.addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema());
+    }
+
     private static Schema<?> errorSchema() {
         return new ObjectSchema()
                 .description("Detailed error entry inside the Extended Problem Detail response.")
-                .addProperty("type", new StringSchema()
-                        .description("Source of the error.")
-                        ._enum(List.of("PARAMETER", "COOKIE", "HEADER", "BUSINESS")))
+                .addProperty("type", errorTypeSchema())
                 .addProperty("target", new StringSchema()
                         .description("Field, parameter, cookie, header, or business target associated with the error."))
                 .addProperty("message", new StringSchema()
                         .description("Human-readable explanation of the error."));
+    }
+
+    private static StringSchema errorTypeSchema() {
+        StringSchema schema = new StringSchema();
+        schema.description("Source of the error.");
+        schema.addEnumItemObject("PARAMETER");
+        schema.addEnumItemObject("COOKIE");
+        schema.addEnumItemObject("HEADER");
+        schema.addEnumItemObject("BUSINESS");
+        return schema;
     }
 
     private static Schema<?> extendedProblemDetailSchema() {
@@ -100,9 +119,16 @@ public class OpenApiConfiguration {
                 .addProperty("instance", new StringSchema()
                         .format("uri")
                         .description("URI identifying the specific occurrence."))
-                .addProperty("errors", new ArraySchema()
-                        .description("Detailed validation or business errors.")
-                        .items(new Schema<>().$ref(ERROR_SCHEMA_REF)));
+                .addProperty("errors", errorListSchema());
+    }
+
+    private static ArraySchema errorListSchema() {
+        ArraySchema schema = new ArraySchema();
+        schema.description("Detailed validation or business errors.");
+        Schema<Object> itemSchema = new Schema<>();
+        itemSchema.$ref(ERROR_SCHEMA_REF);
+        schema.items(itemSchema);
+        return schema;
     }
 
     private static ApiResponse response(String description, Example example) {
@@ -166,37 +192,36 @@ public class OpenApiConfiguration {
     }
 
     private static ErrorResponseSpec responseSpec(String operationId) {
-        if (operationId.startsWith("methodNotAllowedException")) {
-            return new ErrorResponseSpec("405", "405 method not allowed error",
-                    problemExample("Method not allowed", "Method Not Allowed", 405,
-                            "Supported methods: [GET, POST]",
-                            "/mvc-extended-problem-detail/method-not-allowed-exception"),
-                    "DELETE /mvc-extended-problem-detail/method-not-allowed-exception");
-        }
         return switch (operationId) {
-            case "httpRequestMethodNotSupportedException", "methodNotAllowedException" ->
+            case "methodNotAllowedException" ->
+                    new ErrorResponseSpec("405", "405 method not allowed error",
+                            problemExample("Method not allowed", "Method Not Allowed", 405,
+                                    "Supported methods: [GET, POST]",
+                                    "/mvc-extended-problem-detail/method-not-allowed-exception"),
+                            "DELETE /mvc-extended-problem-detail/method-not-allowed-exception");
+            case "httpRequestMethodNotSupportedException" ->
                     new ErrorResponseSpec("405", "405 method not allowed error", methodNotAllowedProblemDetailExample(),
                             "POST /mvc-extended-problem-detail/http-request-method-not-supported-exception");
-            case "httpMediaTypeNotAcceptableException", "notAcceptableStatusException" ->
+            case "httpMediaTypeNotAcceptableException" ->
                     new ErrorResponseSpec("406", "406 not acceptable error",
-                            operationId.equals("notAcceptableStatusException")
-                                    ? problemExample("Not acceptable", "Not Acceptable", 406,
+                            notAcceptableProblemDetailExample(),
+                            "PUT /mvc-extended-problem-detail/http-media-type-not-acceptable-exception with Accept: application/xml");
+            case "notAcceptableStatusException" ->
+                    new ErrorResponseSpec("406", "406 not acceptable error",
+                            problemExample("Not acceptable", "Not Acceptable", 406,
                                     "Acceptable representations: [application/json].",
-                                    "/mvc-extended-problem-detail/not-acceptable-status-exception")
-                                    : notAcceptableProblemDetailExample(),
-                            operationId.equals("notAcceptableStatusException")
-                                    ? "GET /mvc-extended-problem-detail/not-acceptable-status-exception"
-                                    : "PUT /mvc-extended-problem-detail/http-media-type-not-acceptable-exception with Accept: application/xml");
-            case "httpMediaTypeNotSupportedException", "unsupportedMediaTypeStatusException" ->
+                                    "/mvc-extended-problem-detail/not-acceptable-status-exception"),
+                            "GET /mvc-extended-problem-detail/not-acceptable-status-exception");
+            case "httpMediaTypeNotSupportedException" ->
                     new ErrorResponseSpec("415", "415 unsupported media type error",
-                            operationId.equals("unsupportedMediaTypeStatusException")
-                                    ? problemExample("Unsupported media type", "Unsupported Media Type", 415,
+                            unsupportedMediaTypeProblemDetailExample(),
+                            "PUT /mvc-extended-problem-detail/http-media-type-not-supported-exception");
+            case "unsupportedMediaTypeStatusException" ->
+                    new ErrorResponseSpec("415", "415 unsupported media type error",
+                            problemExample("Unsupported media type", "Unsupported Media Type", 415,
                                     "Could not parse Content-Type.",
-                                    "/mvc-extended-problem-detail/unsupported-media-type-status-exception")
-                                    : unsupportedMediaTypeProblemDetailExample(),
-                            operationId.equals("unsupportedMediaTypeStatusException")
-                                    ? "POST /mvc-extended-problem-detail/unsupported-media-type-status-exception"
-                                    : "PUT /mvc-extended-problem-detail/http-media-type-not-supported-exception");
+                                    "/mvc-extended-problem-detail/unsupported-media-type-status-exception"),
+                            "POST /mvc-extended-problem-detail/unsupported-media-type-status-exception");
             case "extendedErrorResponseException" ->
                     new ErrorResponseSpec("500", "500 business error", businessProblemDetailExample(),
                             "GET /mvc-extended-problem-detail/extended-error-response-exception");
@@ -270,35 +295,36 @@ public class OpenApiConfiguration {
                             problemExample("Payload too large", "Content Too Large", 413, "payload too large",
                                     "/mvc-extended-problem-detail/payload-too-large-exception"),
                             "POST multipart/form-data /mvc-extended-problem-detail/payload-too-large-exception with file");
-            case "contentTooLargeException", "maxUploadSizeExceedededException" ->
+            case "contentTooLargeException", "maxUploadSizeExceededException" ->
                     new ErrorResponseSpec("413", "413 content too large error",
                             problemExample("Content too large", "Content Too Large", 413, null,
                                     "/mvc-extended-problem-detail/content-too-large-exception"),
                             "POST multipart/form-data /mvc-extended-problem-detail/content-too-large-exception with file");
-            case "missingPathVariableException", "serverErrorException", "asyncRequestTimeoutException",
-                  "conversionNotSupportedException", "httpMessageNotWritableException", "asyncRequestNotUsableException" ->
-                    switch (operationId) {
-                        case "asyncRequestTimeoutException" -> new ErrorResponseSpec("503", "503 async timeout error",
-                                problemExample("Async timeout", "Service Unavailable", 503, null,
-                                        "/mvc-extended-problem-detail/async-request-timeout-exception"),
-                                "GET /mvc-extended-problem-detail/async-request-timeout-exception and let async processing time out");
-                        case "httpMessageNotWritableException" -> new ErrorResponseSpec("500", "500 message not writable error",
-                                problemExample("Message not writable", "Internal Server Error", 500,
-                                        "Failed to write request",
-                                        "/mvc-extended-problem-detail/http-message-not-writable-exception"),
-                                "GET /mvc-extended-problem-detail/http-message-not-writable-exception");
-                        case "asyncRequestNotUsableException" -> new ErrorResponseSpec("500", "500 async request unusable error",
-                                problemExample("Async request unusable", "Internal Server Error", 500, null,
-                                        "/mvc-extended-problem-detail/async-request-not-usable-exception"),
-                                "GET /mvc-extended-problem-detail/async-request-not-usable-exception");
-                        case "missingPathVariableException" -> new ErrorResponseSpec("500", "500 missing path variable error",
-                                problemExample("Missing path variable", "Internal Server Error", 500,
-                                        "Required path variable 'id' is not present.",
-                                        "/mvc-extended-problem-detail/missing-path-variable-exception"),
-                                "DELETE /mvc-extended-problem-detail/missing-path-variable-exception");
-                        default -> new ErrorResponseSpec("500", "500 server error", serverProblemDetailExample(),
-                                "GET /mvc-extended-problem-detail/server-error-exception");
-                    };
+            case "asyncRequestTimeoutException" ->
+                    new ErrorResponseSpec("503", "503 async timeout error",
+                            problemExample("Async timeout", "Service Unavailable", 503, null,
+                                    "/mvc-extended-problem-detail/async-request-timeout-exception"),
+                            "GET /mvc-extended-problem-detail/async-request-timeout-exception and let async processing time out");
+            case "httpMessageNotWritableException" ->
+                    new ErrorResponseSpec("500", "500 message not writable error",
+                            problemExample("Message not writable", "Internal Server Error", 500,
+                                    "Failed to write request",
+                                    "/mvc-extended-problem-detail/http-message-not-writable-exception"),
+                            "GET /mvc-extended-problem-detail/http-message-not-writable-exception");
+            case "asyncRequestNotUsableException" ->
+                    new ErrorResponseSpec("500", "500 async request unusable error",
+                            problemExample("Async request unusable", "Internal Server Error", 500, null,
+                                    "/mvc-extended-problem-detail/async-request-not-usable-exception"),
+                            "GET /mvc-extended-problem-detail/async-request-not-usable-exception");
+            case "missingPathVariableException" ->
+                    new ErrorResponseSpec("500", "500 missing path variable error",
+                            problemExample("Missing path variable", "Internal Server Error", 500,
+                                    "Required path variable 'id' is not present.",
+                                    "/mvc-extended-problem-detail/missing-path-variable-exception"),
+                            "DELETE /mvc-extended-problem-detail/missing-path-variable-exception");
+            case "serverErrorException", "conversionNotSupportedException" ->
+                    new ErrorResponseSpec("500", "500 server error", serverProblemDetailExample(),
+                            "GET /mvc-extended-problem-detail/server-error-exception");
             case "methodArgumentNotValidException", "handlerMethodValidationExceptionCookieValue",
                   "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
                   "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",

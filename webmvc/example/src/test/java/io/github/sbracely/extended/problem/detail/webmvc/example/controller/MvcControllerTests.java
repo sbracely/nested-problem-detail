@@ -866,7 +866,7 @@ class MvcControllerTests {
 
     /**
      * @see MethodNotAllowedException
-     * @see MvcProblemDetailController#methodNotAllowedException(HttpMethod)
+     * @see MvcProblemDetailController#methodNotAllowedException()
      */
     @Test
     void methodNotAllowedException() {

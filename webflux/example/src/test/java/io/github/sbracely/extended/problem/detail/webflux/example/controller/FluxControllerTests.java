@@ -45,9 +45,9 @@ import static org.springframework.http.MediaType.*;
 
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "PT1M")
-class WebfluxControllerTests {
+class FluxControllerTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebfluxControllerTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(FluxControllerTests.class);
     private static final String BASE_PATH = "/flux-extended-problem-detail";
     @Autowired
     private WebTestClient webTestClient;

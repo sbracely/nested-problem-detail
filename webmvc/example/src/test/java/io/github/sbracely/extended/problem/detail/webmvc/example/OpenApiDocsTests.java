@@ -26,6 +26,9 @@ class OpenApiDocsTests {
         String body = result.getResponse().getContentAsString();
         assertThat(body)
                 .contains("\"openapi\":\"3.1.0\"")
+                .contains("\"components\":{\"schemas\":")
+                .contains("\"Error\":{\"type\":\"object\"")
+                .contains("\"ExtendedProblemDetail\":{\"type\":\"object\"")
                 .contains("/mvc-extended-problem-detail/http-request-method-not-supported-exception")
                 .contains("Extended Problem Detail WebMVC Example API")
                 .contains("\"application/problem+json\"")
@@ -47,6 +50,10 @@ class OpenApiDocsTests {
         String body = result.getResponse().getContentAsString();
         assertThat(body)
                 .contains("openapi: 3.1.0")
+                .contains("components:")
+                .contains("schemas:")
+                .contains("ExtendedProblemDetail:")
+                .contains("Error:")
                 .contains("/mvc-extended-problem-detail/http-request-method-not-supported-exception")
                 .contains("Extended Problem Detail WebMVC Example API")
                 .contains("application/problem+json:")
