@@ -45,7 +45,7 @@ No additional configuration is required. The exception handler registers automat
 
 ## Example OpenAPI Documents
 
-Both example applications now expose OpenAPI documents at runtime:
+Both example applications expose OpenAPI documents at runtime:
 
 - WebMVC example: `/v3/api-docs`, `/v3/api-docs.yaml`, and `/swagger-ui/index.html`
 - WebFlux example: `/v3/api-docs`, `/v3/api-docs.yaml`, and `/swagger-ui/index.html`
@@ -56,6 +56,31 @@ error response, refer to the example controller tests in each module.
 
 When the example applications are running, `/swagger-ui/index.html` provides interactive "Try it out"
 requests against the live example endpoints.
+
+### Offline OpenAPI Exports
+
+Each example module also provides an opt-in Maven profile that generates offline OpenAPI spec files
+without requiring you to start the application manually.
+
+Generate WebMVC offline docs:
+
+```powershell
+.\mvnw.cmd -pl webmvc\example -Poffline-openapi-docs verify
+```
+
+Generate WebFlux offline docs:
+
+```powershell
+.\mvnw.cmd -pl webflux\example -Poffline-openapi-docs verify
+```
+
+Generated files are written to `docs` inside the example module:
+
+- `openapi.json`
+- `openapi.yaml`
+
+These exported OpenAPI files make it easier to inspect which exceptions map to which
+`application/problem+json` response bodies without manually starting the example service first.
 
 ## Response Format
 
