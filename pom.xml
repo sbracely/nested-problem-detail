@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail</artifactId>
+    <artifactId>extended-problem-detail-boot3</artifactId>
     <version>1.1.0</version>
     <packaging>pom</packaging>
 
-    <name>Extended Problem Detail</name>
-    <description>Spring Boot starter that extends ProblemDetail (RFC 9457) with field-level validation error details, supporting both WebMVC and WebFlux across Boot 3 and Boot 4</description>
+    <name>Extended Problem Detail Boot 3</name>
+    <description>Spring Boot 3 starter that extends ProblemDetail (RFC 9457) with field-level validation error details for both WebMVC and WebFlux</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>
     <licenses>
         <license>
@@ -33,8 +33,8 @@
 
     <modules>
         <module>common</module>
-        <module>boot3</module>
-        <module>boot4</module>
+        <module>webmvc</module>
+        <module>webflux</module>
     </modules>
 
     <properties>
