@@ -70,6 +70,9 @@ public class FluxOpenApiConfiguration {
                         response(errorResponseSpec.description(), errorResponseSpec.example()));
                 operation.setDescription(testGuidance(errorResponseSpec.trigger(),
                         "src/test/java/io/github/sbracely/extended/problem/detail/webflux/example/controller/FluxControllerTests.java"));
+                String scenario = scenario(operation.getOperationId());
+                operation.addExtension("x-scenario", scenario);
+                operation.addTagsItem("scenario:" + scenario);
             }));
         };
     }
@@ -379,6 +382,13 @@ public class FluxOpenApiConfiguration {
     private static String testGuidance(String trigger, String testPath) {
         return "Real trigger from tests: " + trigger + ". "
                 + "For the exact request setup and assertions, see " + testPath + ".";
+    }
+
+    static String scenario(String operationId) {
+        return switch (operationId) {
+            case "invalidApiVersionException", "missingApiVersionException" -> "api-version";
+            default -> "default";
+        };
     }
 
     private record FluxErrorResponseSpec(String statusCode, String description, Example example, String trigger) {

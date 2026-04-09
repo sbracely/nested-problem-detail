@@ -70,6 +70,9 @@ public class MvcOpenApiConfiguration {
                         response(errorResponseSpec.description(), errorResponseSpec.example()));
                 operation.setDescription(testGuidance(errorResponseSpec.trigger(),
                         testPath(operation.getOperationId())));
+                String scenario = scenario(operation.getOperationId());
+                operation.addExtension("x-scenario", scenario);
+                operation.addTagsItem("scenario:" + scenario);
             }));
         };
     }
@@ -340,25 +343,25 @@ public class MvcOpenApiConfiguration {
             case "conversionNotSupportedException" ->
                     new MvcErrorResponseSpec("500", "500 conversion not supported error",
                             problemExample("Conversion not supported", "Internal Server Error", 500,
-                                    "Failed to convert value of type 'java.lang.String' to required type 'io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest'.",
+                                    "Failed to convert 'null' with value: 'test-value'",
                                     "/mvc-extended-problem-detail/conversion-not-supported-exception"),
                             "GET /mvc-extended-problem-detail/conversion-not-supported-exception?data=test-value");
             case "methodArgumentConversionNotSupportedException" ->
                     new MvcErrorResponseSpec("500", "500 method argument conversion not supported error",
                             problemExample("Method argument conversion not supported", "Internal Server Error", 500,
-                                    "Failed to convert value of type 'java.lang.String' to required type 'io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest'.",
+                                    "Failed to convert 'error' with value: 'test-value'",
                                     "/mvc-extended-problem-detail/method-argument-conversion-not-supported-exception"),
                             "GET /mvc-extended-problem-detail/method-argument-conversion-not-supported-exception?error=test-value");
             case "typeMismatchException" ->
                     new MvcErrorResponseSpec("400", "400 type mismatch error",
                             problemExample("Type mismatch", "Bad Request", 400,
-                                    "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Integer'.",
+                                    "Failed to convert 'null' with value: 'test'",
                                     "/mvc-extended-problem-detail/type-mismatch-exception"),
-                            "GET /mvc-extended-problem-detail/type-mismatch-exception?integer=a");
+                            "GET /mvc-extended-problem-detail/type-mismatch-exception");
             case "methodArgumentTypeMismatchException" ->
                     new MvcErrorResponseSpec("400", "400 method argument type mismatch error",
                             problemExample("Method argument type mismatch", "Bad Request", 400,
-                                    "Failed to convert value 'a' to required type 'java.lang.Integer'.",
+                                    "Failed to convert 'integer' with value: 'a'",
                                     "/mvc-extended-problem-detail/method-argument-type-mismatch-exception"),
                             "GET /mvc-extended-problem-detail/method-argument-type-mismatch-exception?integer=a");
             case "httpMessageNotReadableException" ->
@@ -518,6 +521,15 @@ public class MvcOpenApiConfiguration {
                     "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/controller/MvcControllerRandomPortTests.java";
             default ->
                     "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/controller/MvcControllerTests.java";
+        };
+    }
+
+    static String scenario(String operationId) {
+        return switch (operationId) {
+            case "asyncRequestNotUsableException" -> "random-port";
+            case "maxUploadSizeExceededException" -> "multipart-limit";
+            case "invalidApiVersionException", "missingApiVersionException" -> "api-version";
+            default -> "default";
         };
     }
 
