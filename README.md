@@ -253,7 +253,7 @@ All available override points:
 
 | Artifact                                                   | Description |
 |------------------------------------------------------------|-------------|
-| `extended-problem-detail-common`                           | Shared response model and support layer for the Boot 3 line |
+| `extended-problem-detail-boot3-common`                     | Shared response model and support layer for the Boot 3 line |
 | `extended-problem-detail-boot3-webmvc-autoconfigure`       | Boot 3 WebMVC auto-configuration |
 | `extended-problem-detail-boot3-webmvc-spring-boot-starter` | Boot 3 WebMVC starter |
 | `extended-problem-detail-boot3-webflux-autoconfigure`      | Boot 3 WebFlux auto-configuration |

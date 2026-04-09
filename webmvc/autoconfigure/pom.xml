@@ -39,7 +39,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.sbracely</groupId>
-            <artifactId>extended-problem-detail-common</artifactId>
+            <artifactId>extended-problem-detail-boot3-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
