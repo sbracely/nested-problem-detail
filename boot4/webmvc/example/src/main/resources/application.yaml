@@ -1,6 +1,6 @@
 spring:
   application:
-    name: webmvc-example
+    name: boot4-webmvc-example
 springdoc:
   packages-to-scan: io.github.sbracely.extended.problem.detail.webmvc.example.controller
   paths-to-match: /mvc-extended-problem-detail/**
