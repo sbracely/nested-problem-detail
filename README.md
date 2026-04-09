@@ -1,37 +1,15 @@
-# Extended Problem Detail
+# Extended Problem Detail Boot 4
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5%2B%20%7C%204.0%2B-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0%2B-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://openjdk.org/)
 
-A Spring Boot starter that extends [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `ProblemDetail` responses with
-field-level validation error details. Supports Spring Boot 3 and 4, for both Spring WebMVC and Spring WebFlux.
+A Spring Boot 4 starter that extends [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `ProblemDetail` responses with
+field-level validation error details for both Spring WebMVC and Spring WebFlux.
 
 ## Installation
 
-Choose the starter that matches both your Spring Boot major version and web stack.
-
-### Spring Boot 3 WebMVC
-
-```xml
-
-<dependency>
-    <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-boot3-webmvc-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
-</dependency>
-```
-
-### Spring Boot 3 WebFlux
-
-```xml
-
-<dependency>
-    <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-boot3-webflux-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
-</dependency>
-```
+Choose the starter that matches your web stack.
 
 ### Spring Boot 4 WebMVC
 
@@ -61,10 +39,9 @@ No additional configuration is required. The exception handler registers automat
 
 | Scope | Version | Notes |
 |------|---------|-------|
-| Spring Boot 3 line | `3.5.x` | Use `extended-problem-detail-boot3-*` artifacts |
 | Spring Boot 4 line | `4.0.x` | Use `extended-problem-detail-boot4-*` artifacts |
 | Minimum Java | `17+` | Project source and public API target Java 17 or newer |
-| Verified in this repository | Spring Boot `3.5.13` and `4.0.5` / Java `25.0.2` | Current reactor test run covers both lines |
+| Verified in this repository | Spring Boot `4.0.5` / Java `25.0.2` | Current reactor test run covers the Boot 4 line |
 
 ## Example OpenAPI Documents
 
@@ -86,7 +63,6 @@ When a validation exception occurs, the response extends the standard RFC 9457 b
 
 ```json
 {
-  "type": "about:blank",
   "title": "Bad Request",
   "status": 400,
   "detail": "Invalid request content.",
@@ -105,6 +81,9 @@ When a validation exception occurs, the response extends the standard RFC 9457 b
   ]
 }
 ```
+
+On Spring Framework 7 / Spring Boot 4, `ProblemDetail.type` is not set by default, so the serialized
+JSON usually omits the `type` field unless your application sets it explicitly.
 
 ### Error Object Fields
 
@@ -276,19 +255,13 @@ All available override points:
 
 | Artifact                                                   | Description |
 |------------------------------------------------------------|-------------|
-| `extended-problem-detail-common`                           | Shared response model used by both Boot lines |
-| `extended-problem-detail-boot3-common`                     | Shared Boot 3 support layer |
-| `extended-problem-detail-boot3-webmvc-autoconfigure`       | Boot 3 WebMVC auto-configuration |
-| `extended-problem-detail-boot3-webmvc-spring-boot-starter` | Boot 3 WebMVC starter |
-| `extended-problem-detail-boot3-webflux-autoconfigure`      | Boot 3 WebFlux auto-configuration |
-| `extended-problem-detail-boot3-webflux-spring-boot-starter`| Boot 3 WebFlux starter |
 | `extended-problem-detail-boot4-common`                     | Shared Boot 4 support layer |
 | `extended-problem-detail-boot4-webmvc-autoconfigure`       | Boot 4 WebMVC auto-configuration |
 | `extended-problem-detail-boot4-webmvc-spring-boot-starter` | Boot 4 WebMVC starter |
 | `extended-problem-detail-boot4-webflux-autoconfigure`      | Boot 4 WebFlux auto-configuration |
 | `extended-problem-detail-boot4-webflux-spring-boot-starter`| Boot 4 WebFlux starter |
 
-The root, `boot3`, `boot4`, `webmvc`, and `webflux` aggregator POMs are reactor-only and are not published to Maven Central.
+The root, `webmvc`, and `webflux` aggregator POMs are reactor-only and are not published to Maven Central.
 
 ## Related Links
 
