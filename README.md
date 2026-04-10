@@ -78,6 +78,8 @@ Generated files are written to `docs` inside the example module:
 
 - `openapi.json`
 - `openapi.yaml`
+- [WebMVC exception response table](webmvc/example/docs/webmvc-example-exception-response-table.md)
+- [WebFlux exception response table](webflux/example/docs/webflux-example-exception-response-table.md)
 
 These exported OpenAPI files make it easier to inspect which exceptions map to which
 `application/problem+json` response bodies without manually starting the example service first.

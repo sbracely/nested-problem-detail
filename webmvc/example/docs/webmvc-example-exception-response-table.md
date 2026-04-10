@@ -1,0 +1,911 @@
+# WebMVC Example Application Exception Response Table
+
+- Data source: real runtime results captured by starting/running the current WebMVC example application and triggering each scenario the same way as in the controller tests.
+- Ordering: follows the current `ResponseEntityExceptionHandler#handleException` dispatch order; subclasses are placed next to their parent class.
+- The 3 API-version rows are triggered with the dedicated controller-test configuration: `spring.mvc.apiversion.use.header=API-Version`, `spring.mvc.apiversion.supported=1,2`.
+- Matrix-variable-related cases are listed separately in 2 rows: `MissingMatrixVariableException` (the matrix variable is truly missing) and the matrix-variable validation-failure case for `HandlerMethodValidationException`.
+- The `asyncRequestNotUsableException` row records the **normal client-visible response**: `200 text/event-stream`; the exception is only triggered after the client disconnects/times out and the server keeps writing SSE data.
+
+<table>
+  <thead>
+    <tr><th>No.</th><th>Exception Class</th><th>Endpoint</th><th>Parameters</th><th>Response</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code>org.springframework.web.HttpRequestMethodNotSupportedException</code></td>
+      <td><code>POST /mvc-extended-problem-detail/http-request-method-not-supported-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 405
+Content-Type: application/problem+json
+Allow: GET
+
+{
+  &quot;detail&quot; : &quot;Method &#39;POST&#39; is not supported.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-request-method-not-supported-exception&quot;,
+  &quot;status&quot; : 405,
+  &quot;title&quot; : &quot;Method Not Allowed&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code>org.springframework.web.HttpMediaTypeNotSupportedException</code></td>
+      <td><code>PUT /mvc-extended-problem-detail/http-media-type-not-supported-exception</code></td>
+      <td><pre>None (no Content-Type sent)</pre></td>
+      <td><pre>status: 415
+Content-Type: application/problem+json
+Accept: application/json
+
+{
+  &quot;detail&quot; : &quot;Content-Type &#39;null&#39; is not supported.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-media-type-not-supported-exception&quot;,
+  &quot;status&quot; : 415,
+  &quot;title&quot; : &quot;Unsupported Media Type&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code>org.springframework.web.HttpMediaTypeNotAcceptableException</code></td>
+      <td><code>PUT /mvc-extended-problem-detail/http-media-type-not-acceptable-exception</code></td>
+      <td><pre>Header: Accept=application/xml</pre></td>
+      <td><pre>status: 406
+Content-Type: application/problem+json
+Accept: application/json
+
+{
+  &quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-media-type-not-acceptable-exception&quot;,
+  &quot;status&quot; : 406,
+  &quot;title&quot; : &quot;Not Acceptable&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code>org.springframework.web.bind.MissingPathVariableException</code></td>
+      <td><code>DELETE /mvc-extended-problem-detail/missing-path-variable-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required path variable &#39;id&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-path-variable-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code>org.springframework.web.bind.MissingServletRequestParameterException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/missing-servlet-request-parameter-exception</code></td>
+      <td><pre>None (missing query parameter id)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required parameter &#39;id&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-servlet-request-parameter-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><code>org.springframework.web.multipart.support.MissingServletRequestPartException</code></td>
+      <td><code>PUT /mvc-extended-problem-detail/missing-servlet-request-part-exception</code></td>
+      <td><pre>multipart/form-data; missing file part</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required part &#39;file&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-servlet-request-part-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><code>org.springframework.web.bind.ServletRequestBindingException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/servlet-request-binding-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/servlet-request-binding-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><code>org.springframework.web.bind.UnsatisfiedServletRequestParameterException</code><br><sub>extends ServletRequestBindingException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception</code></td>
+      <td><pre>Query: type=1 (does not satisfy exist and !debug)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Invalid request parameters.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td><code>org.springframework.web.bind.MissingRequestValueException</code><br><sub>extends ServletRequestBindingException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td><code>org.springframework.web.bind.MissingMatrixVariableException</code><br><sub>extends MissingRequestValueException → ServletRequestBindingException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c</code></td>
+      <td><pre>Path matrix: list1=a,b,c (intentionally missing list)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required path parameter &#39;list&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td><code>org.springframework.web.bind.MissingRequestCookieException</code><br><sub>extends MissingRequestValueException → ServletRequestBindingException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/missing-request-cookie-exception</code></td>
+      <td><pre>None (missing cookie `cookieValue`)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required cookie &#39;cookieValue&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-request-cookie-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td><code>org.springframework.web.bind.MissingRequestHeaderException</code><br><sub>extends MissingRequestValueException → ServletRequestBindingException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/missing-request-header-exception</code></td>
+      <td><pre>None (missing request header `header`)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required header &#39;header&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-request-header-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td><code>org.springframework.web.bind.MethodArgumentNotValidException</code></td>
+      <td><code>POST /mvc-extended-problem-detail/method-argument-not-valid-exception</code></td>
+      <td><pre>Content-Type: application/json；Body: {&quot;name&quot;:&quot;abc&quot;,&quot;password&quot;:&quot;123&quot;}</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Invalid request content.&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;age&quot;,
+    &quot;message&quot; : &quot;Age cannot be null&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;password&quot;,
+    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;confirmPassword&quot;,
+    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-not-valid-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-cookie-value</code></td>
+      <td><pre>Cookie: name=a</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;COOKIE&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;Name length must be at least 2&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-cookie-value&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c</code></td>
+      <td><pre>Path matrix: list=a,b,c</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;list&quot;,
+    &quot;message&quot; : &quot;Maximum size is 2&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-model-attribute</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;password&quot;,
+    &quot;message&quot; : &quot;Password cannot be empty&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-model-attribute&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a</code></td>
+      <td><pre>PathVariable: id=a</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;id&quot;,
+    &quot;message&quot; : &quot;ID minimum length is 2&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>POST /mvc-extended-problem-detail/handler-method-validation-exception-request-body</code></td>
+      <td><pre>Content-Type: application/json；Body: {&quot;name&quot;:&quot;abc&quot;}</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;password&quot;,
+    &quot;message&quot; : &quot;Password cannot be empty&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>POST /mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result</code></td>
+      <td><pre>Content-Type: application/json；Body: [&quot;&quot;,&quot;a&quot;]</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : null,
+    &quot;message&quot; : &quot;Element cannot contain empty values&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-request-header</code></td>
+      <td><pre>Header: headerValue=a</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;HEADER&quot;,
+    &quot;target&quot; : &quot;headerValue&quot;,
+    &quot;message&quot; : &quot;Minimum length is 2&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-header&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-request-param</code></td>
+      <td><pre>None (intentionally missing `param` and `param2`)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;param&quot;,
+    &quot;message&quot; : &quot;Parameter cannot be empty&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;param2&quot;,
+    &quot;message&quot; : &quot;Parameter 2 cannot be null&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;param2&quot;,
+    &quot;message&quot; : &quot;Parameter 2 cannot be blank&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-param&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-request-part</code></td>
+      <td><pre>Header: Content-Type=multipart/form-data</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;file&quot;,
+    &quot;message&quot; : &quot;File cannot be empty&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-part&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/handler-method-validation-exception-other</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failure&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-other&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td><code>org.springframework.web.servlet.NoHandlerFoundException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/no-handler-found-exception</code></td>
+      <td><pre>None (requires `spring.web.resources.add-mappings=false`)</pre></td>
+      <td><pre>status: 404
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/no-handler-found-exception&quot;,
+  &quot;status&quot; : 404,
+  &quot;title&quot; : &quot;Not Found&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td><code>org.springframework.web.servlet.resource.NoResourceFoundException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/no-resource-found-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 404
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;No static resource mvc-extended-problem-detail/no-resource-found-exception.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/no-resource-found-exception&quot;,
+  &quot;status&quot; : 404,
+  &quot;title&quot; : &quot;Not Found&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td><code>org.springframework.web.context.request.async.AsyncRequestTimeoutException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/async-request-timeout-exception</code></td>
+      <td><pre>None (async timeout is triggered intentionally in the test)</pre></td>
+      <td><pre>status: 503
+Content-Type: application/problem+json
+
+{
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/async-request-timeout-exception&quot;,
+  &quot;status&quot; : 503,
+  &quot;title&quot; : &quot;Service Unavailable&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td><code>org.springframework.web.ErrorResponseException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/error-response-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/error-response-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td><code>io.github.sbracely.extended.problem.detail.webmvc.example.exception.MvcExtendedErrorResponseException</code><br><sub>extends ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/extended-error-response-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Payment failed&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;BUSINESS&quot;,
+    &quot;target&quot; : null,
+    &quot;message&quot; : &quot;Insufficient balance&quot;
+  }, {
+    &quot;type&quot; : &quot;BUSINESS&quot;,
+    &quot;target&quot; : null,
+    &quot;message&quot; : &quot;Payment frequent&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/extended-error-response-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td><code>org.springframework.web.server.MethodNotAllowedException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>DELETE /mvc-extended-problem-detail/method-not-allowed-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 405
+Content-Type: application/problem+json
+Allow: GET,POST
+
+{
+  &quot;detail&quot; : &quot;Supported methods: [GET, POST]&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-not-allowed-exception&quot;,
+  &quot;status&quot; : 405,
+  &quot;title&quot; : &quot;Method Not Allowed&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td><code>org.springframework.web.server.NotAcceptableStatusException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/not-acceptable-status-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 406
+Content-Type: application/problem+json
+Accept: application/json
+
+{
+  &quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/not-acceptable-status-exception&quot;,
+  &quot;status&quot; : 406,
+  &quot;title&quot; : &quot;Not Acceptable&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>31</td>
+      <td><code>org.springframework.web.server.ContentTooLargeException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>POST /mvc-extended-problem-detail/content-too-large-exception</code></td>
+      <td><pre>multipart/form-data; upload `file=test.txt`</pre></td>
+      <td><pre>status: 413
+Content-Type: application/problem+json
+
+{
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/content-too-large-exception&quot;,
+  &quot;status&quot; : 413,
+  &quot;title&quot; : &quot;Content Too Large&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td><code>org.springframework.web.server.UnsupportedMediaTypeStatusException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>POST /mvc-extended-problem-detail/unsupported-media-type-status-exception</code></td>
+      <td><pre>None (no valid Content-Type sent)</pre></td>
+      <td><pre>status: 415
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Could not parse Content-Type.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsupported-media-type-status-exception&quot;,
+  &quot;status&quot; : 415,
+  &quot;title&quot; : &quot;Unsupported Media Type&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>33</td>
+      <td><code>org.springframework.web.server.ResponseStatusException</code><br><sub>extends ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/response-status-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;exception&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/response-status-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>34</td>
+      <td><code>org.springframework.boot.webmvc.actuate.endpoint.web.AbstractWebMvcEndpointHandlerMapping.InvalidEndpointBadRequestException</code><br><sub>extends ResponseStatusException</sub></td>
+      <td><code>GET /actuator/demo/name</code></td>
+      <td><pre>None (requires `management.endpoints.web.exposure.include=demo`)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Missing parameters: param1,param2&quot;,
+  &quot;instance&quot; : &quot;/actuator/demo/name&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>35</td>
+      <td><code>org.springframework.web.server.ServerWebInputException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/server-web-input-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;server web input error&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/server-web-input-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td><code>org.springframework.web.server.MissingRequestValueException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception</code></td>
+      <td><pre>None (missing request parameter `id`)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Required request param &#39;id&#39; is not present.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>37</td>
+      <td><code>org.springframework.web.server.UnsatisfiedRequestParameterException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/unsatisfied-request-parameter-exception</code></td>
+      <td><pre>Query: type=1 (does not satisfy exist and !debug)</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Invalid request parameters.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsatisfied-request-parameter-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>38</td>
+      <td><code>org.springframework.web.server.ServerErrorException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/server-error-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;server error&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/server-error-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>39</td>
+      <td><code>org.springframework.web.server.PayloadTooLargeException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>POST /mvc-extended-problem-detail/payload-too-large-exception</code></td>
+      <td><pre>multipart/form-data; upload `file=test.txt`</pre></td>
+      <td><pre>status: 413
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;payload too large&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/payload-too-large-exception&quot;,
+  &quot;status&quot; : 413,
+  &quot;title&quot; : &quot;Content Too Large&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>40</td>
+      <td><code>org.springframework.web.accept.InvalidApiVersionException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/invalid-api-version-exception</code></td>
+      <td><pre>Header: API-Version=3; requires `spring.mvc.apiversion.*`</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+connection: close
+date: Fri, 10 Apr 2026 20:45:01 GMT
+transfer-encoding: chunked
+
+{
+  &quot;detail&quot; : &quot;Invalid API version: &#39;3.0.0&#39;.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/invalid-api-version-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>41</td>
+      <td><code>org.springframework.web.accept.MissingApiVersionException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/missing-api-version-exception</code></td>
+      <td><pre>API-Version not sent; requires `spring.mvc.apiversion.*`</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+connection: close
+date: Fri, 10 Apr 2026 20:45:01 GMT
+transfer-encoding: chunked
+
+{
+  &quot;detail&quot; : &quot;API version is required.&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-api-version-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>42</td>
+      <td><code>org.springframework.web.accept.NotAcceptableApiVersionException</code><br><sub>extends InvalidApiVersionException → ResponseStatusException</sub></td>
+      <td><code>GET /not-acceptable-api-version</code></td>
+      <td><pre>Header: API-Version=2; requires `spring.mvc.apiversion.*`</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+connection: close
+date: Fri, 10 Apr 2026 20:45:01 GMT
+transfer-encoding: chunked
+
+{
+  &quot;detail&quot; : &quot;Invalid API version: &#39;2.0.0&#39;.&quot;,
+  &quot;instance&quot; : &quot;/not-acceptable-api-version&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>43</td>
+      <td><code>org.springframework.web.multipart.MaxUploadSizeExceededException</code></td>
+      <td><code>POST /mvc-extended-problem-detail/max-upload-size-exceeded-exception</code></td>
+      <td><pre>multipart/form-data; upload a 2-byte file; requires `spring.servlet.multipart.max-file-size=1`</pre></td>
+      <td><pre>status: 413
+Content-Type: application/problem+json
+connection: close
+date: Fri, 10 Apr 2026 20:45:01 GMT
+transfer-encoding: chunked
+
+{
+  &quot;detail&quot; : &quot;Maximum upload size exceeded&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/max-upload-size-exceeded-exception&quot;,
+  &quot;status&quot; : 413,
+  &quot;title&quot; : &quot;Content Too Large&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>44</td>
+      <td><code>org.springframework.beans.ConversionNotSupportedException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/conversion-not-supported-exception</code></td>
+      <td><pre>Query: data=test-value</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Failed to convert &#39;null&#39; with value: &#39;test-value&#39;&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/conversion-not-supported-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td><code>org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException</code><br><sub>extends ConversionNotSupportedException → TypeMismatchException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/method-argument-conversion-not-supported-exception</code></td>
+      <td><pre>Query: error=test-value</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Failed to convert &#39;error&#39; with value: &#39;test-value&#39;&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-conversion-not-supported-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td><code>org.springframework.beans.TypeMismatchException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/type-mismatch-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Failed to convert &#39;null&#39; with value: &#39;test&#39;&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/type-mismatch-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>47</td>
+      <td><code>org.springframework.web.method.annotation.MethodArgumentTypeMismatchException</code><br><sub>extends TypeMismatchException</sub></td>
+      <td><code>GET /mvc-extended-problem-detail/method-argument-type-mismatch-exception</code></td>
+      <td><pre>Query: integer=a</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Failed to convert &#39;integer&#39; with value: &#39;a&#39;&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-type-mismatch-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td><code>org.springframework.http.converter.HttpMessageNotReadableException</code></td>
+      <td><code>POST /mvc-extended-problem-detail/http-message-not-readable-exception</code></td>
+      <td><pre>Content-Type: application/json；Body: {</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Failed to read request&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-message-not-readable-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>49</td>
+      <td><code>org.springframework.http.converter.HttpMessageNotWritableException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/http-message-not-writable-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Failed to write request&quot;,
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-message-not-writable-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td><code>org.springframework.validation.method.MethodValidationException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/method-validation-exception</code></td>
+      <td><pre>None</pre></td>
+      <td><pre>status: 500
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Validation failed&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;name must not be blank&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;name must not be null&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;confirmPassword&quot;,
+    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;age&quot;,
+    &quot;message&quot; : &quot;Age cannot be null&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;password&quot;,
+    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;Name cannot be blank&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : null,
+    &quot;message&quot; : &quot;Name is not valid&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-validation-exception&quot;,
+  &quot;status&quot; : 500,
+  &quot;title&quot; : &quot;Internal Server Error&quot;
+}</pre></td>
+    </tr>
+    <tr>
+      <td>51</td>
+      <td><code>org.springframework.web.context.request.async.AsyncRequestNotUsableException</code></td>
+      <td><code>GET /mvc-extended-problem-detail/async-request-not-usable-exception</code></td>
+      <td><pre>Header: Accept=text/event-stream</pre></td>
+      <td><pre>status: 200
+Content-Type: text/event-stream
+
+data:event 0
+
+data:event 1
+
+data:event 2
+
+data:event 3
+
+data:event 4
+
+data:event 5
+
+... (the stream keeps sending data; `AsyncRequestNotUsableException` is only triggered after the client times out/disconnects and the server writes again)</pre></td>
+    </tr>
+  </tbody>
+</table>
