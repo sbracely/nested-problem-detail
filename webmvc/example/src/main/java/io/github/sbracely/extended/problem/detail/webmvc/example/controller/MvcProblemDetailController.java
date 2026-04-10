@@ -520,10 +520,10 @@ public class MvcProblemDetailController {
     @GetMapping("/async-request-not-usable-exception")
     public SseEmitter asyncRequestNotUsableException() {
         logger.info("asyncRequestNotUsableException");
-        SseEmitter emitter = new SseEmitter(5000L);
+        SseEmitter emitter = new SseEmitter(1000L);
         CompletableFuture.runAsync(() -> {
             try {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 20; i++) {
                     Thread.sleep(100);
                     logger.info("asyncRequestNotUsableException, emitter send: {}", i);
                     emitter.send("event " + i);

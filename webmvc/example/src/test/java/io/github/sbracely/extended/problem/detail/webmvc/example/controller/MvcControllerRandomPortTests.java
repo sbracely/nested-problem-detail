@@ -1,21 +1,20 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.controller;
 
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
+import java.net.SocketTimeoutException;
 import java.time.Duration;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class MvcControllerRandomPortTests {
 
-    private static final Logger logger = LoggerFactory.getLogger(MvcControllerRandomPortTests.class);
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
     @LocalServerPort
     private int port;
@@ -33,21 +32,12 @@ class MvcControllerRandomPortTests {
                 .requestFactory(factory)
                 .baseUrl("http://localhost:" + port)
                 .build();
-
-        try {
-            restClient.get()
-                    .uri(BASE_PATH + "/async-request-not-usable-exception")
-                    .retrieve()
-                    .toBodilessEntity();
-        } catch (Exception e) {
-            assertThat(e).hasMessageContaining("Read timed out");
-        }
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            logger.error("Thread sleep interrupted", e);
-            Thread.currentThread().interrupt();
-        }
+        assertThatThrownBy(() -> restClient.get()
+                .uri(BASE_PATH + "/async-request-not-usable-exception")
+                .retrieve()
+                .toBodilessEntity())
+                .isExactlyInstanceOf(ResourceAccessException.class)
+                .hasCauseInstanceOf(SocketTimeoutException.class)
+                .hasMessageContaining("Read timed out");
     }
 }
