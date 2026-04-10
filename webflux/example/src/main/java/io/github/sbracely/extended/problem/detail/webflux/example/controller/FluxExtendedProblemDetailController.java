@@ -115,9 +115,9 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException.Visitor#matrixVariable(MatrixVariable, ParameterValidationResult)
      */
     @GetMapping("/handler-method-validation-exception-matrix/{id}")
-    public Mono<Void> handlerMethodValidationExceptionMatrix(@PathVariable String id,
-                                                             @MatrixVariable @Size(max = 2, message = "list maximum size is 2") List<String> list) {
-        logger.info("handlerMethodValidationExceptionMatrix, id: {}, list: {}", id, list);
+    public Mono<Void> handlerMethodValidationExceptionMatrixVariable(@PathVariable String id,
+                                                                     @MatrixVariable @Size(max = 2, message = "list maximum size is 2") List<String> list) {
+        logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
         return Mono.empty();
     }
 

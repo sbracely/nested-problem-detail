@@ -258,7 +258,7 @@ public class FluxOpenApiConfiguration {
                                     "/flux-extended-problem-detail/missing-api-version-exception"),
                             "GET /flux-extended-problem-detail/missing-api-version-exception without API-Version header");
             case "webExchangeBindException", "handlerMethodValidationExceptionCookieValue",
-                 "handlerMethodValidationExceptionMatrix", "handlerMethodValidationExceptionModelAttribute",
+                "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
                  "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
                   "handlerMethodValidationExceptionRequestBodyValidationResult", "handlerMethodValidationExceptionRequestHeader",
                   "handlerMethodValidationExceptionRequestParam", "handlerMethodValidationExceptionRequestPart",
@@ -279,7 +279,7 @@ public class FluxOpenApiConfiguration {
                             validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-cookie-value",
                                     List.of(error("COOKIE", "cookieValue", "cookie cannot be empty"))),
                             "GET /flux-extended-problem-detail/handler-method-validation-exception-cookie-value with cookie cookieValue=");
-            case "handlerMethodValidationExceptionMatrix" ->
+            case "handlerMethodValidationExceptionMatrixVariable" ->
                     new FluxErrorResponseSpec("400", "400 validation error",
                             validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c",
                                     List.of(error("PARAMETER", "list", "list maximum size is 2"))),

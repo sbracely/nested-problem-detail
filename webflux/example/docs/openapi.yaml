@@ -738,7 +738,7 @@ paths:
       - scenario:default
       description: "Real trigger from tests: GET /flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c.\
         \ For the exact request setup and assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webflux/example/controller/FluxControllerTests.java."
-      operationId: handlerMethodValidationExceptionMatrix
+      operationId: handlerMethodValidationExceptionMatrixVariable
       parameters:
       - name: id
         in: path

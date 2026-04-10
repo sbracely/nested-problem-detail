@@ -119,7 +119,7 @@ public final class FluxOperationFixtures {
                                 .cookie("cookieValue", "").exchange(),
                         400));
 
-        map.put("handlerMethodValidationExceptionMatrix",
+        map.put("handlerMethodValidationExceptionMatrixVariable",
                 new FluxOperationFixture("default",
                         BASE + "/handler-method-validation-exception-matrix/{id}", "get",
                         client -> client.get()

@@ -237,7 +237,7 @@ class FluxControllerTests {
 
     /**
      * @see HandlerMethodValidationException
-     * @see FluxExtendedProblemDetailController#handlerMethodValidationExceptionMatrix(String, List)
+     * @see FluxExtendedProblemDetailController#handlerMethodValidationExceptionMatrixVariable(String, List)
      * @see HandlerMethodValidationException.Visitor#matrixVariable(MatrixVariable, ParameterValidationResult)
      */
     @Test
