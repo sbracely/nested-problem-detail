@@ -89,15 +89,13 @@ class ExtendedProblemDetailPropertiesTest {
     void shouldSupportFieldVisibilityConfiguration() {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
-        properties.getField().getInclude().add("status");
-        properties.getField().getExclude().add("instance");
+        properties.getField().getHide().add("instance");
         ExtendedProblemDetailProperties.FieldRule dev = new ExtendedProblemDetailProperties.FieldRule();
-        dev.getInclude().add("errors");
+        dev.getHide().add("errors");
         properties.getField().getProfiles().put("dev", dev);
 
-        assertThat(properties.getField().getInclude()).containsExactly("status");
-        assertThat(properties.getField().getExclude()).containsExactly("instance");
+        assertThat(properties.getField().getHide()).containsExactly("instance");
         assertThat(properties.getField().getProfiles()).containsKey("dev");
-        assertThat(properties.getField().getProfiles().get("dev").getInclude()).containsExactly("errors");
+        assertThat(properties.getField().getProfiles().get("dev").getHide()).containsExactly("errors");
     }
 }

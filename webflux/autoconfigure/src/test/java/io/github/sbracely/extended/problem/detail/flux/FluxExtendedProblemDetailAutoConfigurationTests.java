@@ -1,5 +1,6 @@
 package io.github.sbracely.extended.problem.detail.flux;
 
+import io.github.sbracely.extended.problem.detail.common.response.ProblemDetailFieldVisibility;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.flux.advice.FluxExtendedProblemDetailExceptionHandler;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.JacksonModule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +27,9 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
         this.contextRunner.run(context -> {
             assertThat(context).hasSingleBean(FluxExtendedProblemDetailProperties.class);
             assertThat(context).hasSingleBean(ExtendedProblemDetailLog.class);
+            assertThat(context).hasSingleBean(ProblemDetailFieldVisibility.class);
+            assertThat(context).hasSingleBean(JacksonModule.class);
+            assertThat(context).hasBean("extendedProblemDetailJacksonModule");
             assertThat(context).hasSingleBean(FluxExtendedProblemDetailExceptionHandler.class);
         });
     }
@@ -73,6 +78,24 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
                     FluxExtendedProblemDetailProperties properties = context.getBean(FluxExtendedProblemDetailProperties.class);
                     assertThat(properties.getLogging().getAtLevel().name()).isEqualTo("WARN");
                     assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
+                });
+    }
+
+    @Test
+    void shouldCreateFieldVisibilityFromActiveProfiles() {
+        this.contextRunner
+                .withPropertyValues(
+                        "spring.profiles.active=dev,prod",
+                        "extended.problem-detail.field.hide[0]=title",
+                        "extended.problem-detail.field.profiles.dev.hide[0]=status",
+                        "extended.problem-detail.field.profiles.prod.hide[0]=detail"
+                )
+                .run(context -> {
+                    ProblemDetailFieldVisibility fieldVisibility = context.getBean(ProblemDetailFieldVisibility.class);
+                    assertThat(fieldVisibility.isVisible("errors")).isTrue();
+                    assertThat(fieldVisibility.isVisible("title")).isTrue();
+                    assertThat(fieldVisibility.isVisible("status")).isFalse();
+                    assertThat(fieldVisibility.isVisible("detail")).isFalse();
                 });
     }
 

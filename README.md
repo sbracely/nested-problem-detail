@@ -136,6 +136,16 @@ extended:
     logging:
       at-level: INFO     # Level used to log caught exceptions: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF (default: INFO)
       print-stack-trace: false  # Include full stack trace in the log entry (default: false)
+    field:
+      hide:
+        - instance
+      profiles:
+        dev:
+          hide:
+            - status
+        prod:
+          hide:
+            - detail
 ```
 
 Equivalent `application.properties`:
@@ -145,6 +155,16 @@ extended.problem-detail.enabled=true
 extended.problem-detail.logging.at-level=INFO
 extended.problem-detail.logging.print-stack-trace=false
 ```
+
+Field visibility rules apply to the serialized `application/problem+json` top-level fields, including
+`type`, `title`, `status`, `detail`, `instance`, `errors`, and any custom properties added through
+`ProblemDetail#setProperty(...)`.
+
+- No `field` configuration: no fields are hidden.
+- Only `hide`: the listed fields are hidden and other fields are serialized.
+- If one or more configured profiles are active, the matching profile rules override the default
+  `field.hide` settings.
+- Multiple active profiles: all matching profile `hide` values are unioned together.
 
 ## Customization
 

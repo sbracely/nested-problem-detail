@@ -206,14 +206,9 @@ public class ExtendedProblemDetailProperties {
         }
 
         /**
-         * Fields that should be explicitly included in the response.
+         * Fields that should be hidden from the response.
          */
-        private Set<String> include = new LinkedHashSet<>();
-
-        /**
-         * Fields that should be excluded from the response.
-         */
-        private Set<String> exclude = new LinkedHashSet<>();
+        private Set<String> hide = new LinkedHashSet<>();
 
         /**
          * Profile-specific field visibility settings.
@@ -221,39 +216,21 @@ public class ExtendedProblemDetailProperties {
         private Map<String, FieldRule> profiles = new LinkedHashMap<>();
 
         /**
-         * Gets the explicitly included fields.
+         * Gets the explicitly hidden fields.
          *
-         * @return the fields to include
+         * @return the fields to hide
          */
-        public Set<String> getInclude() {
-            return include;
+        public Set<String> getHide() {
+            return hide;
         }
 
         /**
-         * Sets the explicitly included fields.
+         * Sets the explicitly hidden fields.
          *
-         * @param include the fields to include
+         * @param hide the fields to hide
          */
-        public void setInclude(Set<String> include) {
-            this.include = include;
-        }
-
-        /**
-         * Gets the explicitly excluded fields.
-         *
-         * @return the fields to exclude
-         */
-        public Set<String> getExclude() {
-            return exclude;
-        }
-
-        /**
-         * Sets the explicitly excluded fields.
-         *
-         * @param exclude the fields to exclude
-         */
-        public void setExclude(Set<String> exclude) {
-            this.exclude = exclude;
+        public void setHide(Set<String> hide) {
+            this.hide = hide;
         }
 
         /**
@@ -286,49 +263,26 @@ public class ExtendedProblemDetailProperties {
         }
 
         /**
-         * Fields that should be explicitly included for the profile.
+         * Fields that should be hidden for the profile.
          */
-        private Set<String> include = new LinkedHashSet<>();
+        private Set<String> hide = new LinkedHashSet<>();
 
         /**
-         * Fields that should be excluded for the profile.
-         */
-        private Set<String> exclude = new LinkedHashSet<>();
-
-        /**
-         * Gets the explicitly included fields.
+         * Gets the explicitly hidden fields.
          *
-         * @return the fields to include
+         * @return the fields to hide
          */
-        public Set<String> getInclude() {
-            return include;
+        public Set<String> getHide() {
+            return hide;
         }
 
         /**
-         * Sets the explicitly included fields.
+         * Sets the explicitly hidden fields.
          *
-         * @param include the fields to include
+         * @param hide the fields to hide
          */
-        public void setInclude(Set<String> include) {
-            this.include = include;
-        }
-
-        /**
-         * Gets the explicitly excluded fields.
-         *
-         * @return the fields to exclude
-         */
-        public Set<String> getExclude() {
-            return exclude;
-        }
-
-        /**
-         * Sets the explicitly excluded fields.
-         *
-         * @param exclude the fields to exclude
-         */
-        public void setExclude(Set<String> exclude) {
-            this.exclude = exclude;
+        public void setHide(Set<String> hide) {
+            this.hide = hide;
         }
     }
 
