@@ -1,5 +1,7 @@
 package io.github.sbracely.extended.problem.detail.mvc;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetailJacksonSerializer;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.ProblemDetailFieldVisibility;
@@ -12,9 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import tools.jackson.databind.JacksonModule;
-import tools.jackson.databind.module.SimpleModule;
-
 import java.util.List;
 
 /**
@@ -92,7 +91,7 @@ public class MvcExtendedProblemDetailAutoConfiguration {
      * @return the object mapper builder customizer
      */
     @Bean
-    public JacksonModule extendedProblemDetailJacksonModule(
+    public Module extendedProblemDetailJacksonModule(
             ProblemDetailFieldVisibility fieldVisibility) {
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ProblemDetailJacksonSerializer(fieldVisibility));

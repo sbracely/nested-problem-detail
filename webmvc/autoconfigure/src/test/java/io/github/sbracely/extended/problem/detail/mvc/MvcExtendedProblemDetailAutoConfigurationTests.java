@@ -3,12 +3,12 @@ package io.github.sbracely.extended.problem.detail.mvc;
 import io.github.sbracely.extended.problem.detail.common.response.ProblemDetailFieldVisibility;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.mvc.advice.MvcExtendedProblemDetailExceptionHandler;
+import com.fasterxml.jackson.databind.Module;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import tools.jackson.databind.JacksonModule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +28,7 @@ class MvcExtendedProblemDetailAutoConfigurationTests {
             assertThat(context).hasSingleBean(MvcExtendedProblemDetailProperties.class);
             assertThat(context).hasSingleBean(ExtendedProblemDetailLog.class);
             assertThat(context).hasSingleBean(ProblemDetailFieldVisibility.class);
-            assertThat(context).hasSingleBean(JacksonModule.class);
+            assertThat(context).hasSingleBean(Module.class);
             assertThat(context).hasBean("extendedProblemDetailJacksonModule");
             assertThat(context).hasSingleBean(MvcExtendedProblemDetailExceptionHandler.class);
         });

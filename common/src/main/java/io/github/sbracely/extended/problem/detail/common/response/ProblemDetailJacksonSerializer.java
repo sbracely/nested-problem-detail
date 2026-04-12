@@ -1,10 +1,9 @@
 package io.github.sbracely.extended.problem.detail.common.response;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.springframework.http.ProblemDetail;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.SerializationContext;
-import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Jackson serializer for ProblemDetail that applies field visibility rules.
@@ -26,7 +25,7 @@ public class ProblemDetailJacksonSerializer extends StdSerializer<ProblemDetail>
     }
 
     @Override
-    public void serialize(ProblemDetail value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
+    public void serialize(ProblemDetail value, JsonGenerator gen, SerializerProvider provider) throws java.io.IOException {
         ProblemDetailJacksonSerializerSupport.writeProblemDetail(value, gen, provider, fieldVisibility);
     }
 }

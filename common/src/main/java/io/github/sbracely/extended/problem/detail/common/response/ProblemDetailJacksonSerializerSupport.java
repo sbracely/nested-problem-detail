@@ -1,9 +1,8 @@
 package io.github.sbracely.extended.problem.detail.common.response;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.http.ProblemDetail;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.SerializationContext;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -20,13 +19,13 @@ final class ProblemDetailJacksonSerializerSupport {
     static void writeProblemDetail(
             ProblemDetail value,
             JsonGenerator gen,
-            SerializationContext provider,
-            ProblemDetailFieldVisibility fieldVisibility) throws JacksonException {
+            SerializerProvider provider,
+            ProblemDetailFieldVisibility fieldVisibility) throws java.io.IOException {
         gen.writeStartObject();
         writeField(gen, provider, fieldVisibility.isTypeVisible(), "type", value.getType());
         writeField(gen, provider, fieldVisibility.isTitleVisible(), "title", value.getTitle());
         if (fieldVisibility.isStatusVisible()) {
-            gen.writeNumberProperty("status", value.getStatus());
+            gen.writeNumberField("status", value.getStatus());
         }
         writeField(gen, provider, fieldVisibility.isDetailVisible(), "detail", value.getDetail());
         writeField(gen, provider, fieldVisibility.isInstanceVisible(), "instance", value.getInstance());
@@ -51,15 +50,15 @@ final class ProblemDetailJacksonSerializerSupport {
 
     private static void writeField(
             JsonGenerator gen,
-            SerializationContext provider,
+            SerializerProvider provider,
             boolean visible,
             String fieldName,
-            Object value) throws JacksonException {
+            Object value) throws java.io.IOException {
         if (!visible || isEmpty(value)) {
             return;
         }
-        gen.writeName(fieldName);
-        provider.writeValue(gen, value);
+        gen.writeFieldName(fieldName);
+        provider.defaultSerializeValue(value, gen);
     }
 
     private static boolean isEmpty(Object value) {

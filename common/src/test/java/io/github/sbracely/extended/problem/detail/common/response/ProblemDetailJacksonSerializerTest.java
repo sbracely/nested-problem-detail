@@ -1,12 +1,12 @@
 package io.github.sbracely.extended.problem.detail.common.response;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.github.sbracely.extended.problem.detail.common.properties.ExtendedProblemDetailProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.module.SimpleModule;
 
 import java.net.URI;
 import java.util.List;
@@ -81,8 +81,8 @@ class ProblemDetailJacksonSerializerTest {
         SimpleModule module = new SimpleModule();
         module.addSerializer(new ProblemDetailJacksonSerializer(fieldVisibility));
         module.addSerializer(new ExtendedProblemDetailJacksonSerializer(fieldVisibility));
-        return new ObjectMapper().rebuild()
-                .addModule(module)
-                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
+        return objectMapper;
     }
 }
