@@ -5,14 +5,12 @@
 
 <table>
   <thead>
-    <tr><th>No.</th><th>Exception Class</th><th>Endpoint</th><th>Parameters</th><th>Response</th></tr>
+    <tr><th>No.</th><th>Scenario</th><th>Response</th></tr>
   </thead>
   <tbody>
-    <tr>
+        <tr>
       <td>1</td>
-      <td><code>org.springframework.web.server.MethodNotAllowedException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>DELETE /flux-extended-problem-detail/method-not-allowed-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.server.MethodNotAllowedException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>DELETE /flux-extended-problem-detail/method-not-allowed-exception</code><br><pre>None</pre></td>
       <td><pre>status: 405
 Content-Type: application/problem+json
 Allow: GET
@@ -25,11 +23,9 @@ Allow: GET
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/method-not-allowed-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>2</td>
-      <td><code>org.springframework.web.server.NotAcceptableStatusException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/not-acceptable-status-exception</code></td>
-      <td><pre>Header: Accept=application/xml</pre></td>
+      <td><code>org.springframework.web.server.NotAcceptableStatusException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/not-acceptable-status-exception</code><br><pre>Header: Accept=application/xml</pre></td>
       <td><pre>status: 406
 Content-Type: application/problem+json
 Accept: application/json
@@ -42,11 +38,9 @@ Accept: application/json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/not-acceptable-status-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>3</td>
-      <td><code>org.springframework.web.server.UnsupportedMediaTypeStatusException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>POST /flux-extended-problem-detail/unsupported-media-type-status-exception</code></td>
-      <td><pre>None (Content-Type: application/xml not sent)</pre></td>
+      <td><code>org.springframework.web.server.UnsupportedMediaTypeStatusException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>POST /flux-extended-problem-detail/unsupported-media-type-status-exception</code><br><pre>None (Content-Type: application/xml not sent)</pre></td>
       <td><pre>status: 415
 Content-Type: application/problem+json
 Accept: application/xml
@@ -58,11 +52,9 @@ Accept: application/xml
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/unsupported-media-type-status-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>4</td>
-      <td><code>org.springframework.web.server.MissingRequestValueException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/missing-request-value-exception</code></td>
-      <td><pre>None (missing query parameter id)</pre></td>
+      <td><code>org.springframework.web.server.MissingRequestValueException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub><br><code>GET /flux-extended-problem-detail/missing-request-value-exception</code><br><pre>None (missing query parameter id)</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -74,11 +66,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/missing-request-value-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>5</td>
-      <td><code>org.springframework.web.server.UnsatisfiedRequestParameterException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/unsatisfied-request-parameter-exception</code></td>
-      <td><pre>None (does not satisfy params condition `type=1`, `exist`, `!debug`)</pre></td>
+      <td><code>org.springframework.web.server.UnsatisfiedRequestParameterException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub><br><code>GET /flux-extended-problem-detail/unsatisfied-request-parameter-exception</code><br><pre>None (does not satisfy params condition `type=1`, `exist`, `!debug`)</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -90,11 +80,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/unsatisfied-request-parameter-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>6</td>
-      <td><code>org.springframework.web.bind.support.WebExchangeBindException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub></td>
-      <td><code>POST /flux-extended-problem-detail/web-exchange-bind-exception</code></td>
-      <td><pre>Content-Type: application/json; Body: {&quot;name&quot;:&quot;abc&quot;,&quot;password&quot;:&quot;123&quot;}</pre></td>
+      <td><code>org.springframework.web.bind.support.WebExchangeBindException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub><br><code>POST /flux-extended-problem-detail/web-exchange-bind-exception</code><br><pre>Content-Type: application/json; Body: {&quot;name&quot;:&quot;abc&quot;,&quot;password&quot;:&quot;123&quot;}</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -128,11 +116,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>7</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-cookie-value</code></td>
-      <td><pre>Cookie: cookieValue=</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-cookie-value</code><br><pre>Cookie: cookieValue=</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -151,11 +137,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>8</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c</code></td>
-      <td><pre>Path matrix: list=a,b,c</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c</code><br><pre>Path matrix: list=a,b,c</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -174,11 +158,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>9</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-model-attribute</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-model-attribute</code><br><pre>None</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -197,11 +179,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>10</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc</code></td>
-      <td><pre>PathVariable: id=abc</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc</code><br><pre>PathVariable: id=abc</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -220,11 +200,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>11</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>POST /flux-extended-problem-detail/handler-method-validation-exception-request-body</code></td>
-      <td><pre>Content-Type: application/json; Body: {&quot;name&quot;:&quot;abc&quot;}</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>POST /flux-extended-problem-detail/handler-method-validation-exception-request-body</code><br><pre>Content-Type: application/json; Body: {&quot;name&quot;:&quot;abc&quot;}</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -243,11 +221,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>12</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>POST /flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result</code></td>
-      <td><pre>Content-Type: application/json; Body: [&quot;&quot;,&quot;a&quot;]</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>POST /flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result</code><br><pre>Content-Type: application/json; Body: [&quot;&quot;,&quot;a&quot;]</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -265,11 +241,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>13</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-request-header</code></td>
-      <td><pre>Header: headerValue=</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-request-header</code><br><pre>Header: headerValue=</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -288,11 +262,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>14</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-request-param?param=&amp;value=ab</code></td>
-      <td><pre>Query: param=; value=ab</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-request-param?param=&amp;value=ab</code><br><pre>Query: param=; value=ab</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -316,11 +288,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>15</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>POST /flux-extended-problem-detail/handler-method-validation-exception-request-part</code></td>
-      <td><pre>Body: {}</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>POST /flux-extended-problem-detail/handler-method-validation-exception-request-part</code><br><pre>Body: {}</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -339,11 +309,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>16</td>
-      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/handler-method-validation-exception-other</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.method.annotation.HandlerMethodValidationException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/handler-method-validation-exception-other</code><br><pre>None</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -355,11 +323,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/handler-method-validation-exception-other&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>17</td>
-      <td><code>org.springframework.web.server.ServerWebInputException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/server-web-input-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.server.ServerWebInputException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/server-web-input-exception</code><br><pre>None</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -371,11 +337,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/server-web-input-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>18</td>
-      <td><code>org.springframework.web.server.ServerErrorException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/server-error-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.server.ServerErrorException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/server-error-exception</code><br><pre>None</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
 
@@ -387,11 +351,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/server-error-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>19</td>
-      <td><code>org.springframework.web.server.ResponseStatusException</code><br><sub>extends ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/response-status-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.server.ResponseStatusException</code><br><sub>extends ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/response-status-exception</code><br><pre>None</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -403,11 +365,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/response-status-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>20</td>
-      <td><code>org.springframework.web.reactive.resource.NoResourceFoundException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/no-resource-found</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.reactive.resource.NoResourceFoundException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/no-resource-found</code><br><pre>None</pre></td>
       <td><pre>status: 404
 Content-Type: application/problem+json
 
@@ -419,11 +379,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/no-resource-found&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>21</td>
-      <td><code>org.springframework.web.server.PayloadTooLargeException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub></td>
-      <td><code>POST /flux-extended-problem-detail/payload-too-large-exception</code></td>
-      <td><pre>Body: text</pre></td>
+      <td><code>org.springframework.web.server.PayloadTooLargeException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>POST /flux-extended-problem-detail/payload-too-large-exception</code><br><pre>Body: text</pre></td>
       <td><pre>status: 413
 Content-Type: application/problem+json
 
@@ -434,11 +392,9 @@ Content-Type: application/problem+json
   &quot;instance&quot;: &quot;/flux-extended-problem-detail/payload-too-large-exception&quot;
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>22</td>
-      <td><code>org.springframework.web.ErrorResponseException</code></td>
-      <td><code>GET /flux-extended-problem-detail/error-response-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.web.ErrorResponseException</code><br><code>GET /flux-extended-problem-detail/error-response-exception</code><br><pre>None</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
@@ -460,11 +416,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>23</td>
-      <td><code>io.github.sbracely.extended.problem.detail.webflux.example.exception.FluxExtendedErrorResponseException</code><br><sub>extends ErrorResponseException</sub></td>
-      <td><code>GET /flux-extended-problem-detail/extended-error-response-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>io.github.sbracely.extended.problem.detail.webflux.example.exception.FluxExtendedErrorResponseException</code><br><sub>extends ErrorResponseException</sub><br><code>GET /flux-extended-problem-detail/extended-error-response-exception</code><br><pre>None</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
 
@@ -486,11 +440,9 @@ Content-Type: application/problem+json
   ]
 }</pre></td>
     </tr>
-    <tr>
+        <tr>
       <td>24</td>
-      <td><code>org.springframework.validation.method.MethodValidationException</code></td>
-      <td><code>GET /flux-extended-problem-detail/method-validation-exception</code></td>
-      <td><pre>None</pre></td>
+      <td><code>org.springframework.validation.method.MethodValidationException</code><br><code>GET /flux-extended-problem-detail/method-validation-exception</code><br><pre>None</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
 
@@ -545,3 +497,4 @@ Content-Type: application/problem+json
     </tr>
   </tbody>
 </table>
+
