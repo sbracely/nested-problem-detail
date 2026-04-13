@@ -521,7 +521,7 @@ Content-Type: application/problem+json
     </tr>
         <tr>
       <td>34</td>
-      <td><code>org.springframework.boot.webmvc.actuate.endpoint.web.AbstractWebMvcEndpointHandlerMapping.InvalidEndpointBadRequestException</code><br><sub>extends ResponseStatusException</sub><br><code>GET /actuator/demo/name</code><br><pre>None (requires `management.endpoints.web.exposure.include=demo`)</pre></td>
+      <td><code>org.springframework.boot.webmvc.actuate.endpoint.web<br/>.AbstractWebMvcEndpointHandlerMapping.InvalidEndpointBadRequestException</code><br><sub>extends ResponseStatusException</sub><br><code>GET /actuator/demo/name</code><br><pre>None (requires `management.endpoints.web.exposure.include=demo`)</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
 
