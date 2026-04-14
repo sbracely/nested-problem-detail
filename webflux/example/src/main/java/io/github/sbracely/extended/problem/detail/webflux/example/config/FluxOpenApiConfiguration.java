@@ -2,6 +2,8 @@ package io.github.sbracely.extended.problem.detail.webflux.example.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -58,6 +60,7 @@ public class FluxOpenApiConfiguration {
             if (openApi.getPaths() == null) {
                 return;
             }
+            registerSyntheticOperations(openApi);
             openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
                 ApiResponses responses = operation.getResponses();
                 responses.remove("200");
@@ -75,6 +78,28 @@ public class FluxOpenApiConfiguration {
                 operation.addTagsItem("scenario:" + scenario);
             }));
         };
+    }
+
+    private static void registerSyntheticOperations(OpenAPI openApi) {
+        addSyntheticGetOperation(openApi,
+                "/flux-extended-problem-detail/no-resource-found",
+                "noResourceFoundException");
+        addSyntheticGetOperation(openApi,
+                "/not-acceptable-api-version",
+                "notAcceptableApiVersionException");
+    }
+
+    private static void addSyntheticGetOperation(OpenAPI openApi, String path, String operationId) {
+        PathItem pathItem = openApi.getPaths().get(path);
+        if (pathItem == null) {
+            pathItem = new PathItem();
+            openApi.getPaths().addPathItem(path, pathItem);
+        }
+        if (pathItem.getGet() == null) {
+            pathItem.setGet(new Operation()
+                    .operationId(operationId)
+                    .responses(new ApiResponses()));
+        }
     }
 
     private static void ensureProblemSchemas(OpenAPI openApi) {
@@ -244,6 +269,11 @@ public class FluxOpenApiConfiguration {
                             problemExample("Server web input error", "Bad Request", 400, "server web input error",
                                     "/flux-extended-problem-detail/server-web-input-exception"),
                             "GET /flux-extended-problem-detail/server-web-input-exception");
+            case "noResourceFoundException" ->
+                    new FluxErrorResponseSpec("404", "404 no resource found error",
+                            problemExample("No resource found", "Not Found", 404, null,
+                                    "/flux-extended-problem-detail/no-resource-found"),
+                            "GET /flux-extended-problem-detail/no-resource-found");
             case "serverErrorException" ->
                     new FluxErrorResponseSpec("500", "500 server error", serverProblemDetailExample(),
                             "GET /flux-extended-problem-detail/server-error-exception");
@@ -257,9 +287,14 @@ public class FluxOpenApiConfiguration {
                             problemExample("Missing API version", "Bad Request", 400, "API version is required.",
                                     "/flux-extended-problem-detail/missing-api-version-exception"),
                             "GET /flux-extended-problem-detail/missing-api-version-exception without API-Version header");
+            case "notAcceptableApiVersionException" ->
+                    new FluxErrorResponseSpec("400", "400 not acceptable API version error",
+                            problemExample("Not acceptable API version", "Bad Request", 400, "Invalid API version: '2.0.0'.",
+                                    "/not-acceptable-api-version"),
+                            "GET /not-acceptable-api-version with API-Version: 2 and a version=1 handler");
             case "webExchangeBindException", "handlerMethodValidationExceptionCookieValue",
-                "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
-                 "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
+                 "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
+                  "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
                   "handlerMethodValidationExceptionRequestBodyValidationResult", "handlerMethodValidationExceptionRequestHeader",
                   "handlerMethodValidationExceptionRequestParam", "handlerMethodValidationExceptionRequestPart",
                   "handlerMethodValidationExceptionOther", "methodValidationException" ->
@@ -385,7 +420,7 @@ public class FluxOpenApiConfiguration {
 
     static String scenario(String operationId) {
         return switch (operationId) {
-            case "invalidApiVersionException", "missingApiVersionException" -> "api-version";
+            case "invalidApiVersionException", "missingApiVersionException", "notAcceptableApiVersionException" -> "api-version";
             default -> "default";
         };
     }

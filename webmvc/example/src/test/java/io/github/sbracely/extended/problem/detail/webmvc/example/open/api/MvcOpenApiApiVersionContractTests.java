@@ -8,11 +8,15 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTe
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
+import org.springframework.web.accept.NotAcceptableApiVersionException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,18 +24,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Strict OpenAPI contract tests for the <b>api-version</b> configuration scenario (WebMVC).
  * <p>
  * Starts a real HTTP server with API version negotiation properties and verifies that
- * {@code invalidApiVersionException} and {@code missingApiVersionException} match their
- * documented OpenAPI examples.
+ * {@code invalidApiVersionException}, {@code missingApiVersionException}, and
+ * {@code notAcceptableApiVersionException} match their documented OpenAPI examples.
  */
 @AutoConfigureRestTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@Import(MvcOpenApiApiVersionContractTests.MvcNotAcceptableApiVersionController.class)
 @TestPropertySource(properties = {
         "spring.mvc.apiversion.use.header=API-Version",
         "spring.mvc.apiversion.supported=1,2",
 })
 class MvcOpenApiApiVersionContractTests {
 
+    private static final String SCENARIO = "api-version";
     private static final String BASE = "/mvc-extended-problem-detail";
 
     @LocalServerPort
@@ -84,5 +90,49 @@ class MvcOpenApiApiVersionContractTests {
                 .returnResult();
 
         MvcOpenApiContractTestSupport.assertContractMatches(result.getResponseBody(), docExample);
+    }
+
+    @Test
+    void notAcceptableApiVersionExceptionContractMatches() throws Exception {
+        JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
+                mockMvcTester, "API-Version", "1");
+        JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
+                apiDocs, "/not-acceptable-api-version", "get");
+        assertThat(docExample)
+                .as("documented example for notAcceptableApiVersionException should be present").isNotNull();
+
+        String uri = "http://localhost:" + port + "/not-acceptable-api-version";
+        EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+                .uri(uri)
+                .header("API-Version", "2")
+                .exchange()
+                .expectStatus().isEqualTo(400)
+                .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .expectBody(ExtendedProblemDetail.class)
+                .returnResult();
+
+        MvcOpenApiContractTestSupport.assertContractMatches(result.getResponseBody(), docExample);
+    }
+
+    @Test
+    void allApiVersionOperationsCovered() throws Exception {
+        JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
+                mockMvcTester, "API-Version", "1");
+        MvcOpenApiContractTestSupport.assertAllScenarioOperationsCovered(
+                apiDocs, SCENARIO, MvcOperationFixtures.all());
+    }
+
+    /**
+     * {@link NotAcceptableApiVersionException}
+     * <p>
+     * This test-only controller is required because Spring only raises
+     * {@code NotAcceptableApiVersionException} when version negotiation is enabled and at least one
+     * competing versioned handler exists.
+     */
+    @RestController
+    static class MvcNotAcceptableApiVersionController {
+        @GetMapping(path = "/not-acceptable-api-version", version = "1")
+        void notAcceptableApiVersion() {
+        }
     }
 }

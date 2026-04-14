@@ -872,6 +872,54 @@ paths:
                     - type: BUSINESS
                       message: Error message 2
       x-scenario: default
+  /flux-extended-problem-detail/no-resource-found:
+    get:
+      tags:
+      - scenario:default
+      description: "Real trigger from tests: GET /flux-extended-problem-detail/no-resource-found.\
+        \ For the exact request setup and assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webflux/example/controller/FluxControllerTests.java."
+      operationId: noResourceFoundException
+      responses:
+        "404":
+          description: 404 no resource found error. See the WebFlux example tests
+            for concrete triggering inputs.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ExtendedProblemDetail"
+              examples:
+                example:
+                  summary: No resource found
+                  value:
+                    title: Not Found
+                    status: 404
+                    instance: /flux-extended-problem-detail/no-resource-found
+      x-scenario: default
+  /not-acceptable-api-version:
+    get:
+      tags:
+      - scenario:api-version
+      description: "Real trigger from tests: GET /not-acceptable-api-version with\
+        \ API-Version: 2 and a version=1 handler. For the exact request setup and\
+        \ assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webflux/example/controller/FluxControllerTests.java."
+      operationId: notAcceptableApiVersionException
+      responses:
+        "400":
+          description: 400 not acceptable API version error. See the WebFlux example
+            tests for concrete triggering inputs.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ExtendedProblemDetail"
+              examples:
+                example:
+                  summary: Not acceptable API version
+                  value:
+                    title: Bad Request
+                    status: 400
+                    detail: "Invalid API version: '2.0.0'."
+                    instance: /not-acceptable-api-version
+      x-scenario: api-version
 components:
   schemas:
     FluxProblemDetailRequest:

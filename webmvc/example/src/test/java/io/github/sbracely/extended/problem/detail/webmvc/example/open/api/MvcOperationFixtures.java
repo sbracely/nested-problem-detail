@@ -331,6 +331,12 @@ public final class MvcOperationFixtures {
                         mock -> mock.get().uri(BASE + "/method-validation-exception").exchange(),
                         500));
 
+        map.put("noResourceFoundException",
+                new MvcOperationFixture("default",
+                        BASE + "/no-resource-found-exception", "get",
+                        mock -> mock.get().uri(BASE + "/no-resource-found-exception").exchange(),
+                        404));
+
         // ── random-port scenario ─────────────────────────────────────────────────────
         // asyncRequestNotUsableException is tested via a real HTTP connection with tiny
         // timeout; it cannot be triggered reliably via MockMvc and is therefore only
@@ -360,6 +366,26 @@ public final class MvcOperationFixtures {
                 new MvcOperationFixture("api-version",
                         BASE + "/missing-api-version-exception", "get",
                         null, // trigger requires api-version properties – see MvcOpenApiApiVersionContractTests
+                        400));
+
+        map.put("notAcceptableApiVersionException",
+                new MvcOperationFixture("api-version",
+                        "/not-acceptable-api-version", "get",
+                        null, // trigger requires api-version properties and a versioned test controller – see MvcOpenApiApiVersionContractTests
+                        400));
+
+        // ── no-handler-found scenario ─────────────────────────────────────────────────
+        map.put("noHandlerFoundException",
+                new MvcOperationFixture("no-handler-found",
+                        BASE + "/no-handler-found-exception", "get",
+                        null, // trigger requires spring.web.resources.add-mappings=false – see MvcOpenApiNoHandlerFoundContractTests
+                        404));
+
+        // ── actuator-endpoint scenario ────────────────────────────────────────────────
+        map.put("invalidEndpointBadRequestException",
+                new MvcOperationFixture("actuator-endpoint",
+                        "/actuator/demo/{name}", "get",
+                        null, // trigger requires management.endpoints.web.exposure.include=demo – see MvcOpenApiActuatorContractTests
                         400));
 
         return map;

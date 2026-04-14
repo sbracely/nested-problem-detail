@@ -548,6 +548,36 @@ Content-Type: application/problem+json
     </tr>
         <tr>
       <td>36</td>
+      <td><code>org.springframework.web.bind.support.WebExchangeBindException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub><br><code>POST /mvc-extended-problem-detail/web-exchange-bind-exception</code><br><pre>Content-Type: application/json；Body: {&quot;name&quot;:&quot;abc&quot;,&quot;password&quot;:&quot;123&quot;}</pre></td>
+      <td><pre>status: 400
+Content-Type: application/problem+json
+
+{
+  &quot;detail&quot; : &quot;Invalid request content.&quot;,
+  &quot;errors&quot; : [ {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;name&quot;,
+    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;age&quot;,
+    &quot;message&quot; : &quot;Age cannot be null&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;password&quot;,
+    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+  }, {
+    &quot;type&quot; : &quot;PARAMETER&quot;,
+    &quot;target&quot; : &quot;confirmPassword&quot;,
+    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+  } ],
+  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/web-exchange-bind-exception&quot;,
+  &quot;status&quot; : 400,
+  &quot;title&quot; : &quot;Bad Request&quot;
+}</pre></td>
+    </tr>
+        <tr>
+      <td>37</td>
       <td><code>org.springframework.web.server.MissingRequestValueException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub><br><code>GET /mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception</code><br><pre>None (missing request parameter `id`)</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -560,7 +590,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>37</td>
+      <td>38</td>
       <td><code>org.springframework.web.server.UnsatisfiedRequestParameterException</code><br><sub>extends ServerWebInputException → ResponseStatusException</sub><br><code>GET /mvc-extended-problem-detail/unsatisfied-request-parameter-exception</code><br><pre>Query: type=1 (does not satisfy exist and !debug)</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -573,7 +603,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>38</td>
+      <td>39</td>
       <td><code>org.springframework.web.server.ServerErrorException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /mvc-extended-problem-detail/server-error-exception</code><br><pre>None</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
@@ -586,7 +616,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>39</td>
+      <td>40</td>
       <td><code>org.springframework.web.server.PayloadTooLargeException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>POST /mvc-extended-problem-detail/payload-too-large-exception</code><br><pre>multipart/form-data; upload `file=test.txt`</pre></td>
       <td><pre>status: 413
 Content-Type: application/problem+json
@@ -599,7 +629,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>40</td>
+      <td>41</td>
       <td><code>org.springframework.web.accept.InvalidApiVersionException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /mvc-extended-problem-detail/invalid-api-version-exception</code><br><pre>Header: API-Version=3; requires `spring.mvc.apiversion.*`</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -615,7 +645,7 @@ transfer-encoding: chunked
 }</pre></td>
     </tr>
         <tr>
-      <td>41</td>
+      <td>42</td>
       <td><code>org.springframework.web.accept.MissingApiVersionException</code><br><sub>extends ResponseStatusException → ErrorResponseException</sub><br><code>GET /mvc-extended-problem-detail/missing-api-version-exception</code><br><pre>API-Version not sent; requires `spring.mvc.apiversion.*`</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -631,7 +661,7 @@ transfer-encoding: chunked
 }</pre></td>
     </tr>
         <tr>
-      <td>42</td>
+      <td>43</td>
       <td><code>org.springframework.web.accept.NotAcceptableApiVersionException</code><br><sub>extends InvalidApiVersionException → ResponseStatusException</sub><br><code>GET /not-acceptable-api-version</code><br><pre>Header: API-Version=2; requires `spring.mvc.apiversion.*`</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -647,7 +677,7 @@ transfer-encoding: chunked
 }</pre></td>
     </tr>
         <tr>
-      <td>43</td>
+      <td>44</td>
       <td><code>org.springframework.web.multipart.MaxUploadSizeExceededException</code><br><code>POST /mvc-extended-problem-detail/max-upload-size-exceeded-exception</code><br><pre>multipart/form-data; upload a 2-byte file; requires `spring.servlet.multipart.max-file-size=1`</pre></td>
       <td><pre>status: 413
 Content-Type: application/problem+json
@@ -663,7 +693,7 @@ transfer-encoding: chunked
 }</pre></td>
     </tr>
         <tr>
-      <td>44</td>
+      <td>45</td>
       <td><code>org.springframework.beans.ConversionNotSupportedException</code><br><code>GET /mvc-extended-problem-detail/conversion-not-supported-exception</code><br><pre>Query: data=test-value</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
@@ -676,7 +706,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>45</td>
+      <td>46</td>
       <td><code>org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException</code><br><sub>extends ConversionNotSupportedException → TypeMismatchException</sub><br><code>GET /mvc-extended-problem-detail/method-argument-conversion-not-supported-exception</code><br><pre>Query: error=test-value</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
@@ -689,7 +719,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>46</td>
+      <td>47</td>
       <td><code>org.springframework.beans.TypeMismatchException</code><br><code>GET /mvc-extended-problem-detail/type-mismatch-exception</code><br><pre>None</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -702,7 +732,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>47</td>
+      <td>48</td>
       <td><code>org.springframework.web.method.annotation.MethodArgumentTypeMismatchException</code><br><sub>extends TypeMismatchException</sub><br><code>GET /mvc-extended-problem-detail/method-argument-type-mismatch-exception</code><br><pre>Query: integer=a</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -715,7 +745,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>48</td>
+      <td>49</td>
       <td><code>org.springframework.http.converter.HttpMessageNotReadableException</code><br><code>POST /mvc-extended-problem-detail/http-message-not-readable-exception</code><br><pre>Content-Type: application/json；Body: {</pre></td>
       <td><pre>status: 400
 Content-Type: application/problem+json
@@ -728,7 +758,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>49</td>
+      <td>50</td>
       <td><code>org.springframework.http.converter.HttpMessageNotWritableException</code><br><code>GET /mvc-extended-problem-detail/http-message-not-writable-exception</code><br><pre>None</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
@@ -741,7 +771,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>50</td>
+      <td>51</td>
       <td><code>org.springframework.validation.method.MethodValidationException</code><br><code>GET /mvc-extended-problem-detail/method-validation-exception</code><br><pre>None</pre></td>
       <td><pre>status: 500
 Content-Type: application/problem+json
@@ -787,7 +817,7 @@ Content-Type: application/problem+json
 }</pre></td>
     </tr>
         <tr>
-      <td>51</td>
+      <td>52</td>
       <td><code>org.springframework.web.context.request.async.AsyncRequestNotUsableException</code><br><code>GET /mvc-extended-problem-detail/async-request-not-usable-exception</code><br><pre>Header: Accept=text/event-stream</pre></td>
       <td><pre>status: 200
 Content-Type: text/event-stream

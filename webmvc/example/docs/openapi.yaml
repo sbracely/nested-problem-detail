@@ -1537,6 +1537,103 @@ paths:
                     detail: "Supported methods: [GET, POST]"
                     instance: /mvc-extended-problem-detail/method-not-allowed-exception
       x-scenario: default
+  /mvc-extended-problem-detail/no-resource-found-exception:
+    get:
+      tags:
+      - scenario:default
+      description: "Real trigger from tests: GET /mvc-extended-problem-detail/no-resource-found-exception.\
+        \ For the exact request setup and assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/controller/MvcControllerTests.java."
+      operationId: noResourceFoundException
+      responses:
+        "404":
+          description: 404 no resource found error. See the MVC example tests for
+            concrete triggering inputs.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ExtendedProblemDetail"
+              examples:
+                example:
+                  summary: No resource found
+                  value:
+                    title: Not Found
+                    status: 404
+                    detail: No static resource mvc-extended-problem-detail/no-resource-found-exception.
+                    instance: /mvc-extended-problem-detail/no-resource-found-exception
+      x-scenario: default
+  /mvc-extended-problem-detail/no-handler-found-exception:
+    get:
+      tags:
+      - scenario:no-handler-found
+      description: "Real trigger from tests: GET /mvc-extended-problem-detail/no-handler-found-exception\
+        \ with spring.web.resources.add-mappings=false. For the exact request setup\
+        \ and assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiNoHandlerFoundContractTests.java."
+      operationId: noHandlerFoundException
+      responses:
+        "404":
+          description: 404 no handler found error. See the MVC example tests for concrete
+            triggering inputs.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ExtendedProblemDetail"
+              examples:
+                example:
+                  summary: No handler found
+                  value:
+                    title: Not Found
+                    status: 404
+                    detail: No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.
+                    instance: /mvc-extended-problem-detail/no-handler-found-exception
+      x-scenario: no-handler-found
+  /actuator/demo/{name}:
+    get:
+      tags:
+      - scenario:actuator-endpoint
+      description: "Real trigger from tests: GET /actuator/demo/name with management.endpoints.web.exposure.include=demo.\
+        \ For the exact request setup and assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiActuatorContractTests.java."
+      operationId: invalidEndpointBadRequestException
+      responses:
+        "400":
+          description: 400 invalid actuator endpoint request error. See the MVC example
+            tests for concrete triggering inputs.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ExtendedProblemDetail"
+              examples:
+                example:
+                  summary: Invalid actuator endpoint request
+                  value:
+                    title: Bad Request
+                    status: 400
+                    instance: /actuator/demo/name
+      x-scenario: actuator-endpoint
+  /not-acceptable-api-version:
+    get:
+      tags:
+      - scenario:api-version
+      description: "Real trigger from tests: GET /not-acceptable-api-version with\
+        \ API-Version: 2 and a version=1 handler. For the exact request setup and\
+        \ assertions, see src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/controller/MvcControllerRandomPortTests.java."
+      operationId: notAcceptableApiVersionException
+      responses:
+        "400":
+          description: 400 not acceptable API version error. See the MVC example tests
+            for concrete triggering inputs.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ExtendedProblemDetail"
+              examples:
+                example:
+                  summary: Not acceptable API version
+                  value:
+                    title: Bad Request
+                    status: 400
+                    detail: "Invalid API version: '2.0.0'."
+                    instance: /not-acceptable-api-version
+      x-scenario: api-version
 components:
   schemas:
     MvcProblemDetailRequest:

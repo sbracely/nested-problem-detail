@@ -90,7 +90,7 @@
                         <executions>
                             <execution>
                                 <id>clean-offline-openapi-docs</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>process-test-classes</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
@@ -116,14 +116,14 @@
                         <executions>
                             <execution>
                                 <id>start-openapi-docs-app</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>process-test-classes</phase>
                                 <goals>
                                     <goal>start</goal>
                                 </goals>
                             </execution>
                             <execution>
                                 <id>stop-openapi-docs-app</id>
-                                <phase>post-integration-test</phase>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>stop</goal>
                                 </goals>
@@ -137,7 +137,7 @@
                         <executions>
                             <execution>
                                 <id>generate-openapi-json</id>
-                                <phase>integration-test</phase>
+                                <phase>process-test-classes</phase>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>
@@ -149,7 +149,7 @@
                             </execution>
                             <execution>
                                 <id>generate-openapi-yaml</id>
-                                <phase>integration-test</phase>
+                                <phase>process-test-classes</phase>
                                 <goals>
                                     <goal>generate</goal>
                                 </goals>

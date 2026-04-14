@@ -98,6 +98,12 @@ public final class FluxOperationFixtures {
                         client -> client.get().uri(BASE + "/server-web-input-exception").exchange(),
                         400));
 
+        map.put("noResourceFoundException",
+                new FluxOperationFixture("default",
+                        BASE + "/no-resource-found", "get",
+                        client -> client.get().uri(BASE + "/no-resource-found").exchange(),
+                        404));
+
         map.put("serverErrorException",
                 new FluxOperationFixture("default",
                         BASE + "/server-error-exception", "get",
@@ -212,6 +218,12 @@ public final class FluxOperationFixtures {
                 new FluxOperationFixture("api-version",
                         BASE + "/missing-api-version-exception", "get",
                         null, // trigger requires api-version properties – see FluxOpenApiApiVersionContractTests
+                        400));
+
+        map.put("notAcceptableApiVersionException",
+                new FluxOperationFixture("api-version",
+                        "/not-acceptable-api-version", "get",
+                        null, // trigger requires api-version properties and a versioned test controller – see FluxOpenApiApiVersionContractTests
                         400));
 
         return map;
