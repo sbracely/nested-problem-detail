@@ -373,7 +373,8 @@ public class MvcOpenApiConfiguration {
                             "GET /mvc-extended-problem-detail/missing-servlet-request-parameter-exception");
             case "invalidEndpointBadRequestException" ->
                     new MvcErrorResponseSpec("400", "400 invalid actuator endpoint request error",
-                            problemExample("Invalid actuator endpoint request", "Bad Request", 400, null,
+                            problemExample("Invalid actuator endpoint request", "Bad Request", 400,
+                                    "Missing parameters: param1,param2",
                                     "/actuator/demo/name"),
                             "GET /actuator/demo/name with management.endpoints.web.exposure.include=demo");
             case "payloadTooLargeException" ->
@@ -442,18 +443,6 @@ public class MvcOpenApiConfiguration {
                                     "Failed to read request",
                                     "/mvc-extended-problem-detail/http-message-not-readable-exception"),
                             "POST /mvc-extended-problem-detail/http-message-not-readable-exception with malformed application/json body");
-            case "invalidApiVersionException" ->
-                    new MvcErrorResponseSpec("400", "400 invalid API version error",
-                            problemExample("Invalid API version", "Bad Request", 400,
-                                    "Invalid API version: '3.0.0'.",
-                                    "/mvc-extended-problem-detail/invalid-api-version-exception"),
-                            "GET /mvc-extended-problem-detail/invalid-api-version-exception with header API-Version: 3");
-            case "missingApiVersionException" ->
-                    new MvcErrorResponseSpec("400", "400 missing API version error",
-                            problemExample("Missing API version", "Bad Request", 400,
-                                    "API version is required.",
-                                    "/mvc-extended-problem-detail/missing-api-version-exception"),
-                            "GET /mvc-extended-problem-detail/missing-api-version-exception without API-Version header");
             case "methodArgumentNotValidException", "handlerMethodValidationExceptionCookieValue",
                    "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
                    "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
@@ -592,8 +581,6 @@ public class MvcOpenApiConfiguration {
                     "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiRandomPortContractTests.java";
             case "maxUploadSizeExceededException" ->
                     "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiMultipartContractTests.java";
-            case "invalidApiVersionException", "missingApiVersionException" ->
-                    "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiApiVersionContractTests.java";
             case "noHandlerFoundException" ->
                     "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiNoHandlerFoundContractTests.java";
             case "invalidEndpointBadRequestException" ->
@@ -607,7 +594,6 @@ public class MvcOpenApiConfiguration {
         return switch (operationId) {
             case "asyncRequestNotUsableException" -> "random-port";
             case "maxUploadSizeExceededException" -> "multipart-limit";
-            case "invalidApiVersionException", "missingApiVersionException" -> "api-version";
             case "noHandlerFoundException" -> "no-handler-found";
             case "invalidEndpointBadRequestException" -> "actuator-endpoint";
             default -> "default";

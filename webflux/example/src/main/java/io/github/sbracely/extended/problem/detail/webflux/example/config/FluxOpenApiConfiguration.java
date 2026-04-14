@@ -269,16 +269,6 @@ public class FluxOpenApiConfiguration {
             case "serverErrorException" ->
                     new FluxErrorResponseSpec("500", "500 server error", serverProblemDetailExample(),
                             "GET /flux-extended-problem-detail/server-error-exception");
-            case "invalidApiVersionException" ->
-                    new FluxErrorResponseSpec("400", "400 invalid API version error",
-                            problemExample("Invalid API version", "Bad Request", 400, "Invalid API version: '3.0.0'.",
-                                    "/flux-extended-problem-detail/invalid-api-version-exception"),
-                            "GET /flux-extended-problem-detail/invalid-api-version-exception with header API-Version: 3");
-            case "missingApiVersionException" ->
-                    new FluxErrorResponseSpec("400", "400 missing API version error",
-                            problemExample("Missing API version", "Bad Request", 400, "API version is required.",
-                                    "/flux-extended-problem-detail/missing-api-version-exception"),
-                            "GET /flux-extended-problem-detail/missing-api-version-exception without API-Version header");
             case "webExchangeBindException", "handlerMethodValidationExceptionCookieValue",
                  "handlerMethodValidationExceptionMatrix", "handlerMethodValidationExceptionModelAttribute",
                  "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
@@ -408,7 +398,6 @@ public class FluxOpenApiConfiguration {
 
     static String scenario(String operationId) {
         return switch (operationId) {
-            case "invalidApiVersionException", "missingApiVersionException" -> "api-version";
             default -> "default";
         };
     }

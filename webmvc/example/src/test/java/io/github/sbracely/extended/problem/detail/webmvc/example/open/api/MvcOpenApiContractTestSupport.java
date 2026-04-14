@@ -187,7 +187,7 @@ public final class MvcOpenApiContractTestSupport {
      * {@code fixtureMap}. This ensures no documented operation is silently skipped.
      *
      * @param apiDocs    parsed API docs root node
-     * @param scenario   the scenario name (e.g. {@code "default"}, {@code "api-version"})
+     * @param scenario   the scenario name (e.g. {@code "default"}, {@code "no-handler-found"})
      * @param fixtureMap map from operationId to fixture – used to confirm coverage
      */
     public static void assertAllScenarioOperationsCovered(JsonNode apiDocs, String scenario,

@@ -38,8 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <p>
  * Operations that require non-default Spring properties are covered by their own scenario
  * classes ({@code MvcOpenApiRandomPortContractTests}, {@code MvcOpenApiMultipartContractTests},
- * {@code MvcOpenApiApiVersionContractTests}, {@code MvcOpenApiNoHandlerFoundContractTests}, and
- * {@code MvcOpenApiActuatorContractTests}).
+ * {@code MvcOpenApiNoHandlerFoundContractTests}, and {@code MvcOpenApiActuatorContractTests}).
  */
 @SpringBootTest
 @AutoConfigureMockMvc

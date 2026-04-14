@@ -12,6 +12,9 @@ import io.github.sbracely.extended.problem.detail.common.response.ExtendedProble
  */
 public class ExtendedProblemDetailJacksonSerializer extends StdSerializer<ExtendedProblemDetail> {
 
+    /**
+     * Effective field visibility used while writing the serialized response.
+     */
     private final ProblemDetailFieldVisibility fieldVisibility;
 
     /**

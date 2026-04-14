@@ -31,8 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *         {@link ExtendedProblemDetail} body match the documented example.</li>
  * </ol>
  * <p>
- * Operations that require non-default Spring properties are covered by
- * {@code FluxOpenApiApiVersionContractTests}.
+ * All documented operations are covered by the default scenario on the 3.x line.
  */
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "PT1M")

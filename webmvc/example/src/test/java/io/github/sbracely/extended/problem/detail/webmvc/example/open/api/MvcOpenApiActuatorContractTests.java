@@ -44,7 +44,16 @@ class MvcOpenApiActuatorContractTests {
 
         ExtendedProblemDetail actual = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        MvcOpenApiContractTestSupport.assertContractMatches(actual, docExample);
+        assertThat(actual).isNotNull();
+        assertThat(actual.getType()).hasToString(docExample.path("type").asText());
+        assertThat(actual.getTitle()).isEqualTo(docExample.path("title").asText());
+        assertThat(actual.getStatus()).isEqualTo(docExample.path("status").asInt());
+        assertThat(actual.getInstance()).hasToString(docExample.path("instance").asText());
+        assertThat(actual.getDetail())
+                .as("detail should mention both missing actuator parameters")
+                .startsWith("Missing parameters:")
+                .contains("param1")
+                .contains("param2");
     }
 
     @Test

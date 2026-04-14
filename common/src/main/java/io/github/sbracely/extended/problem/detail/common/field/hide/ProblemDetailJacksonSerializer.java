@@ -12,6 +12,9 @@ import org.springframework.http.ProblemDetail;
  */
 public class ProblemDetailJacksonSerializer extends StdSerializer<ProblemDetail> {
 
+    /**
+     * Effective field visibility used while writing the serialized response.
+     */
     private final ProblemDetailFieldVisibility fieldVisibility;
 
     /**
