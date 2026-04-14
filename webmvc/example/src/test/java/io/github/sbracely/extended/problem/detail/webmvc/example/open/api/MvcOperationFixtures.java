@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example.contract;
+package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.mock.web.MockMultipartFile;

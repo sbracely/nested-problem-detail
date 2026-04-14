@@ -1,8 +1,8 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example.contract;
+package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
-import io.github.sbracely.extended.problem.detail.webmvc.example.contract.MvcOperationFixtures.MvcOperationFixture;
+import io.github.sbracely.extended.problem.detail.webmvc.example.open.api.MvcOperationFixtures.MvcOperationFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

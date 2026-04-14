@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example.controller;
+package io.github.sbracely.extended.problem.detail.webmvc.example.field.hide;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
