@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example.contract;
+package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

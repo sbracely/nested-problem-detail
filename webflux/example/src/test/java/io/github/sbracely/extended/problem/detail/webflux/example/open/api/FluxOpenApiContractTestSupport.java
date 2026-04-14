@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webflux.example.contract;
+package io.github.sbracely.extended.problem.detail.webflux.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

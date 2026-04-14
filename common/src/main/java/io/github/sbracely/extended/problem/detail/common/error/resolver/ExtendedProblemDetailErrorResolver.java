@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.common.handler;
+package io.github.sbracely.extended.problem.detail.common.error.resolver;
 
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.Error;

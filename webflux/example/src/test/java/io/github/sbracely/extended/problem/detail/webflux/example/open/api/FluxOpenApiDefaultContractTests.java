@@ -1,8 +1,8 @@
-package io.github.sbracely.extended.problem.detail.webflux.example.contract;
+package io.github.sbracely.extended.problem.detail.webflux.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
-import io.github.sbracely.extended.problem.detail.webflux.example.contract.FluxOperationFixtures.FluxOperationFixture;
+import io.github.sbracely.extended.problem.detail.webflux.example.open.api.FluxOperationFixtures.FluxOperationFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

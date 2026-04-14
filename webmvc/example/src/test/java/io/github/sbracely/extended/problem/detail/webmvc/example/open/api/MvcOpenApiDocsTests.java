@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example;
+package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

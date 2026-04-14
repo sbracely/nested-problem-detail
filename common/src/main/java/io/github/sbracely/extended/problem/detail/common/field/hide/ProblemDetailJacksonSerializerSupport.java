@@ -1,5 +1,6 @@
-package io.github.sbracely.extended.problem.detail.common.response;
+package io.github.sbracely.extended.problem.detail.common.field.hide;
 
+import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.springframework.http.ProblemDetail;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
