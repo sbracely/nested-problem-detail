@@ -1,6 +1,8 @@
-package io.github.sbracely.extended.problem.detail.common.response;
+package io.github.sbracely.extended.problem.detail.common.field.hide;
 
 import io.github.sbracely.extended.problem.detail.common.properties.ExtendedProblemDetailProperties;
+import io.github.sbracely.extended.problem.detail.common.response.Error;
+import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -20,7 +22,7 @@ class ProblemDetailJacksonSerializerTest {
         ObjectMapper objectMapper = objectMapper(ProblemDetailFieldVisibility.allowAll());
         ExtendedProblemDetail problemDetail = ExtendedProblemDetail.from(
                 ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request content."),
-                List.of(new Error(Error.Type.PARAMETER, "name", "must not be blank")));
+                List.of(new io.github.sbracely.extended.problem.detail.common.response.Error(io.github.sbracely.extended.problem.detail.common.response.Error.Type.PARAMETER, "name", "must not be blank")));
         problemDetail.setInstance(URI.create("/test"));
         problemDetail.setProperty("traceId", "abc-123");
 
@@ -44,7 +46,7 @@ class ProblemDetailJacksonSerializerTest {
         ObjectMapper objectMapper = objectMapper(ProblemDetailFieldVisibility.from(fieldVisibility, List.of()));
         ExtendedProblemDetail problemDetail = ExtendedProblemDetail.from(
                 ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request content."),
-                List.of(new Error(Error.Type.PARAMETER, "name", "must not be blank")));
+                List.of(new io.github.sbracely.extended.problem.detail.common.response.Error(Error.Type.PARAMETER, "name", "must not be blank")));
         problemDetail.setInstance(URI.create("/test"));
 
         JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(problemDetail));

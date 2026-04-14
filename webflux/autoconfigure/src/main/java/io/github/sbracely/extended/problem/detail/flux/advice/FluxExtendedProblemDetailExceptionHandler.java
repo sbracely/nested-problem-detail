@@ -1,6 +1,6 @@
 package io.github.sbracely.extended.problem.detail.flux.advice;
 
-import io.github.sbracely.extended.problem.detail.common.handler.ExtendedProblemDetailErrorResolver;
+import io.github.sbracely.extended.problem.detail.common.error.resolver.ExtendedProblemDetailErrorResolver;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;

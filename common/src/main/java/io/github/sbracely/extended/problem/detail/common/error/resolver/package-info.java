@@ -3,6 +3,6 @@
  * for both Spring WebMVC and Spring WebFlux exception handlers.
  */
 @NullMarked
-package io.github.sbracely.extended.problem.detail.common.handler;
+package io.github.sbracely.extended.problem.detail.common.error.resolver;
 
 import org.jspecify.annotations.NullMarked;

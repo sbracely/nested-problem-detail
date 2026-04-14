@@ -1,9 +1,9 @@
 package io.github.sbracely.extended.problem.detail.flux;
 
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetailJacksonSerializer;
+import io.github.sbracely.extended.problem.detail.common.field.hide.ExtendedProblemDetailJacksonSerializer;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
-import io.github.sbracely.extended.problem.detail.common.response.ProblemDetailFieldVisibility;
-import io.github.sbracely.extended.problem.detail.common.response.ProblemDetailJacksonSerializer;
+import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailFieldVisibility;
+import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailJacksonSerializer;
 import io.github.sbracely.extended.problem.detail.flux.advice.FluxExtendedProblemDetailExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

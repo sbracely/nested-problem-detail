@@ -1,16 +1,17 @@
-package io.github.sbracely.extended.problem.detail.common.response;
+package io.github.sbracely.extended.problem.detail.common.field.hide;
 
+import org.springframework.http.ProblemDetail;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
- * Jackson serializer for ExtendedProblemDetail that applies field visibility rules.
+ * Jackson serializer for ProblemDetail that applies field visibility rules.
  *
  * @since 1.1.0
  */
-public class ExtendedProblemDetailJacksonSerializer extends StdSerializer<ExtendedProblemDetail> {
+public class ProblemDetailJacksonSerializer extends StdSerializer<ProblemDetail> {
 
     private final ProblemDetailFieldVisibility fieldVisibility;
 
@@ -19,13 +20,13 @@ public class ExtendedProblemDetailJacksonSerializer extends StdSerializer<Extend
      *
      * @param fieldVisibility the effective field visibility
      */
-    public ExtendedProblemDetailJacksonSerializer(ProblemDetailFieldVisibility fieldVisibility) {
-        super(ExtendedProblemDetail.class);
+    public ProblemDetailJacksonSerializer(ProblemDetailFieldVisibility fieldVisibility) {
+        super(ProblemDetail.class);
         this.fieldVisibility = fieldVisibility;
     }
 
     @Override
-    public void serialize(ExtendedProblemDetail value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
+    public void serialize(ProblemDetail value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
         ProblemDetailJacksonSerializerSupport.writeProblemDetail(value, gen, provider, fieldVisibility);
     }
 }

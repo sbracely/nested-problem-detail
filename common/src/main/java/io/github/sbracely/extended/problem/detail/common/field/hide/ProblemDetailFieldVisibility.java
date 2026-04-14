@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.common.response;
+package io.github.sbracely.extended.problem.detail.common.field.hide;
 
 import io.github.sbracely.extended.problem.detail.common.properties.ExtendedProblemDetailProperties;
 
