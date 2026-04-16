@@ -27,9 +27,9 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
         this.contextRunner.run(context -> {
             assertThat(context).hasSingleBean(FluxExtendedProblemDetailProperties.class);
             assertThat(context).hasSingleBean(ExtendedProblemDetailLog.class);
-            assertThat(context).hasSingleBean(ProblemDetailFieldVisibility.class);
-            assertThat(context).hasSingleBean(JacksonModule.class);
-            assertThat(context).hasBean("extendedProblemDetailJacksonModule");
+            assertThat(context).doesNotHaveBean(ProblemDetailFieldVisibility.class);
+            assertThat(context).doesNotHaveBean(JacksonModule.class);
+            assertThat(context).doesNotHaveBean("extendedProblemDetailJacksonModule");
             assertThat(context).hasSingleBean(FluxExtendedProblemDetailExceptionHandler.class);
         });
     }
@@ -82,20 +82,37 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
     }
 
     @Test
+    void shouldNotConfigureLogBeanWhenLevelIsOff() {
+        this.contextRunner
+                .withPropertyValues("extended.problem-detail.logging.at-level=OFF")
+                .run(context -> {
+                    assertThat(context).doesNotHaveBean(ExtendedProblemDetailLog.class);
+                    assertThat(context).doesNotHaveBean(JacksonModule.class);
+                    assertThat(context).hasSingleBean(FluxExtendedProblemDetailExceptionHandler.class);
+                    assertThat(context.getBean(FluxExtendedProblemDetailExceptionHandler.class).getExtendedProblemDetailLog())
+                            .isNull();
+                });
+    }
+
+    @Test
     void shouldCreateFieldVisibilityFromActiveProfiles() {
         this.contextRunner
                 .withPropertyValues(
                         "spring.profiles.active=dev,prod",
                         "extended.problem-detail.field.hide[0]=title",
                         "extended.problem-detail.field.profiles.dev.hide[0]=status",
-                        "extended.problem-detail.field.profiles.prod.hide[0]=detail"
+                        "extended.problem-detail.field.profiles.prod.hide[0]=detail",
+                        "extended.problem-detail.field.profiles.prod.hide[1]=errors.target"
                 )
                 .run(context -> {
                     ProblemDetailFieldVisibility fieldVisibility = context.getBean(ProblemDetailFieldVisibility.class);
+                    assertThat(context).hasSingleBean(JacksonModule.class);
+                    assertThat(context).hasBean("extendedProblemDetailJacksonModule");
                     assertThat(fieldVisibility.isVisible("errors")).isTrue();
                     assertThat(fieldVisibility.isVisible("title")).isTrue();
                     assertThat(fieldVisibility.isVisible("status")).isFalse();
                     assertThat(fieldVisibility.isVisible("detail")).isFalse();
+                    assertThat(fieldVisibility.isErrorFieldVisible("target")).isFalse();
                 });
     }
 

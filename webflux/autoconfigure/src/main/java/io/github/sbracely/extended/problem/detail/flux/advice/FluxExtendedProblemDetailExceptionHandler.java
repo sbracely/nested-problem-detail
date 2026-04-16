@@ -6,6 +6,7 @@ import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.*;
 import org.springframework.validation.method.MethodValidationException;
 import org.springframework.web.ErrorResponseException;
@@ -54,54 +55,54 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     /**
      * Log configuration for Extended Problem Detail exception handling.
      */
-    protected final ExtendedProblemDetailLog extendedProblemDetailLog;
+    protected final @Nullable ExtendedProblemDetailLog extendedProblemDetailLog;
 
     /**
      * Constructs a new handler with the specified dependencies.
      *
-     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance
+     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance, or {@code null} when logging is disabled
      */
-    public FluxExtendedProblemDetailExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+    public FluxExtendedProblemDetailExceptionHandler(@Nullable ExtendedProblemDetailLog extendedProblemDetailLog) {
         this.extendedProblemDetailLog = extendedProblemDetailLog;
     }
 
     @Override
-    public Log getLog() {
+    public Log getLogger() {
         return logger;
     }
 
     @Override
-    public ExtendedProblemDetailLog getExtendedProblemDetailLog() {
+    public @Nullable ExtendedProblemDetailLog getExtendedProblemDetailLog() {
         return extendedProblemDetailLog;
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodNotAllowedException(MethodNotAllowedException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleMethodNotAllowedException");
+        log(ex, "handleMethodNotAllowedException");
         return super.handleMethodNotAllowedException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleNotAcceptableStatusException(NotAcceptableStatusException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleNotAcceptableStatusException");
+        log(ex, "handleNotAcceptableStatusException");
         return super.handleNotAcceptableStatusException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleUnsupportedMediaTypeStatusException(UnsupportedMediaTypeStatusException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleUnsupportedMediaTypeStatusException");
+        log(ex, "handleUnsupportedMediaTypeStatusException");
         return super.handleUnsupportedMediaTypeStatusException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleMissingRequestValueException(MissingRequestValueException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleMissingRequestValueException");
+        log(ex, "handleMissingRequestValueException");
         return super.handleMissingRequestValueException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleUnsatisfiedRequestParameterException(UnsatisfiedRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleUnsatisfiedRequestParameterException");
+        log(ex, "handleUnsatisfiedRequestParameterException");
         return super.handleUnsatisfiedRequestParameterException(ex, headers, status, exchange);
     }
 
@@ -120,7 +121,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleWebExchangeBindException(WebExchangeBindException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleWebExchangeBindException");
+        log(ex, "handleWebExchangeBindException");
         List<Error> errors = resolveWebExchangeBindException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
@@ -151,7 +152,8 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, true, true, "handleHandlerMethodValidationException");
+        log(ex, "[exception#{}] handleHandlerMethodValidationException",
+                Integer.toHexString(System.identityHashCode(ex)));
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
@@ -159,25 +161,25 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
 
     @Override
     protected Mono<ResponseEntity<Object>> handleServerWebInputException(ServerWebInputException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleServerWebInputException");
+        log(ex, "handleServerWebInputException");
         return super.handleServerWebInputException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleServerErrorException(ServerErrorException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleServerErrorException");
+        log(ex, "handleServerErrorException");
         return super.handleServerErrorException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleResponseStatusException(ResponseStatusException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleResponseStatusException");
+        log(ex, "handleResponseStatusException");
         return super.handleResponseStatusException(ex, headers, status, exchange);
     }
 
     @Override
     protected Mono<ResponseEntity<Object>> handleErrorResponseException(ErrorResponseException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleErrorResponseException");
+        log(ex, "handleErrorResponseException");
         return super.handleErrorResponseException(ex, headers, status, exchange);
     }
 
@@ -195,7 +197,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
-        extendedProblemDetailLog.log(logger, ex, "handleMethodValidationException");
+        log(ex, "handleMethodValidationException");
         List<Error> errors = resolveMethodValidationException(ex);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, exchange);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(body, errors);

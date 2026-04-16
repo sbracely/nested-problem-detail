@@ -1,5 +1,6 @@
 package io.github.sbracely.extended.problem.detail.common.field.hide;
 
+import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.springframework.http.ProblemDetail;
 import tools.jackson.core.JacksonException;
@@ -8,6 +9,7 @@ import tools.jackson.databind.SerializationContext;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +34,7 @@ final class ProblemDetailJacksonSerializerSupport {
         writeField(gen, provider, fieldVisibility.isDetailVisible(), "detail", value.getDetail());
         writeField(gen, provider, fieldVisibility.isInstanceVisible(), "instance", value.getInstance());
         if (value instanceof ExtendedProblemDetail extendedProblemDetail) {
-            writeField(gen, provider, fieldVisibility.isErrorsVisible(), "errors", extendedProblemDetail.getErrors());
+            writeErrors(gen, provider, fieldVisibility, extendedProblemDetail.getErrors());
         }
         Map<String, Object> properties = value.getProperties();
         if (properties != null) {
@@ -47,6 +49,38 @@ final class ProblemDetailJacksonSerializerSupport {
                 writeField(gen, provider, fieldVisibility.isVisible(fieldName), fieldName, entry.getValue());
             }
         }
+        gen.writeEndObject();
+    }
+
+    private static void writeErrors(
+            JsonGenerator gen,
+            SerializationContext provider,
+            ProblemDetailFieldVisibility fieldVisibility,
+            List<Error> errors) throws JacksonException {
+        if (!fieldVisibility.isErrorsVisible() || isEmpty(errors)) {
+            return;
+        }
+        gen.writeName("errors");
+        gen.writeStartArray();
+        for (Error error : errors) {
+            if (error == null) {
+                gen.writeNull();
+                continue;
+            }
+            writeError(gen, provider, fieldVisibility, error);
+        }
+        gen.writeEndArray();
+    }
+
+    private static void writeError(
+            JsonGenerator gen,
+            SerializationContext provider,
+            ProblemDetailFieldVisibility fieldVisibility,
+            Error error) throws JacksonException {
+        gen.writeStartObject();
+        writeField(gen, provider, fieldVisibility.isErrorFieldVisible("type"), "type", error.type());
+        writeField(gen, provider, fieldVisibility.isErrorFieldVisible("target"), "target", error.target());
+        writeField(gen, provider, fieldVisibility.isErrorFieldVisible("message"), "message", error.message());
         gen.writeEndObject();
     }
 

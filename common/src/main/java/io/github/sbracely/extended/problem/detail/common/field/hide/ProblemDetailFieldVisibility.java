@@ -14,8 +14,10 @@ import java.util.Set;
  */
 public final class ProblemDetailFieldVisibility {
 
+    private static final String ERRORS_PREFIX = "errors.";
+
     private final Set<String> hidden;
-    private final boolean allowAll;
+    private final Set<String> hiddenErrorFields;
     private final boolean typeVisible;
     private final boolean titleVisible;
     private final boolean statusVisible;
@@ -23,9 +25,9 @@ public final class ProblemDetailFieldVisibility {
     private final boolean instanceVisible;
     private final boolean errorsVisible;
 
-    private ProblemDetailFieldVisibility(Set<String> hidden) {
+    private ProblemDetailFieldVisibility(Set<String> hidden, Set<String> hiddenErrorFields) {
         this.hidden = Set.copyOf(hidden);
-        this.allowAll = hidden.isEmpty();
+        this.hiddenErrorFields = Set.copyOf(hiddenErrorFields);
         this.typeVisible = computeVisibility("type");
         this.titleVisible = computeVisibility("title");
         this.statusVisible = computeVisibility("status");
@@ -44,7 +46,7 @@ public final class ProblemDetailFieldVisibility {
     public static ProblemDetailFieldVisibility from(
             ExtendedProblemDetailProperties.FieldVisibility fieldVisibility,
             Collection<String> activeProfiles) {
-        Set<String> hidden = new LinkedHashSet<>();
+        HiddenFields hiddenFields = new HiddenFields();
         Map<String, ExtendedProblemDetailProperties.FieldRule> profiles = fieldVisibility.getProfiles();
         boolean matchedProfile = false;
         if (profiles != null) {
@@ -54,13 +56,13 @@ public final class ProblemDetailFieldVisibility {
                     continue;
                 }
                 matchedProfile = true;
-                hidden.addAll(normalized(rule.getHide()));
+                hiddenFields.add(normalized(rule.getHide()));
             }
         }
         if (!matchedProfile) {
-            hidden.addAll(normalized(fieldVisibility.getHide()));
+            hiddenFields.add(normalized(fieldVisibility.getHide()));
         }
-        return new ProblemDetailFieldVisibility(hidden);
+        return new ProblemDetailFieldVisibility(hiddenFields.problemDetailFields, hiddenFields.errorFields);
     }
 
     /**
@@ -69,7 +71,7 @@ public final class ProblemDetailFieldVisibility {
      * @return the default visibility
      */
     public static ProblemDetailFieldVisibility allowAll() {
-        return new ProblemDetailFieldVisibility(Set.of());
+        return new ProblemDetailFieldVisibility(Set.of(), Set.of());
     }
 
     /**
@@ -79,7 +81,17 @@ public final class ProblemDetailFieldVisibility {
      * @return {@code true} when the field should be serialized
      */
     public boolean isVisible(String fieldName) {
-        return allowAll || !hidden.contains(fieldName);
+        return !hidden.contains(fieldName);
+    }
+
+    /**
+     * Whether the given {@code errors[]} field should be serialized.
+     *
+     * @param fieldName the error JSON field name
+     * @return {@code true} when the field should be serialized
+     */
+    public boolean isErrorFieldVisible(String fieldName) {
+        return !hiddenErrorFields.contains(fieldName);
     }
 
     /**
@@ -140,8 +152,12 @@ public final class ProblemDetailFieldVisibility {
         return hidden;
     }
 
-    private static Set<String> normalized(Collection<String> fields) {
-        Set<String> normalized = new LinkedHashSet<>();
+    Set<String> getHiddenErrorFields() {
+        return hiddenErrorFields;
+    }
+
+    private static HiddenFields normalized(Collection<String> fields) {
+        HiddenFields normalized = new HiddenFields();
         if (fields == null) {
             return normalized;
         }
@@ -151,13 +167,31 @@ public final class ProblemDetailFieldVisibility {
             }
             String candidate = field.trim();
             if (!candidate.isEmpty()) {
-                normalized.add(candidate);
+                if (candidate.startsWith(ERRORS_PREFIX)) {
+                    String errorField = candidate.substring(ERRORS_PREFIX.length()).trim();
+                    if (!errorField.isEmpty()) {
+                        normalized.errorFields.add(errorField);
+                    }
+                    continue;
+                }
+                normalized.problemDetailFields.add(candidate);
             }
         }
         return normalized;
     }
 
     private boolean computeVisibility(String fieldName) {
-        return allowAll || !hidden.contains(fieldName);
+        return !hidden.contains(fieldName);
+    }
+
+    private static final class HiddenFields {
+
+        private final Set<String> problemDetailFields = new LinkedHashSet<>();
+        private final Set<String> errorFields = new LinkedHashSet<>();
+
+        private void add(HiddenFields hiddenFields) {
+            problemDetailFields.addAll(hiddenFields.problemDetailFields);
+            errorFields.addAll(hiddenFields.errorFields);
+        }
     }
 }

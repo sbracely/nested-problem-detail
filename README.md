@@ -141,6 +141,7 @@ extended:
     field:
       hide:
         - instance
+        - errors.target
       profiles:
         dev:
           hide:
@@ -160,10 +161,14 @@ extended.problem-detail.logging.print-stack-trace=false
 
 Field visibility rules apply to the serialized `application/problem+json` top-level fields, including
 `type`, `title`, `status`, `detail`, `instance`, `errors`, and any custom properties added through
-`ProblemDetail#setProperty(...)`.
+`ProblemDetail#setProperty(...)`. Nested `Error` fields can also be hidden with dot paths such as
+`errors.type`, `errors.target`, and `errors.message`.
 
 - No `field` configuration: no fields are hidden.
 - Only `hide`: the listed fields are hidden and other fields are serialized.
+- `errors`: hides the entire `errors` array.
+- `errors.target` / `errors.message` / `errors.type`: hides only those properties inside each `errors[]` item.
+- If `errors` is hidden, any `errors.*` rules are ignored because the whole array is omitted.
 - If one or more configured profiles are active, the matching profile rules override the default
   `field.hide` settings.
 - Multiple active profiles: all matching profile `hide` values are unioned together.

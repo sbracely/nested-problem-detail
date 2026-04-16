@@ -59,6 +59,25 @@ class ProblemDetailJacksonSerializerTest {
     }
 
     @Test
+    void shouldHideConfiguredNestedErrorFields() throws Exception {
+        ExtendedProblemDetailProperties.FieldVisibility fieldVisibility =
+                new ExtendedProblemDetailProperties.FieldVisibility();
+        fieldVisibility.getHide().add("errors.target");
+
+        ObjectMapper objectMapper = objectMapper(ProblemDetailFieldVisibility.from(fieldVisibility, List.of()));
+        ExtendedProblemDetail problemDetail = ExtendedProblemDetail.from(
+                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request content."),
+                List.of(new io.github.sbracely.extended.problem.detail.common.response.Error(Error.Type.PARAMETER, "name", "must not be blank")));
+
+        JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(problemDetail));
+
+        assertThat(json.path("errors")).hasSize(1);
+        assertThat(json.path("errors").get(0).path("type").asText()).isEqualTo("PARAMETER");
+        assertThat(json.path("errors").get(0).path("message").asText()).isEqualTo("must not be blank");
+        assertThat(json.path("errors").get(0).has("target")).isFalse();
+    }
+
+    @Test
     void shouldHideConfiguredFieldsForPlainProblemDetail() throws Exception {
         ExtendedProblemDetailProperties.FieldVisibility fieldVisibility =
                 new ExtendedProblemDetailProperties.FieldVisibility();

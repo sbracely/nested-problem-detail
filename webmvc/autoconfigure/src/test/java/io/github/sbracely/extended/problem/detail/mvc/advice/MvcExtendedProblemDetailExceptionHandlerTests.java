@@ -76,6 +76,20 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         webRequest = new ServletWebRequest(request, new MockHttpServletResponse());
     }
 
+    @Test
+    void shouldHandleHandlerMethodValidationExceptionWithoutLogConfiguration() {
+        MvcExtendedProblemDetailExceptionHandler handlerWithoutLog =
+                new MvcExtendedProblemDetailExceptionHandler(null);
+        HandlerMethodValidationException ex = buildExceptionVisitingRequestParam("name", "must not be blank");
+
+        ResponseEntity<Object> response = handlerWithoutLog.handleHandlerMethodValidationException(
+                ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
+        assertThat(((ExtendedProblemDetail) response.getBody()).getErrors()).hasSize(1);
+    }
+
     // =====================================================================
     // handleMethodArgumentNotValid
     // =====================================================================
@@ -164,7 +178,7 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             h.handleHandlerMethodValidationException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
-            verify(mockLogger).debug(matches("handleHandlerMethodValidationException \\[exception#[0-9a-f]+]"), isNull());
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] handleHandlerMethodValidationException"), isNull());
             verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
         }
     }
@@ -945,6 +959,17 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         }
 
         @Test
+        void shouldLogHandlerMethodValidationExceptionWithSingleStackTraceWhenPrintStackTraceEnabled() {
+            MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, true);
+            HandlerMethodValidationException ex = buildExceptionVisitingRequestParam("param", "must not be null");
+
+            h.handleHandlerMethodValidationException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
+
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] handleHandlerMethodValidationException"), eq(ex));
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
+        }
+
+        @Test
         void shouldNotLogWhenLevelIsOff() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.OFF, false);
             BindingResult bindingResult = new BeanPropertyBindingResult(new MvcTestBean(), "testBean");
@@ -995,7 +1020,6 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldLogCorrelatedMessageWithoutStackTraceEvenIfPrintStackTraceEnabled() {
             MvcExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, true);
-            // logCorrelated always logs a single-arg message (no Throwable), regardless of printStackTrace setting.
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
                     visitor.cookieValue(annotation(CookieValue.class), buildParameterValidationResult("error")));
 
