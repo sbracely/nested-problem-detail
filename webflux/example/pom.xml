@@ -72,6 +72,9 @@
     <profiles>
         <profile>
             <id>offline-openapi-docs</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -114,7 +117,7 @@
                             </execution>
                             <execution>
                                 <id>stop-openapi-docs-app</id>
-                                <phase>prepare-package</phase>
+                                <phase>test</phase>
                                 <goals>
                                     <goal>stop</goal>
                                 </goals>
