@@ -9,7 +9,12 @@ field-level validation error details for both Spring WebMVC and Spring WebFlux.
 
 ## Installation
 
-Choose the starter that matches your web stack.
+Choose the starter that matches your web stack and Spring Boot line.
+
+| Spring Boot line | Branch | Artifact prefix | Version line |
+|------|--------|-----------------|--------------|
+| `3.x` | `3.x` | `extended-problem-detail-boot3-*` | Use the latest `3.x` release |
+| `4.x` | `main` / `4.x` | `extended-problem-detail-boot4-*` | Use the latest `4.x` release |
 
 ### Spring Boot 3 WebMVC
 
@@ -18,7 +23,7 @@ Choose the starter that matches your web stack.
 <dependency>
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot3-webmvc-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -29,7 +34,7 @@ Choose the starter that matches your web stack.
 <dependency>
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot3-webflux-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
