@@ -64,8 +64,9 @@ requests against the live example endpoints.
 
 ### Offline OpenAPI Exports
 
-Each example module also provides an opt-in Maven profile that generates offline OpenAPI spec files
-without requiring you to start the application manually.
+Each example module also provides a Maven profile that generates offline OpenAPI spec files
+without requiring you to start the application manually. The profile is enabled by default, so
+running the example module test lifecycle also refreshes the exported files in `docs`.
 
 Generate WebMVC offline docs:
 
