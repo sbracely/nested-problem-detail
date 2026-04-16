@@ -19,7 +19,7 @@ import java.util.Set;
  * </p>
  * <ul>
  *     <li>{@code enabled} - Whether to enable the extended problem detail feature, defaults to {@code true}</li>
- *     <li>{@code logging.at-level} - Log level at which exceptions are recorded, defaults to {@code DEBUG}</li>
+ *     <li>{@code logging.at-level} - Log level at which exceptions are recorded, defaults to {@code INFO}</li>
  *     <li>{@code logging.print-stack-trace} - Whether to print exception stack trace in logs, defaults to {@code false}</li>
  * </ul>
  * <p>
@@ -37,7 +37,7 @@ import java.util.Set;
  * <pre>{@code
  * # application.properties
  * extended.problem-detail.enabled=true
- * extended.problem-detail.logging.at-level=DEBUG
+ * extended.problem-detail.logging.at-level=INFO
  * extended.problem-detail.logging.print-stack-trace=false
  * }</pre>
  *
@@ -133,6 +133,11 @@ public class ExtendedProblemDetailProperties {
     public static class CommonLogging {
 
         /**
+         * Default log level for extended problem detail logging.
+         */
+        public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
+
+        /**
          * The log level at which exceptions are recorded.
          * <p>
          * Specifies which level is used to emit the log entry when an exception is caught.
@@ -140,7 +145,7 @@ public class ExtendedProblemDetailProperties {
          * Set to {@link LogLevel#OFF} to disable logging.
          * </p>
          */
-        private LogLevel atLevel = LogLevel.INFO;
+        private LogLevel atLevel = DEFAULT_LOG_LEVEL;
 
         /**
          * Whether to print exception stack trace in logs.

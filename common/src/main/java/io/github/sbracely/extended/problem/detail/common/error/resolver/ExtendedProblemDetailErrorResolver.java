@@ -26,8 +26,8 @@ import java.util.List;
  * {@code FluxExtendedProblemDetailExceptionHandler}.
  * </p>
  * <p>
- * Implementing classes must expose their {@link Log} and {@link ExtendedProblemDetailLog}
- * via {@link #getLog()} and {@link #getExtendedProblemDetailLog()} so that the shared
+ * Implementing classes must expose their {@link Log} and optional {@link ExtendedProblemDetailLog}
+ * via {@link #getLogger()} and {@link #getExtendedProblemDetailLog()} so that the shared
  * {@code default} implementations can log consistently.
  * </p>
  * <p>
@@ -45,13 +45,14 @@ public interface ExtendedProblemDetailErrorResolver {
      *
      * @return the commons-logging {@link Log} instance
      */
-    Log getLog();
+    Log getLogger();
 
     /**
      * Returns the extended problem detail log helper used by the implementing handler.
      *
-     * @return the {@link ExtendedProblemDetailLog} instance
+     * @return the {@link ExtendedProblemDetailLog} instance, or {@code null} when logging is disabled
      */
+    @Nullable
     ExtendedProblemDetailLog getExtendedProblemDetailLog();
 
     /**
@@ -132,7 +133,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveCookieValue(HandlerMethodValidationException ex, CookieValue cookieValue,
                                     ParameterValidationResult result, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveCookieValue");
+        log("[exception#{}] resolveCookieValue",
+                Integer.toHexString(System.identityHashCode(ex)));
         addParameterErrors(result, Error.Type.COOKIE, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -150,7 +152,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveMatrixVariable(HandlerMethodValidationException ex, MatrixVariable matrixVariable,
                                        ParameterValidationResult result, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveMatrixVariable");
+        log("[exception#{}] resolveMatrixVariable",
+                Integer.toHexString(System.identityHashCode(ex)));
         addParameterErrors(result, Error.Type.PARAMETER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -168,7 +171,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveModelAttribute(HandlerMethodValidationException ex, @Nullable ModelAttribute modelAttribute,
                                        ParameterErrors errors, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveModelAttribute");
+        log("[exception#{}] resolveModelAttribute",
+                Integer.toHexString(System.identityHashCode(ex)));
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -188,7 +192,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolvePathVariable(HandlerMethodValidationException ex, PathVariable pathVariable,
                                      ParameterValidationResult result, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolvePathVariable");
+        log("[exception#{}] resolvePathVariable",
+                Integer.toHexString(System.identityHashCode(ex)));
         addParameterErrors(result, Error.Type.PARAMETER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -206,7 +211,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestBody(HandlerMethodValidationException ex, RequestBody requestBody,
                                     ParameterErrors errors, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveRequestBody");
+        log("[exception#{}] resolveRequestBody",
+                Integer.toHexString(System.identityHashCode(ex)));
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -226,7 +232,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestBodyValidationResult(HandlerMethodValidationException ex, RequestBody requestBody,
                                                     ParameterValidationResult result, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveRequestBodyValidationResult");
+        log("[exception#{}] resolveRequestBodyValidationResult",
+                Integer.toHexString(System.identityHashCode(ex)));
         addParameterErrors(result, Error.Type.PARAMETER, null, errorList);
     }
 
@@ -244,7 +251,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestHeader(HandlerMethodValidationException ex, RequestHeader requestHeader,
                                       ParameterValidationResult result, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveRequestHeader");
+        log("[exception#{}] resolveRequestHeader",
+                Integer.toHexString(System.identityHashCode(ex)));
         addParameterErrors(result, Error.Type.HEADER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -262,7 +270,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestParam(HandlerMethodValidationException ex, @Nullable RequestParam requestParam,
                                      ParameterValidationResult result, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveRequestParam");
+        log("[exception#{}] resolveRequestParam",
+                Integer.toHexString(System.identityHashCode(ex)));
         addParameterErrors(result, Error.Type.PARAMETER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -280,7 +289,8 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestPart(HandlerMethodValidationException ex, RequestPart requestPart,
                                     ParameterErrors errors, List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveRequestPart");
+        log("[exception#{}] resolveRequestPart",
+                Integer.toHexString(System.identityHashCode(ex)));
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -299,8 +309,10 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveOther(HandlerMethodValidationException ex, ParameterValidationResult result,
                               List<Error> errorList) {
-        getExtendedProblemDetailLog().log(getLog(), ex, false, true, "resolveOther");
+        log("[exception#{}] resolveOther",
+                Integer.toHexString(System.identityHashCode(ex)));
     }
+
 
     /**
      * Resolves errors from {@link MethodValidationException}.
@@ -374,5 +386,30 @@ public interface ExtendedProblemDetailErrorResolver {
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .map(defaultMessage -> new Error(errorType, parameterName, defaultMessage))
                 .forEach(errorList::add);
+    }
+
+    /**
+     * Logs a correlated message without an exception.
+     *
+     * @param message the message with optional placeholders
+     * @param args    the arguments to replace placeholders
+     */
+    default void log(String message, @Nullable Object... args) {
+        if (getExtendedProblemDetailLog() != null) {
+            getExtendedProblemDetailLog().log(getLogger(), message, args);
+        }
+    }
+
+    /**
+     * Logs a message with an optional exception.
+     *
+     * @param throwable the exception to log, or {@code null} for message-only logging
+     * @param message   the message with optional placeholders
+     * @param args      the arguments to replace placeholders
+     */
+    default void log(@Nullable Throwable throwable, String message, @Nullable Object... args) {
+        if (getExtendedProblemDetailLog() != null) {
+            getExtendedProblemDetailLog().log(getLogger(), throwable, message, args);
+        }
     }
 }

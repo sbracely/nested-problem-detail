@@ -72,66 +72,66 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
     /**
      * Log configuration for Extended Problem Detail exception handling.
      */
-    protected final ExtendedProblemDetailLog extendedProblemDetailLog;
+    protected final @Nullable ExtendedProblemDetailLog extendedProblemDetailLog;
 
     /**
      * Constructs a new handler with the specified dependencies.
      *
-     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance
+     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance, or {@code null} when logging is disabled
      */
-    public MvcExtendedProblemDetailExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
+    public MvcExtendedProblemDetailExceptionHandler(@Nullable ExtendedProblemDetailLog extendedProblemDetailLog) {
         this.extendedProblemDetailLog = extendedProblemDetailLog;
     }
 
     @Override
-    public Log getLog() {
+    public Log getLogger() {
         return logger;
     }
 
     @Override
-    public ExtendedProblemDetailLog getExtendedProblemDetailLog() {
+    public @Nullable ExtendedProblemDetailLog getExtendedProblemDetailLog() {
         return extendedProblemDetailLog;
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleHttpRequestMethodNotSupported");
+        log(ex, "handleHttpRequestMethodNotSupported");
         return super.handleHttpRequestMethodNotSupported(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleHttpMediaTypeNotSupported");
+        log(ex, "handleHttpMediaTypeNotSupported");
         return super.handleHttpMediaTypeNotSupported(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleHttpMediaTypeNotAcceptable");
+        log(ex, "handleHttpMediaTypeNotAcceptable");
         return super.handleHttpMediaTypeNotAcceptable(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleMissingPathVariable");
+        log(ex, "handleMissingPathVariable");
         return super.handleMissingPathVariable(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleMissingServletRequestParameter");
+        log(ex, "handleMissingServletRequestParameter");
         return super.handleMissingServletRequestParameter(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleMissingServletRequestPart");
+        log(ex, "handleMissingServletRequestPart");
         return super.handleMissingServletRequestPart(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleServletRequestBindingException");
+        log(ex, "handleServletRequestBindingException");
         return super.handleServletRequestBindingException(ex, headers, status, request);
     }
 
@@ -150,7 +150,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      */
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleMethodArgumentNotValid");
+        log(ex, "handleMethodArgumentNotValid");
         List<Error> errors = resolveMethodArgumentNotValidException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
@@ -185,7 +185,8 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      */
     @Override
     public @Nullable ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleHandlerMethodValidationException [exception#{}]", Integer.toHexString(System.identityHashCode(ex)));
+        log(ex, "[exception#{}] handleHandlerMethodValidationException",
+                Integer.toHexString(System.identityHashCode(ex)));
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
@@ -193,19 +194,19 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
 
     @Override
     protected @Nullable ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleNoHandlerFoundException");
+        log(ex, "handleNoHandlerFoundException");
         return super.handleNoHandlerFoundException(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleNoResourceFoundException");
+        log(ex, "handleNoResourceFoundException");
         return super.handleNoResourceFoundException(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleAsyncRequestTimeoutException(AsyncRequestTimeoutException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleAsyncRequestTimeoutException");
+        log(ex, "handleAsyncRequestTimeoutException");
         return super.handleAsyncRequestTimeoutException(ex, headers, status, request);
     }
 
@@ -225,7 +226,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
     @Override
     protected @Nullable ResponseEntity<Object> handleErrorResponseException(
             ErrorResponseException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleErrorResponseException");
+        log(ex, "handleErrorResponseException");
         if (ex instanceof WebExchangeBindException exchangeBindException) {
             List<Error> errors = resolveWebExchangeBindException(exchangeBindException);
             exchangeBindException.updateAndGetBody(getMessageSource(), request.getLocale());
@@ -247,31 +248,31 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleMaxUploadSizeExceededException");
+        log(ex, "handleMaxUploadSizeExceededException");
         return super.handleMaxUploadSizeExceededException(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleConversionNotSupported(ConversionNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleConversionNotSupported");
+        log(ex, "handleConversionNotSupported");
         return super.handleConversionNotSupported(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleTypeMismatch");
+        log(ex, "handleTypeMismatch");
         return super.handleTypeMismatch(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleHttpMessageNotReadable");
+        log(ex, "handleHttpMessageNotReadable");
         return super.handleHttpMessageNotReadable(ex, headers, status, request);
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleHttpMessageNotWritable");
+        log(ex, "handleHttpMessageNotWritable");
         return super.handleHttpMessageNotWritable(ex, headers, status, request);
     }
 
@@ -293,7 +294,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
                                                                                HttpHeaders headers,
                                                                                HttpStatus status,
                                                                                WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleMethodValidationException");
+        log(ex, "handleMethodValidationException");
         List<Error> errors = resolveMethodValidationException(ex);
         ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, request);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(body, errors);
@@ -313,7 +314,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
     @Override
     protected @Nullable ResponseEntity<Object> handleAsyncRequestNotUsableException(
             AsyncRequestNotUsableException ex, WebRequest request) {
-        extendedProblemDetailLog.log(logger, ex, "handleAsyncRequestNotUsableException");
+        log(ex, "handleAsyncRequestNotUsableException");
         return null;
     }
 }

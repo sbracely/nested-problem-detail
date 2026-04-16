@@ -62,6 +62,21 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
         exchange = mockServerWebExchange();
     }
 
+    @Test
+    void shouldHandleHandlerMethodValidationExceptionWithoutLogConfiguration() {
+        FluxExtendedProblemDetailExceptionHandler handlerWithoutLog =
+                new FluxExtendedProblemDetailExceptionHandler(null);
+        HandlerMethodValidationException ex = buildExceptionVisitingRequestParam("name", "must not be blank");
+
+        StepVerifier.create(handlerWithoutLog.handleHandlerMethodValidationException(
+                        ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange))
+                .assertNext(response -> {
+                    assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
+                    assertThat(((ExtendedProblemDetail) response.getBody()).getErrors()).hasSize(1);
+                })
+                .verifyComplete();
+    }
+
     // =====================================================================
     // handleWebExchangeBindException
     // =====================================================================
@@ -799,6 +814,18 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
         }
 
         @Test
+        void shouldLogHandlerMethodValidationExceptionWithSingleStackTraceWhenPrintStackTraceEnabled() {
+            FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, true);
+            HandlerMethodValidationException ex = buildExceptionVisitingRequestParam("param", "must not be null");
+
+            h.handleHandlerMethodValidationException(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange)
+                    .block();
+
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] handleHandlerMethodValidationException"), eq(ex));
+            verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveRequestParam"), isNull());
+        }
+
+        @Test
         void shouldNotLogWhenLevelIsOff() {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.OFF, false);
             BindingResult bindingResult = new BeanPropertyBindingResult(new FluxTestBean(), "testBean");
@@ -853,13 +880,11 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
         @Test
         void shouldLogCorrelatedMessageWithoutStackTraceEvenIfPrintStackTraceEnabled() {
             FluxExtendedProblemDetailExceptionHandlerWithMockLogger h = handlerWithMockLogger(LogLevel.DEBUG, true);
-            // logCorrelated always logs a single-arg message (no Throwable), regardless of printStackTrace setting.
             HandlerMethodValidationException ex = buildExceptionVisiting(visitor ->
                     visitor.cookieValue(annotation(CookieValue.class), buildParameterValidationResult("error")));
 
             h.resolveHandlerMethodValidationException(ex);
 
-            // logCorrelated uses single-arg debug(String) — no Throwable, even with printStackTrace=true
             verify(mockLogger).debug(matches("\\[exception#[0-9a-f]+] resolveCookieValue"), isNull());
         }
     }
