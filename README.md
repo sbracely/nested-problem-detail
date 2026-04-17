@@ -165,6 +165,10 @@ extended.problem-detail.logging.at-level=INFO
 extended.problem-detail.logging.print-stack-trace=false
 ```
 
+If `extended.problem-detail.enabled` is omitted, the starter logs a one-time `INFO` message at startup
+to make the default explicit and show how to disable it. Set the property explicitly to `true` or
+`false` to suppress that reminder.
+
 Field visibility rules apply to the serialized `application/problem+json` top-level fields, including
 `type`, `title`, `status`, `detail`, `instance`, `errors`, and any custom properties added through
 `ProblemDetail#setProperty(...)`. Nested `Error` fields can also be hidden with dot paths such as

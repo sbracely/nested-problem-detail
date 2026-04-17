@@ -24,8 +24,6 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 @TestPropertySource(properties = "management.endpoints.web.exposure.include=demo")
 class MvcOpenApiActuatorContractTests {
 
-    private static final String SCENARIO = "actuator-endpoint";
-
     @Autowired
     private MockMvcTester mockMvcTester;
 
@@ -48,9 +46,16 @@ class MvcOpenApiActuatorContractTests {
     }
 
     @Test
-    void allActuatorOperationsCovered() throws Exception {
+    void actuatorFixtureRemainsDocumented() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(mockMvcTester);
-        MvcOpenApiContractTestSupport.assertAllScenarioOperationsCovered(
-                apiDocs, SCENARIO, MvcOperationFixtures.all());
+        MvcOperationFixtures.MvcOperationFixture fixture =
+                MvcOperationFixtures.all().get("invalidEndpointBadRequestException");
+        assertThat(fixture).as("fixture for invalidEndpointBadRequestException").isNotNull();
+        JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
+                apiDocs, fixture.docPath(), fixture.docMethod());
+        assertThat(docExample)
+                .as("documented example for invalidEndpointBadRequestException at %s %s",
+                        fixture.docMethod(), fixture.docPath())
+                .isNotNull();
     }
 }

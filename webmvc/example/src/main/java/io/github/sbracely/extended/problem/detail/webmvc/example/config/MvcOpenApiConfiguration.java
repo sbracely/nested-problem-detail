@@ -1,18 +1,13 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.config;
 
+import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.ObjectSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.*;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.servers.Server;
@@ -20,9 +15,8 @@ import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.LinkedHashMap;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 /**
  * OpenAPI configuration for the Spring WebMVC Extended Problem Detail example application.
@@ -41,9 +35,7 @@ import java.util.Map;
 @Configuration
 public class MvcOpenApiConfiguration {
 
-    private static final String PROBLEM_JSON = "application/problem+json";
-    private static final String ERROR_SCHEMA_REF = "#/components/schemas/Error";
-    private static final String EXTENDED_PROBLEM_DETAIL_SCHEMA_REF = "#/components/schemas/ExtendedProblemDetail";
+    private static final String SUPPLEMENTAL_OPERATIONS_TAG = "Supplemental Operations";
 
     /**
      * Creates and registers the {@link OpenAPI} bean that describes the WebMVC example API.
@@ -56,12 +48,10 @@ public class MvcOpenApiConfiguration {
      *     <li><b>Servers</b> – a single relative server entry with URL {@code "/"} so that the
      *         Swagger UI "Try it out" feature works regardless of the host the application is
      *         deployed on.</li>
-     *     <li><b>Components / Schemas</b> – two reusable schema definitions:
+     *     <li><b>Components / Schemas</b> – one reusable schema definition:
      *         <ul>
-     *             <li>{@code Error} – represents a single validation or business error entry
-     *                 (type, target, message) that appears inside the {@code errors} array.</li>
      *             <li>{@code ExtendedProblemDetail} – the RFC 9457 problem-detail object augmented
-     *                 with the {@code errors} array that references the {@code Error} schema.</li>
+     *                 with the {@code errors} array whose item schema is defined inline.</li>
      *         </ul>
      *     </li>
      *     <li><b>Components / Examples</b> – seven named examples that illustrate the
@@ -73,7 +63,7 @@ public class MvcOpenApiConfiguration {
      * </ul>
      *
      * @return an {@link OpenAPI} instance pre-populated with the example API metadata and reusable
-     *         component definitions
+     * component definitions
      */
     @Bean
     OpenAPI webMvcExampleOpenApi() {
@@ -82,139 +72,36 @@ public class MvcOpenApiConfiguration {
                         .title("Extended Problem Detail Boot 4 WebMVC Example API")
                         .description("Example Spring Boot 4 WebMVC endpoints that demonstrate Extended Problem Detail responses.")
                         .version("1.1.0"))
+                .addTagsItem(new io.swagger.v3.oas.models.tags.Tag()
+                        .name(SUPPLEMENTAL_OPERATIONS_TAG)
+                        .description("Documented operations added outside MvcProblemDetailController, including framework fallback and other supplemental endpoints."))
                 .servers(List.of(new Server()
                         .url("/")
                         .description("Relative server URL")))
                 .components(new Components()
-                        .addSchemas("Error", errorSchema())
-                        .addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema())
-                        .addExamples("ValidationProblemDetailExample", validationProblemDetailExample())
-                        .addExamples("GenericBadRequestProblemDetailExample", genericBadRequestProblemDetailExample())
-                        .addExamples("MethodNotAllowedProblemDetailExample", methodNotAllowedProblemDetailExample())
-                        .addExamples("NotAcceptableProblemDetailExample", notAcceptableProblemDetailExample())
-                        .addExamples("UnsupportedMediaTypeProblemDetailExample", unsupportedMediaTypeProblemDetailExample())
-                        .addExamples("ServerProblemDetailExample", serverProblemDetailExample())
-                        .addExamples("BusinessProblemDetailExample", businessProblemDetailExample()));
-    }
-
-    /**
-     * Creates and registers an {@link OpenApiCustomizer} bean that tailors the operation responses
-     * generated by SpringDoc for every path in the example API.
-     * <p>
-     * For each operation the customizer:
-     * </p>
-     * <ol>
-     *     <li>Ensures the {@code Error} and {@code ExtendedProblemDetail} schemas are present in the
-     *         {@link io.swagger.v3.oas.models.Components} section of the document.</li>
-     *     <li>Removes the generic success responses ({@code 200}, {@code 201}, {@code 202},
-     *         {@code 204}) and the catch-all {@code default} response that SpringDoc generates
-     *         automatically, because these example endpoints intentionally return only error
-     *         responses.</li>
-     *     <li>Looks up the operation-specific {@link ErrorResponseSpec} (HTTP status code, human-readable
-     *         description, and a pre-built {@code application/problem+json} example) via
-     *         {@link #responseSpec(String)}.</li>
-     *     <li>Adds the resolved error response to the operation's responses map.</li>
-     *     <li>Replaces the operation description with test-guidance text that names the exact trigger
-     *         and points to the corresponding test class in the source tree.</li>
-     * </ol>
-     *
-     * @return an {@link OpenApiCustomizer} that rewrites each operation's responses to reflect the
-     *         actual {@code application/problem+json} error contract
-     */
-    @Bean
-    OpenApiCustomizer webMvcErrorResponseCustomizer() {
-        return openApi -> {
-            ensureProblemSchemas(openApi);
-            if (openApi.getPaths() == null) {
-                return;
-            }
-            registerSyntheticOperations(openApi);
-            openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-                ApiResponses responses = operation.getResponses();
-                responses.remove("200");
-                responses.remove("201");
-                responses.remove("202");
-                responses.remove("204");
-                responses.remove("default");
-                if ("asyncRequestNotUsableException".equals(operation.getOperationId())) {
-                    responses.addApiResponse("200", eventStreamResponse(
-                            "200 server-sent events stream",
-                            "data:event 0\n\ndata:event 1\n\ndata:event 2\n"));
-                    operation.setDescription(asyncRequestNotUsableGuidance(testPath(operation.getOperationId())));
-                }
-                else {
-                    MvcErrorResponseSpec errorResponseSpec = responseSpec(operation.getOperationId());
-                    responses.addApiResponse(errorResponseSpec.statusCode(),
-                            response(errorResponseSpec.description(), errorResponseSpec.example()));
-                    operation.setDescription(testGuidance(errorResponseSpec.trigger(),
-                            testPath(operation.getOperationId())));
-                }
-                String scenario = scenario(operation.getOperationId());
-                operation.addExtension("x-scenario", scenario);
-                operation.addTagsItem("scenario:" + scenario);
-            }));
-        };
-    }
-
-    private static void registerSyntheticOperations(OpenAPI openApi) {
-        addSyntheticGetOperation(openApi,
-                "/mvc-extended-problem-detail/no-resource-found-exception",
-                "noResourceFoundException");
-        addSyntheticGetOperation(openApi,
-                "/mvc-extended-problem-detail/no-handler-found-exception",
-                "noHandlerFoundException");
-        addSyntheticGetOperation(openApi,
-                "/actuator/demo/{name}",
-                "invalidEndpointBadRequestException");
-        addSyntheticGetOperation(openApi,
-                "/not-acceptable-api-version",
-                "notAcceptableApiVersionException");
-    }
-
-    private static void addSyntheticGetOperation(OpenAPI openApi, String path, String operationId) {
-        PathItem pathItem = openApi.getPaths().get(path);
-        if (pathItem == null) {
-            pathItem = new PathItem();
-            openApi.getPaths().addPathItem(path, pathItem);
-        }
-        if (pathItem.getGet() == null) {
-            pathItem.setGet(new Operation()
-                    .operationId(operationId)
-                    .responses(new ApiResponses()));
-        }
-    }
-
-    private static void ensureProblemSchemas(OpenAPI openApi) {
-        Components components = openApi.getComponents();
-        if (components == null) {
-            components = new Components();
-            openApi.setComponents(components);
-        }
-        components.addSchemas("Error", errorSchema());
-        components.addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema());
-    }
-
-    private static Schema<?> errorSchema() {
-        return new ObjectSchema()
-                .description("Detailed error entry inside the Extended Problem Detail response.")
-                .addProperty("type", errorTypeSchema())
-                .addProperty("target", new StringSchema()
-                        .description("Field, parameter, cookie, header, or business target associated with the error."))
-                .addProperty("message", new StringSchema()
-                        .description("Human-readable explanation of the error."));
-    }
-
-    private static StringSchema errorTypeSchema() {
-        StringSchema schema = new StringSchema();
-        schema.description("Source of the error.");
-        schema.addEnumItemObject("PARAMETER");
-        schema.addEnumItemObject("COOKIE");
-        schema.addEnumItemObject("HEADER");
-        schema.addEnumItemObject("BUSINESS");
-        return schema;
+                        .addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema()));
     }
 
     private static Schema<?> extendedProblemDetailSchema() {
+        StringSchema errorType = new StringSchema();
+        errorType.description("Source of the error.");
+        errorType.addEnumItemObject("PARAMETER");
+        errorType.addEnumItemObject("COOKIE");
+        errorType.addEnumItemObject("HEADER");
+        errorType.addEnumItemObject("BUSINESS");
+
+        ObjectSchema errorItemSchema = new ObjectSchema();
+        errorItemSchema.description("Detailed error entry inside the Extended Problem Detail response.");
+        errorItemSchema.addProperty("type", errorType);
+        errorItemSchema.addProperty("target", new StringSchema()
+                .description("Field, parameter, cookie, header, or business target associated with the error."));
+        errorItemSchema.addProperty("message", new StringSchema()
+                .description("Human-readable explanation of the error."));
+
+        ArraySchema errorsSchema = new ArraySchema();
+        errorsSchema.description("Detailed validation or business errors.");
+        errorsSchema.items(errorItemSchema);
+
         return new ObjectSchema()
                 .description("RFC 9457 problem detail extended with an errors array.")
                 .addProperty("type", new StringSchema()
@@ -229,467 +116,145 @@ public class MvcOpenApiConfiguration {
                 .addProperty("instance", new StringSchema()
                         .format("uri")
                         .description("URI identifying the specific occurrence."))
-                .addProperty("errors", errorListSchema());
+                .addProperty("errors", errorsSchema);
     }
 
-    private static ArraySchema errorListSchema() {
-        ArraySchema schema = new ArraySchema();
-        schema.description("Detailed validation or business errors.");
-        Schema<Object> itemSchema = new Schema<>();
-        itemSchema.$ref(ERROR_SCHEMA_REF);
-        schema.items(itemSchema);
-        return schema;
+    /**
+     * Creates and registers an {@link OpenApiCustomizer} bean that tailors the operation responses
+     * generated by SpringDoc for every path in the example API.
+     * <p>
+     * For each operation the customizer:
+     * </p>
+     * <ol>
+     *     <li>Ensures the {@code ExtendedProblemDetail} schema is present in the
+     *         {@link io.swagger.v3.oas.models.Components} section of the document.</li>
+     *     <li>Registers the small set of synthetic operations that do not have controller methods,
+     *         together with their fallback responses.</li>
+     *     <li>Adds scenario metadata used by the contract tests.</li>
+     * </ol>
+     *
+     * @return an {@link OpenApiCustomizer} that rewrites each operation's responses to reflect the
+     * actual {@code application/problem+json} error contract
+     */
+    @Bean
+    OpenApiCustomizer webMvcErrorResponseCustomizer() {
+        return MvcOpenApiConfiguration::registerSupplementalOperations;
     }
 
-    private static ApiResponse response(String description, Example example) {
-        return new ApiResponse()
-                .description(description + ". See the MVC example tests for concrete triggering inputs.")
-                .content(problemDetailContent(example));
+    private static void registerSupplementalOperations(OpenAPI openApi) {
+        registerNoResourceFoundOperation(openApi);
+        registerNoHandlerFoundOperation(openApi);
+        registerInvalidEndpointBadRequestOperation(openApi);
+        registerNotAcceptableApiVersionOperation(openApi);
     }
 
-    private static ApiResponse eventStreamResponse(String description, String example) {
-        return new ApiResponse()
-                .description(description + ". Normal client-visible behavior is an SSE stream; "
-                        + "AsyncRequestNotUsableException is only triggered after the client disconnects while the "
-                        + "server is still writing.")
-                .content(new Content().addMediaType("text/event-stream", new MediaType()
-                        .schema(new StringSchema())
-                        .example(example)));
+    private static void registerNoResourceFoundOperation(OpenAPI openApi) {
+        ExtendedProblemDetail noResourceFoundExample = new ExtendedProblemDetail();
+        noResourceFoundExample.setTitle("Not Found");
+        noResourceFoundExample.setStatus(404);
+        noResourceFoundExample.setDetail("No static resource mvc-extended-problem-detail/no-resource-found-exception.");
+        noResourceFoundExample.setInstance(URI.create("/mvc-extended-problem-detail/no-resource-found-exception"));
+        addSupplementalGetOperation(openApi,
+                "/mvc-extended-problem-detail/no-resource-found-exception",
+                "noResourceFoundException",
+                "404",
+                "404 no resource found error",
+                "Matches the documented example with the default static-resource handling "
+                        + "configuration (`spring.web.resources.add-mappings=true`, which is also the "
+                        + "Spring Boot default). If static resource mappings are disabled, the same "
+                        + "request is handled as `NoHandlerFoundException` instead.",
+                new Example().summary("No resource found").value(noResourceFoundExample));
     }
 
-    private static Content problemDetailContent(Example example) {
-        return new Content().addMediaType(PROBLEM_JSON, new MediaType()
-                .schema(new Schema<>().$ref(EXTENDED_PROBLEM_DETAIL_SCHEMA_REF))
-                .addExamples("example", example));
+    private static void registerNoHandlerFoundOperation(OpenAPI openApi) {
+        ExtendedProblemDetail noHandlerFoundExample = new ExtendedProblemDetail();
+        noHandlerFoundExample.setTitle("Not Found");
+        noHandlerFoundExample.setStatus(404);
+        noHandlerFoundExample.setDetail("No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.");
+        noHandlerFoundExample.setInstance(URI.create("/mvc-extended-problem-detail/no-handler-found-exception"));
+        addSupplementalGetOperation(openApi,
+                "/mvc-extended-problem-detail/no-handler-found-exception",
+                "noHandlerFoundException",
+                "404",
+                "404 no handler found error",
+                "Matches the documented example when static resource mappings are disabled via "
+                        + "`spring.web.resources.add-mappings=false`. Otherwise Spring treats the "
+                        + "request as a static-resource lookup and returns the `NoResourceFoundException` "
+                        + "shape instead.",
+                new Example().summary("No handler found").value(noHandlerFoundExample));
     }
 
-    private static Example validationProblemDetailExample() {
-        return problemExample("Validation error", "Bad Request", 400, "Invalid request content.",
-                "/mvc-extended-problem-detail/method-argument-not-valid-exception",
-                List.of(
-                        error("PARAMETER", "name", "Name length must be between 6-10"),
-                        error("PARAMETER", "age", "Age cannot be null"),
-                        error("PARAMETER", "password", "Password and confirm password do not match"),
-                        error("PARAMETER", "confirmPassword", "Password and confirm password do not match")));
+    private static void registerInvalidEndpointBadRequestOperation(OpenAPI openApi) {
+        ExtendedProblemDetail invalidEndpointExample = new ExtendedProblemDetail();
+        invalidEndpointExample.setTitle("Bad Request");
+        invalidEndpointExample.setStatus(400);
+        invalidEndpointExample.setDetail("Missing parameters: param1,param2");
+        invalidEndpointExample.setInstance(URI.create("/actuator/demo/name"));
+        addSupplementalGetOperation(openApi,
+                "/actuator/demo/{name}",
+                "invalidEndpointBadRequestException",
+                "400",
+                "400 invalid actuator endpoint request error",
+                "Matches the documented example when the demo actuator endpoint is exposed with "
+                        + "`management.endpoints.web.exposure.include=demo`. Without that exposure, "
+                        + "`/actuator/demo/{name}` is not available.",
+                new Example().summary("Invalid actuator endpoint request").value(invalidEndpointExample));
     }
 
-    private static Example genericBadRequestProblemDetailExample() {
-        return problemExample("Bad request", "Bad Request", 400,
-                "Required parameter 'id' is not present.",
-                "/mvc-extended-problem-detail/missing-servlet-request-parameter-exception");
+    private static void registerNotAcceptableApiVersionOperation(OpenAPI openApi) {
+        ExtendedProblemDetail notAcceptableApiVersionExample = new ExtendedProblemDetail();
+        notAcceptableApiVersionExample.setTitle("Bad Request");
+        notAcceptableApiVersionExample.setStatus(400);
+        notAcceptableApiVersionExample.setDetail("Invalid API version: '2.0.0'.");
+        notAcceptableApiVersionExample.setInstance(URI.create("/not-acceptable-api-version"));
+        addSupplementalGetOperation(openApi,
+                "/not-acceptable-api-version",
+                "notAcceptableApiVersionException",
+                "400",
+                "400 not acceptable API version error",
+                "Matches the documented example when API version negotiation is enabled for the "
+                        + "`API-Version` header (for example, "
+                        + "`spring.mvc.apiversion.use.header=API-Version` and "
+                        + "`spring.mvc.apiversion.supported=1,2`). The example application registers "
+                        + "a versioned `GET /not-acceptable-api-version` handler only in that setup.",
+                new Example().summary("Not acceptable API version").value(notAcceptableApiVersionExample));
     }
 
-    private static Example methodNotAllowedProblemDetailExample() {
-        return problemExample("Method not allowed", "Method Not Allowed", 405,
-                "Method 'POST' is not supported.",
-                "/mvc-extended-problem-detail/http-request-method-not-supported-exception");
-    }
-
-    private static Example notAcceptableProblemDetailExample() {
-        return problemExample("Not acceptable", "Not Acceptable", 406,
-                "Acceptable representations: [application/json].",
-                "/mvc-extended-problem-detail/http-media-type-not-acceptable-exception");
-    }
-
-    private static Example unsupportedMediaTypeProblemDetailExample() {
-        return problemExample("Unsupported media type", "Unsupported Media Type", 415,
-                "Content-Type 'null' is not supported.",
-                "/mvc-extended-problem-detail/http-media-type-not-supported-exception");
-    }
-
-    private static Example serverProblemDetailExample() {
-        return problemExample("Server error", "Internal Server Error", 500,
-                "server error",
-                "/mvc-extended-problem-detail/server-error-exception");
-    }
-
-    private static Example businessProblemDetailExample() {
-        return problemExample("Business error", "Internal Server Error", 500, "Payment failed",
-                "/mvc-extended-problem-detail/extended-error-response-exception",
-                List.of(
-                        error("BUSINESS", null, "Insufficient balance"),
-                        error("BUSINESS", null, "Payment frequent")));
-    }
-
-    private static MvcErrorResponseSpec responseSpec(String operationId) {
-        return switch (operationId) {
-            case "methodNotAllowedException" ->
-                    new MvcErrorResponseSpec("405", "405 method not allowed error",
-                            problemExample("Method not allowed", "Method Not Allowed", 405,
-                                    "Supported methods: [GET, POST]",
-                                    "/mvc-extended-problem-detail/method-not-allowed-exception"),
-                            "DELETE /mvc-extended-problem-detail/method-not-allowed-exception");
-            case "httpRequestMethodNotSupportedException" ->
-                    new MvcErrorResponseSpec("405", "405 method not allowed error", methodNotAllowedProblemDetailExample(),
-                            "POST /mvc-extended-problem-detail/http-request-method-not-supported-exception");
-            case "httpMediaTypeNotAcceptableException" ->
-                    new MvcErrorResponseSpec("406", "406 not acceptable error",
-                            notAcceptableProblemDetailExample(),
-                            "PUT /mvc-extended-problem-detail/http-media-type-not-acceptable-exception with Accept: application/xml");
-            case "notAcceptableStatusException" ->
-                    new MvcErrorResponseSpec("406", "406 not acceptable error",
-                            problemExample("Not acceptable", "Not Acceptable", 406,
-                                    "Acceptable representations: [application/json].",
-                                    "/mvc-extended-problem-detail/not-acceptable-status-exception"),
-                            "GET /mvc-extended-problem-detail/not-acceptable-status-exception");
-            case "httpMediaTypeNotSupportedException" ->
-                    new MvcErrorResponseSpec("415", "415 unsupported media type error",
-                            unsupportedMediaTypeProblemDetailExample(),
-                            "PUT /mvc-extended-problem-detail/http-media-type-not-supported-exception");
-            case "unsupportedMediaTypeStatusException" ->
-                    new MvcErrorResponseSpec("415", "415 unsupported media type error",
-                            problemExample("Unsupported media type", "Unsupported Media Type", 415,
-                                    "Could not parse Content-Type.",
-                                    "/mvc-extended-problem-detail/unsupported-media-type-status-exception"),
-                            "POST /mvc-extended-problem-detail/unsupported-media-type-status-exception");
-            case "extendedErrorResponseException" ->
-                    new MvcErrorResponseSpec("500", "500 business error", businessProblemDetailExample(),
-                            "GET /mvc-extended-problem-detail/extended-error-response-exception");
-            case "errorResponseException" ->
-                    new MvcErrorResponseSpec("400", "400 error response exception",
-                            problemExample("Error response", "Bad Request", 400, null,
-                                    "/mvc-extended-problem-detail/error-response-exception"),
-                            "GET /mvc-extended-problem-detail/error-response-exception");
-            case "responseStatusException" ->
-                    new MvcErrorResponseSpec("400", "400 response status error",
-                            problemExample("Response status error", "Bad Request", 400, "exception",
-                                    "/mvc-extended-problem-detail/response-status-exception"),
-                            "GET /mvc-extended-problem-detail/response-status-exception");
-            case "serverWebInputException" ->
-                    new MvcErrorResponseSpec("400", "400 server web input error",
-                            problemExample("Server web input error", "Bad Request", 400, "server web input error",
-                                    "/mvc-extended-problem-detail/server-web-input-exception"),
-                            "GET /mvc-extended-problem-detail/server-web-input-exception");
-            case "noResourceFoundException" ->
-                    new MvcErrorResponseSpec("404", "404 no resource found error",
-                            problemExample("No resource found", "Not Found", 404,
-                                    "No static resource mvc-extended-problem-detail/no-resource-found-exception.",
-                                    "/mvc-extended-problem-detail/no-resource-found-exception"),
-                            "GET /mvc-extended-problem-detail/no-resource-found-exception");
-            case "noHandlerFoundException" ->
-                    new MvcErrorResponseSpec("404", "404 no handler found error",
-                            problemExample("No handler found", "Not Found", 404,
-                                    "No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.",
-                                    "/mvc-extended-problem-detail/no-handler-found-exception"),
-                            "GET /mvc-extended-problem-detail/no-handler-found-exception with spring.web.resources.add-mappings=false");
-            case "missingServletRequestPartException" ->
-                    new MvcErrorResponseSpec("400", "400 missing request part error",
-                            problemExample("Missing request part", "Bad Request", 400,
-                                    "Required part 'file' is not present.",
-                                    "/mvc-extended-problem-detail/missing-servlet-request-part-exception"),
-                            "PUT multipart/form-data /mvc-extended-problem-detail/missing-servlet-request-part-exception without file part");
-            case "servletRequestBindingException" ->
-                    new MvcErrorResponseSpec("400", "400 servlet request binding error",
-                            problemExample("Servlet request binding error", "Bad Request", 400, null,
-                                    "/mvc-extended-problem-detail/servlet-request-binding-exception"),
-                            "GET /mvc-extended-problem-detail/servlet-request-binding-exception");
-            case "unsatisfiedServletRequestParameterException" ->
-                    new MvcErrorResponseSpec("400", "400 invalid request parameters error",
-                            problemExample("Invalid request parameters", "Bad Request", 400,
-                                    "Invalid request parameters.",
-                                    "/mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception"),
-                            "GET /mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception?type=1");
-            case "unsatisfiedRequestParameterException" ->
-                    new MvcErrorResponseSpec("400", "400 invalid request parameters error",
-                            problemExample("Invalid request parameters", "Bad Request", 400,
-                                    "Invalid request parameters.",
-                                    "/mvc-extended-problem-detail/unsatisfied-request-parameter-exception"),
-                            "GET /mvc-extended-problem-detail/unsatisfied-request-parameter-exception?type=1");
-            case "missingRequestHeaderException" ->
-                    new MvcErrorResponseSpec("400", "400 missing request header error",
-                            problemExample("Missing request header", "Bad Request", 400,
-                                    "Required header 'header' is not present.",
-                                    "/mvc-extended-problem-detail/missing-request-header-exception"),
-                            "GET /mvc-extended-problem-detail/missing-request-header-exception without header");
-            case "missingRequestCookieException" ->
-                    new MvcErrorResponseSpec("400", "400 missing request cookie error",
-                            problemExample("Missing request cookie", "Bad Request", 400,
-                                    "Required cookie 'cookieValue' is not present.",
-                                    "/mvc-extended-problem-detail/missing-request-cookie-exception"),
-                            "GET /mvc-extended-problem-detail/missing-request-cookie-exception without cookieValue cookie");
-            case "missingMatrixVariableException" ->
-                    new MvcErrorResponseSpec("400", "400 missing matrix variable error",
-                            problemExample("Missing matrix variable", "Bad Request", 400,
-                                    "Required path parameter 'list' is not present.",
-                                    "/mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c"),
-                            "GET /mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c");
-            case "orgSpringWebBindMissingRequestValueException" ->
-                    new MvcErrorResponseSpec("400", "400 missing request value error",
-                            problemExample("Missing request value", "Bad Request", 400, null,
-                                    "/mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception"),
-                            "GET /mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception");
-            case "orgSpringframeworkWebServerMissingRequestValueException" ->
-                    new MvcErrorResponseSpec("400", "400 missing request param error",
-                            problemExample("Missing request param", "Bad Request", 400,
-                                    "Required request param 'id' is not present.",
-                                    "/mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception"),
-                            "GET /mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception");
-            case "missingServletRequestParameterException" ->
-                    new MvcErrorResponseSpec("400", "400 missing request parameter error",
-                            genericBadRequestProblemDetailExample(),
-                            "GET /mvc-extended-problem-detail/missing-servlet-request-parameter-exception");
-            case "invalidEndpointBadRequestException" ->
-                    new MvcErrorResponseSpec("400", "400 invalid actuator endpoint request error",
-                            problemExample("Invalid actuator endpoint request", "Bad Request", 400, null,
-                                    "/actuator/demo/name"),
-                            "GET /actuator/demo/name with management.endpoints.web.exposure.include=demo");
-            case "payloadTooLargeException" ->
-                    new MvcErrorResponseSpec("413", "413 payload too large error",
-                            problemExample("Payload too large", "Content Too Large", 413, "payload too large",
-                                    "/mvc-extended-problem-detail/payload-too-large-exception"),
-                            "POST multipart/form-data /mvc-extended-problem-detail/payload-too-large-exception with file");
-            case "contentTooLargeException" ->
-                    new MvcErrorResponseSpec("413", "413 content too large error",
-                            problemExample("Content too large", "Content Too Large", 413, null,
-                                    "/mvc-extended-problem-detail/content-too-large-exception"),
-                            "POST multipart/form-data /mvc-extended-problem-detail/content-too-large-exception with file");
-            case "maxUploadSizeExceededException" ->
-                    new MvcErrorResponseSpec("413", "413 max upload size exceeded error",
-                            problemExample("Maximum upload size exceeded", "Content Too Large", 413,
-                                    "Maximum upload size exceeded",
-                                    "/mvc-extended-problem-detail/max-upload-size-exceeded-exception"),
-                            "POST multipart/form-data /mvc-extended-problem-detail/max-upload-size-exceeded-exception with a file larger than 1 byte");
-            case "asyncRequestTimeoutException" ->
-                    new MvcErrorResponseSpec("503", "503 async timeout error",
-                            problemExample("Async timeout", "Service Unavailable", 503, null,
-                                    "/mvc-extended-problem-detail/async-request-timeout-exception"),
-                            "GET /mvc-extended-problem-detail/async-request-timeout-exception and let async processing time out");
-            case "httpMessageNotWritableException" ->
-                    new MvcErrorResponseSpec("500", "500 message not writable error",
-                            problemExample("Message not writable", "Internal Server Error", 500,
-                                    "Failed to write request",
-                                    "/mvc-extended-problem-detail/http-message-not-writable-exception"),
-                            "GET /mvc-extended-problem-detail/http-message-not-writable-exception");
-            case "asyncRequestNotUsableException" ->
-                    new MvcErrorResponseSpec("500", "500 async request unusable error",
-                            problemExample("Async request unusable", "Internal Server Error", 500, null,
-                                    "/mvc-extended-problem-detail/async-request-not-usable-exception"),
-                            "GET /mvc-extended-problem-detail/async-request-not-usable-exception");
-            case "missingPathVariableException" ->
-                    new MvcErrorResponseSpec("500", "500 missing path variable error",
-                            problemExample("Missing path variable", "Internal Server Error", 500,
-                                    "Required path variable 'id' is not present.",
-                                    "/mvc-extended-problem-detail/missing-path-variable-exception"),
-                            "DELETE /mvc-extended-problem-detail/missing-path-variable-exception");
-            case "serverErrorException" ->
-                    new MvcErrorResponseSpec("500", "500 server error", serverProblemDetailExample(),
-                            "GET /mvc-extended-problem-detail/server-error-exception");
-            case "conversionNotSupportedException" ->
-                    new MvcErrorResponseSpec("500", "500 conversion not supported error",
-                            problemExample("Conversion not supported", "Internal Server Error", 500,
-                                    "Failed to convert 'null' with value: 'test-value'",
-                                    "/mvc-extended-problem-detail/conversion-not-supported-exception"),
-                            "GET /mvc-extended-problem-detail/conversion-not-supported-exception?data=test-value");
-            case "methodArgumentConversionNotSupportedException" ->
-                    new MvcErrorResponseSpec("500", "500 method argument conversion not supported error",
-                            problemExample("Method argument conversion not supported", "Internal Server Error", 500,
-                                    "Failed to convert 'error' with value: 'test-value'",
-                                    "/mvc-extended-problem-detail/method-argument-conversion-not-supported-exception"),
-                            "GET /mvc-extended-problem-detail/method-argument-conversion-not-supported-exception?error=test-value");
-            case "typeMismatchException" ->
-                    new MvcErrorResponseSpec("400", "400 type mismatch error",
-                            problemExample("Type mismatch", "Bad Request", 400,
-                                    "Failed to convert 'null' with value: 'test'",
-                                    "/mvc-extended-problem-detail/type-mismatch-exception"),
-                            "GET /mvc-extended-problem-detail/type-mismatch-exception");
-            case "methodArgumentTypeMismatchException" ->
-                    new MvcErrorResponseSpec("400", "400 method argument type mismatch error",
-                            problemExample("Method argument type mismatch", "Bad Request", 400,
-                                    "Failed to convert 'integer' with value: 'a'",
-                                    "/mvc-extended-problem-detail/method-argument-type-mismatch-exception"),
-                            "GET /mvc-extended-problem-detail/method-argument-type-mismatch-exception?integer=a");
-            case "httpMessageNotReadableException" ->
-                    new MvcErrorResponseSpec("400", "400 message not readable error",
-                            problemExample("Message not readable", "Bad Request", 400,
-                                    "Failed to read request",
-                                    "/mvc-extended-problem-detail/http-message-not-readable-exception"),
-                            "POST /mvc-extended-problem-detail/http-message-not-readable-exception with malformed application/json body");
-            case "invalidApiVersionException" ->
-                    new MvcErrorResponseSpec("400", "400 invalid API version error",
-                            problemExample("Invalid API version", "Bad Request", 400,
-                                    "Invalid API version: '3.0.0'.",
-                                    "/mvc-extended-problem-detail/invalid-api-version-exception"),
-                            "GET /mvc-extended-problem-detail/invalid-api-version-exception with header API-Version: 3");
-            case "missingApiVersionException" ->
-                    new MvcErrorResponseSpec("400", "400 missing API version error",
-                            problemExample("Missing API version", "Bad Request", 400,
-                                    "API version is required.",
-                                    "/mvc-extended-problem-detail/missing-api-version-exception"),
-                            "GET /mvc-extended-problem-detail/missing-api-version-exception without API-Version header");
-            case "notAcceptableApiVersionException" ->
-                    new MvcErrorResponseSpec("400", "400 not acceptable API version error",
-                            problemExample("Not acceptable API version", "Bad Request", 400,
-                                    "Invalid API version: '2.0.0'.",
-                                    "/not-acceptable-api-version"),
-                            "GET /not-acceptable-api-version with API-Version: 2 and a version=1 handler");
-            case "methodArgumentNotValidException", "handlerMethodValidationExceptionCookieValue",
-                   "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
-                   "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
-                   "handlerMethodValidationExceptionRequestBodyValidationResult", "handlerMethodValidationExceptionRequestHeader",
-                   "handlerMethodValidationExceptionRequestParam", "handlerMethodValidationExceptionRequestPart",
-                  "handlerMethodValidationExceptionOther", "webExchangeBindException", "methodValidationException" ->
-                    validationResponseSpec(operationId);
-            default -> new MvcErrorResponseSpec("400", "400 bad request error", genericBadRequestProblemDetailExample(),
-                    "See the referenced MVC test for the exact trigger");
-        };
-    }
-
-    private static MvcErrorResponseSpec validationResponseSpec(String operationId) {
-        return switch (operationId) {
-            case "methodArgumentNotValidException" ->
-                    new MvcErrorResponseSpec("400", "400 validation error", validationProblemDetailExample(),
-                            "POST /mvc-extended-problem-detail/method-argument-not-valid-exception with application/json body {\"name\":\"abc\",\"password\":\"123\"}");
-            case "webExchangeBindException" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            problemExample("Validation error", "Bad Request", 400, "Invalid request content.",
-                                    "/mvc-extended-problem-detail/web-exchange-bind-exception",
-                                    List.of(
-                                            error("PARAMETER", "name", "Name length must be between 6-10"),
-                                            error("PARAMETER", "age", "Age cannot be null"),
-                                            error("PARAMETER", "password", "Password and confirm password do not match"),
-                                            error("PARAMETER", "confirmPassword", "Password and confirm password do not match"))),
-                            "POST /mvc-extended-problem-detail/web-exchange-bind-exception with application/json body {\"name\":\"abc\",\"password\":\"123\"}");
-            case "handlerMethodValidationExceptionCookieValue" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-cookie-value",
-                                    List.of(error("COOKIE", "name", "Name length must be at least 2"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-cookie-value with cookie name=a");
-            case "handlerMethodValidationExceptionMatrixVariable" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c",
-                                    List.of(error("PARAMETER", "list", "Maximum size is 2"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c");
-            case "handlerMethodValidationExceptionModelAttribute" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-model-attribute",
-                                    List.of(error("PARAMETER", "password", "Password cannot be empty"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-model-attribute");
-            case "handlerMethodValidationExceptionPathVariable" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a",
-                                    List.of(error("PARAMETER", "id", "ID minimum length is 2"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a");
-            case "handlerMethodValidationExceptionRequestBody" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-request-body",
-                                    List.of(error("PARAMETER", "password", "Password cannot be empty"))),
-                            "POST /mvc-extended-problem-detail/handler-method-validation-exception-request-body with application/json body {\"name\":\"abc\"}");
-            case "handlerMethodValidationExceptionRequestBodyValidationResult" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result",
-                                    List.of(error("PARAMETER", null, "Element cannot contain empty values"))),
-                            "POST /mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result with application/json body [\"\",\"a\"]");
-            case "handlerMethodValidationExceptionRequestHeader" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-request-header",
-                                    List.of(error("HEADER", "headerValue", "Minimum length is 2"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-request-header with header headerValue=a");
-            case "handlerMethodValidationExceptionRequestParam" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-request-param",
-                                    List.of(
-                                            error("PARAMETER", "param", "Parameter cannot be empty"),
-                                            error("PARAMETER", "param2", "Parameter 2 cannot be null"),
-                                            error("PARAMETER", "param2", "Parameter 2 cannot be blank"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-request-param without param and param2");
-            case "handlerMethodValidationExceptionRequestPart" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-request-part",
-                                    List.of(error("PARAMETER", "file", "File cannot be empty"))),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-request-part with Content-Type: multipart/form-data and no file");
-            case "handlerMethodValidationExceptionOther" ->
-                    new MvcErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/mvc-extended-problem-detail/handler-method-validation-exception-other", null),
-                            "GET /mvc-extended-problem-detail/handler-method-validation-exception-other");
-            case "methodValidationException" ->
-                    new MvcErrorResponseSpec("500", "500 validation error",
-                            problemExample("Validation failed", "Internal Server Error", 500, "Validation failed",
-                                    "/mvc-extended-problem-detail/method-validation-exception",
-                                    List.of(
-                                            error("PARAMETER", "name", "name must not be blank"),
-                                            error("PARAMETER", "name", "name must not be null"),
-                                            error("PARAMETER", "password", "Password and confirm password do not match"),
-                                            error("PARAMETER", "name", "Name cannot be blank"),
-                                            error("PARAMETER", "age", "Age cannot be null"),
-                                            error("PARAMETER", "confirmPassword", "Password and confirm password do not match"),
-                                            error("PARAMETER", "name", "Name length must be between 6-10"),
-                                            error("PARAMETER", null, "Name is not valid"))),
-                            "GET /mvc-extended-problem-detail/method-validation-exception");
-            default -> new MvcErrorResponseSpec("400", "400 validation error", validationProblemDetailExample(),
-                    "See the referenced MVC test for the exact validation trigger");
-        };
-    }
-
-    private static Example validationFailureExample(String instance, List<Map<String, Object>> errors) {
-        return problemExample("Validation error", "Bad Request", 400, "Validation failure", instance, errors);
-    }
-
-    private static Example problemExample(String summary, String title, int status, String detail, String instance) {
-        return problemExample(summary, title, status, detail, instance, null);
-    }
-
-    private static Example problemExample(String summary, String title, int status, String detail, String instance,
-                                          List<Map<String, Object>> errors) {
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("title", title);
-        payload.put("status", status);
-        if (detail != null) {
-            payload.put("detail", detail);
+    private static void addSupplementalGetOperation(OpenAPI openApi,
+                                                    String path,
+                                                    String operationId,
+                                                    String statusCode,
+                                                    String description,
+                                                    String operationDescription,
+                                                    Example example) {
+        PathItem pathItem = openApi.getPaths().get(path);
+        if (pathItem == null) {
+            pathItem = new PathItem();
+            openApi.getPaths().addPathItem(path, pathItem);
         }
-        payload.put("instance", instance);
-        if (errors != null) {
-            payload.put("errors", errors);
+        if (pathItem.getGet() == null) {
+            MediaType mediaType = new MediaType();
+            mediaType.schema(new Schema<>().$ref("#/components/schemas/ExtendedProblemDetail"));
+            mediaType.addExamples("example", example);
+
+            Content content = new Content();
+            content.addMediaType(org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE, mediaType);
+
+            ApiResponse response = new ApiResponse();
+            response.description(description);
+            response.content(content);
+
+            ApiResponses responses = new ApiResponses();
+            responses.addApiResponse(statusCode, response);
+
+            Operation operation = new Operation();
+            operation.operationId(operationId);
+            operation.addTagsItem(SUPPLEMENTAL_OPERATIONS_TAG);
+            operation.description(operationDescription);
+            operation.responses(responses);
+            pathItem.setGet(operation);
         }
-        return new Example().summary(summary).value(payload);
     }
 
-    private static Map<String, Object> error(String type, String target, String message) {
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("type", type);
-        if (target != null) {
-            payload.put("target", target);
-        }
-        payload.put("message", message);
-        return payload;
-    }
 
-    private static String testPath(String operationId) {
-        return switch (operationId) {
-            case "asyncRequestNotUsableException", "maxUploadSizeExceededException",
-                 "invalidApiVersionException", "missingApiVersionException", "notAcceptableApiVersionException" ->
-                    "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/controller/MvcControllerRandomPortTests.java";
-            case "noHandlerFoundException" ->
-                    "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiNoHandlerFoundContractTests.java";
-            case "invalidEndpointBadRequestException" ->
-                    "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/open/api/MvcOpenApiActuatorContractTests.java";
-            default ->
-                    "src/test/java/io/github/sbracely/extended/problem/detail/webmvc/example/controller/MvcControllerTests.java";
-        };
-    }
-
-    static String scenario(String operationId) {
-        return switch (operationId) {
-            case "asyncRequestNotUsableException" -> "random-port";
-            case "maxUploadSizeExceededException" -> "multipart-limit";
-            case "invalidApiVersionException", "missingApiVersionException", "notAcceptableApiVersionException" -> "api-version";
-            case "noHandlerFoundException" -> "no-handler-found";
-            case "invalidEndpointBadRequestException" -> "actuator-endpoint";
-            default -> "default";
-        };
-    }
-
-    private static String testGuidance(String trigger, String testPath) {
-        return "Real trigger from tests: " + trigger + ". "
-                + "For the exact request setup and assertions, see " + testPath + ".";
-    }
-
-    private static String asyncRequestNotUsableGuidance(String testPath) {
-        return "Normal client-visible response is 200 text/event-stream. "
-                + "AsyncRequestNotUsableException happens only after the client disconnects or times out while the "
-                + "server is still writing, so it is not observable as a stable application/problem+json body. "
-                + "For the disconnect trigger and server-side behaviour, see " + testPath + ".";
-    }
-
-    private record MvcErrorResponseSpec(String statusCode, String description, Example example, String trigger) {
-    }
 }

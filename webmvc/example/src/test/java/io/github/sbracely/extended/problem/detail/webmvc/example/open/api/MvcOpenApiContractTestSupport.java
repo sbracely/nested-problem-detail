@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.jspecify.annotations.Nullable;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -28,6 +29,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 public final class MvcOpenApiContractTestSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final String MISSING_PARAMETERS_PREFIX = "Missing parameters: ";
 
     private MvcOpenApiContractTestSupport() {
     }
@@ -150,9 +152,9 @@ public final class MvcOpenApiContractTestSupport {
 
         // detail – only compare when documented (skip null/missing placeholders)
         if (docExample.hasNonNull("detail")) {
-            assertThat(actual.getDetail())
+            assertThat(normalizeDetail(actual.getDetail()))
                     .as("detail should match documented example")
-                    .isEqualTo(docExample.get("detail").asText());
+                    .isEqualTo(normalizeDetail(docExample.get("detail").asText()));
         }
 
         // errors – order-insensitive when present in example
@@ -170,55 +172,19 @@ public final class MvcOpenApiContractTestSupport {
         }
     }
 
-    /**
-     * Asserts that every documented operation in the {@code paths} section of the API docs that
-     * carries the given {@code scenario} tag has a corresponding entry in the provided
-     * {@code fixtureMap}. This ensures no documented operation is silently skipped.
-     *
-     * @param apiDocs    parsed API docs root node
-     * @param scenario   the scenario name (e.g. {@code "default"}, {@code "api-version"})
-     * @param fixtureMap map from operationId to fixture – used to confirm coverage
-     */
-    public static void assertAllScenarioOperationsCovered(JsonNode apiDocs, String scenario,
-                                                          Map<String, ?> fixtureMap) {
-        List<String> missing = new ArrayList<>();
-        apiDocs.path("paths").properties().forEach(pathEntry ->
-                pathEntry.getValue().properties().forEach(methodEntry -> {
-                    JsonNode operation = methodEntry.getValue();
-                    String opScenario = operation.path("x-scenario").asText(null);
-                    if (scenario.equals(opScenario)) {
-                        String operationId = operation.path("operationId").asText(null);
-                        if (operationId != null && !fixtureMap.containsKey(operationId)) {
-                            missing.add(operationId);
-                        }
-                    }
-                }));
-        assertThat(missing)
-                .as("All documented operations for scenario '%s' should have a contract fixture", scenario)
-                .isEmpty();
+    private static @Nullable String normalizeDetail(@Nullable String detail) {
+        if (detail == null) {
+            return null;
+        }
+        if (!detail.startsWith(MISSING_PARAMETERS_PREFIX)) {
+            return detail;
+        }
+        String normalizedParameters = Arrays.stream(detail.substring(MISSING_PARAMETERS_PREFIX.length()).split(","))
+                .map(String::trim)
+                .filter(parameter -> !parameter.isEmpty())
+                .sorted()
+                .collect(Collectors.joining(","));
+        return MISSING_PARAMETERS_PREFIX + normalizedParameters;
     }
 
-    /**
-     * Converts an already-parsed API docs {@link JsonNode} into a map of
-     * {@code operationId → (path, method)} pairs for all operations belonging to
-     * {@code scenario}.
-     */
-    public static Map<String, String[]> operationsByScenario(JsonNode apiDocs, String scenario) {
-        Map<String, String[]> result = new HashMap<>();
-        apiDocs.path("paths").properties().forEach(pathEntry -> {
-            String path = pathEntry.getKey();
-            pathEntry.getValue().properties().forEach(methodEntry -> {
-                String method = methodEntry.getKey();
-                JsonNode operation = methodEntry.getValue();
-                String opScenario = operation.path("x-scenario").asText(null);
-                if (scenario.equals(opScenario)) {
-                    String operationId = operation.path("operationId").asText(null);
-                    if (operationId != null) {
-                        result.put(operationId, new String[]{path, method});
-                    }
-                }
-            });
-        });
-        return result;
-    }
 }

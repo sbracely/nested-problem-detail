@@ -11,7 +11,6 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTe
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,8 +25,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.accept.InvalidApiVersionException;
 import org.springframework.web.accept.MissingApiVersionException;
 import org.springframework.web.accept.NotAcceptableApiVersionException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
@@ -134,7 +131,6 @@ class MvcControllerRandomPortTests {
      */
     @Nested
     @AutoConfigureRestTestClient
-    @Import(MvcApiVersionTests.MvcNotAcceptableApiVersionController.class)
     @TestPropertySource(properties = {
             "spring.mvc.apiversion.use.header=API-Version",
             "spring.mvc.apiversion.supported=1,2",
@@ -175,7 +171,7 @@ class MvcControllerRandomPortTests {
 
         /**
          * @see NotAcceptableApiVersionException
-         * @see MvcNotAcceptableApiVersionController#notAcceptableApiVersion()
+         * @see MvcApiVersionController#notAcceptableApiVersion()
          */
         @Test
         void notAcceptableApiVersionException() {
@@ -228,17 +224,6 @@ class MvcControllerRandomPortTests {
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create("/mvc-extended-problem-detail/missing-api-version-exception"));
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
-        }
-
-        /**
-         * {@link NotAcceptableApiVersionException}
-         */
-        @RestController
-        static class MvcNotAcceptableApiVersionController {
-            @GetMapping(path = "/not-acceptable-api-version", version = "1")
-            void notAcceptableApiVersion() {
-                logger.info("notAcceptableApiVersion");
-            }
         }
     }
 }

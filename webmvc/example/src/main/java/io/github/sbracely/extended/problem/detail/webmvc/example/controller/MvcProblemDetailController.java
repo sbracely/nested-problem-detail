@@ -1,5 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.controller;
 
+import io.github.sbracely.extended.problem.detail.common.response.Error;
+import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webmvc.example.config.MvcMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webmvc.example.exception.MvcExtendedErrorResponseException;
 import io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest;
@@ -8,8 +10,14 @@ import io.github.sbracely.extended.problem.detail.webmvc.example.response.serial
 import io.github.sbracely.extended.problem.detail.webmvc.example.service.MvcProblemDetailService;
 import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.MvcCheckMultipartFile;
 import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.MvcCheckPassword;
-import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
@@ -68,7 +76,6 @@ import java.util.concurrent.CompletableFuture;
 public class MvcProblemDetailController {
 
     private static final Logger logger = LoggerFactory.getLogger(MvcProblemDetailController.class);
-
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     private final MvcProblemDetailService problemDetailService;
@@ -81,6 +88,21 @@ public class MvcProblemDetailController {
     /**
      * @see HttpRequestMethodNotSupportedException
      */
+    @ApiResponse(
+            responseCode = "405",
+            description = "HttpRequestMethodNotSupportedException",
+            headers = @Header(name = "Allow", schema = @Schema(type = "string", example = "GET")),
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Method Not Allowed",
+                              "status": 405,
+                              "detail": "Method 'POST' is not supported.",
+                              "instance": "/mvc-extended-problem-detail/http-request-method-not-supported-exception"
+                            }
+                            """)))
     @GetMapping("/http-request-method-not-supported-exception")
     public void httpRequestMethodNotSupportedException() {
         logger.info("httpRequestMethodNotSupportedException");
@@ -89,6 +111,32 @@ public class MvcProblemDetailController {
     /**
      * @see HttpMediaTypeNotSupportedException
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example",
+                    value = """
+                            {
+                              "name": "springdoc",
+                              "age": 28,
+                              "password": "password123",
+                              "confirmPassword": "password123"
+                            }
+                            """)))
+    @ApiResponse(
+            responseCode = "415",
+            description = "HttpMediaTypeNotSupportedException",
+            headers = @Header(name = "Accept", schema = @Schema(type = "string", example = MediaType.APPLICATION_JSON_VALUE)),
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Unsupported Media Type",
+                              "status": 415,
+                              "detail": "Content-Type 'null' is not supported.",
+                              "instance": "/mvc-extended-problem-detail/http-media-type-not-supported-exception"
+                            }
+                            """)))
     @PutMapping(path = "/http-media-type-not-supported-exception", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void httpMediaTypeNotSupportedException(MvcProblemDetailRequest problemDetailRequest) {
         logger.info("httpMediaTypeNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
@@ -97,6 +145,33 @@ public class MvcProblemDetailController {
     /**
      * @see HttpMediaTypeNotAcceptableException
      */
+    @Operation(parameters = @Parameter(name = "Accept", in = ParameterIn.HEADER, example = "application/xml"))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example",
+                    value = """
+                            {
+                              "name": "springdoc",
+                              "age": 28,
+                              "password": "password123",
+                              "confirmPassword": "password123"
+                            }
+                            """)))
+    @ApiResponse(
+            responseCode = "406",
+            description = "HttpMediaTypeNotAcceptableException",
+            headers = @Header(name = "Accept", schema = @Schema(type = "string", example = MediaType.APPLICATION_JSON_VALUE)),
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Not Acceptable",
+                              "status": 406,
+                              "detail": "Acceptable representations: [application/json].",
+                              "instance": "/mvc-extended-problem-detail/http-media-type-not-acceptable-exception"
+                            }
+                            """)))
     @PutMapping(path = "/http-media-type-not-acceptable-exception", produces = MediaType.APPLICATION_JSON_VALUE)
     public void httpMediaTypeNotAcceptableException(MvcProblemDetailRequest problemDetailRequest) {
         logger.info("httpMediaTypeNotAcceptableException, problemDetailRequest: {}", problemDetailRequest);
@@ -105,30 +180,85 @@ public class MvcProblemDetailController {
     /**
      * @see MissingPathVariableException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "MissingPathVariableException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Required path variable 'id' is not present.",
+                              "instance": "/mvc-extended-problem-detail/missing-path-variable-exception"
+                            }
+                            """)))
     @DeleteMapping("/missing-path-variable-exception")
-    public void missingPathVariableException(@PathVariable Integer id) {
+    public void missingPathVariableException(@Parameter(example = "1") @PathVariable Integer id) {
         logger.info("missingPathVariableException, id: {}", id);
     }
 
     /**
      * @see MissingServletRequestParameterException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingServletRequestParameterException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required parameter 'id' is not present.",
+                              "instance": "/mvc-extended-problem-detail/missing-servlet-request-parameter-exception"
+                            }
+                            """)))
     @GetMapping("/missing-servlet-request-parameter-exception")
-    public void missingServletRequestParameterException(@RequestParam Integer id) {
+    public void missingServletRequestParameterException(@Parameter(example = "1") @RequestParam Integer id) {
         logger.info("missingServletRequestParameterException, id: {}", id);
     }
 
     /**
      * @see MissingServletRequestPartException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingServletRequestPartException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required part 'file' is not present.",
+                              "instance": "/mvc-extended-problem-detail/missing-servlet-request-part-exception"
+                            }
+                            """)))
     @PutMapping("/missing-servlet-request-part-exception")
-    public void missingServletRequestPartException(@RequestPart MultipartFile file) {
+    public void missingServletRequestPartException(@Parameter(example = "demo.txt") @RequestPart MultipartFile file) {
         logger.info("missingServletRequestPartException, file: {}", file);
     }
 
     /**
      * @see ServletRequestBindingException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ServletRequestBindingException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "instance": "/mvc-extended-problem-detail/servlet-request-binding-exception"
+                            }
+                            """)))
     @GetMapping("/servlet-request-binding-exception")
     public void servletRequestBindingException() throws ServletRequestBindingException {
         logger.info("servletRequestBindingException");
@@ -138,6 +268,21 @@ public class MvcProblemDetailController {
     /**
      * @see UnsatisfiedServletRequestParameterException
      */
+    @Operation(parameters = @Parameter(name = "type", in = ParameterIn.QUERY, example = "1"))
+    @ApiResponse(
+            responseCode = "400",
+            description = "UnsatisfiedServletRequestParameterException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid request parameters.",
+                              "instance": "/mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception"
+                            }
+                            """)))
     @GetMapping(path = "/unsatisfied-servlet-request-parameter-exception", params = {"type=1", "exist", "!debug"})
     public void unsatisfiedServletRequestParameterException() {
         logger.info("unsatisfiedServletRequestParameterException");
@@ -146,6 +291,19 @@ public class MvcProblemDetailController {
     /**
      * @see org.springframework.web.bind.MissingRequestValueException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "org.springframework.web.bind.MissingRequestValueException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "instance": "/mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception"
+                            }
+                            """)))
     @GetMapping("/org-spring-web-bind-missing-request-value-exception")
     public void orgSpringWebBindMissingRequestValueException() throws org.springframework.web.bind.MissingRequestValueException {
         logger.info("orgSpringWebBindMissingRequestValueException");
@@ -156,30 +314,117 @@ public class MvcProblemDetailController {
     /**
      * @see MissingMatrixVariableException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingMatrixVariableException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required path parameter 'list' is not present.",
+                              "instance": "/mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c"
+                            }
+                            """)))
     @GetMapping("/missing-matrix-variable-exception/{id}")
-    public void missingMatrixVariableException(@PathVariable String id, @MatrixVariable List<String> list) {
+    public void missingMatrixVariableException(@Parameter(example = "abc") @PathVariable String id,
+                                               @Parameter(example = "a,b,c") @MatrixVariable List<String> list) {
         logger.info("missingMatrixVariableException, id: {}, list: {}", id, list);
     }
 
     /**
      * @see MissingRequestCookieException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingRequestCookieException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required cookie 'cookieValue' is not present.",
+                              "instance": "/mvc-extended-problem-detail/missing-request-cookie-exception"
+                            }
+                            """)))
     @GetMapping("/missing-request-cookie-exception")
-    public void missingRequestCookieException(@CookieValue String cookieValue) {
+    public void missingRequestCookieException(@Parameter(example = "cookie-value") @CookieValue String cookieValue) {
         logger.info("missingRequestCookieException, cookieValue: {}", cookieValue);
     }
 
     /**
      * @see MissingRequestHeaderException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingRequestHeaderException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required header 'header' is not present.",
+                              "instance": "/mvc-extended-problem-detail/missing-request-header-exception"
+                            }
+                            """)))
     @GetMapping("/missing-request-header-exception")
-    public void missingRequestHeaderException(@RequestHeader String header) {
+    public void missingRequestHeaderException(@Parameter(example = "header-value") @RequestHeader String header) {
         logger.info("missingRequestHeaderException, header: {}", header);
     }
 
     /**
      * @see MethodArgumentNotValidException
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example", value = """
+                    {
+                      "name": "abc",
+                      "password": "123"
+                    }
+                    """)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "MethodArgumentNotValidException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid request content.",
+                              "instance": "/mvc-extended-problem-detail/method-argument-not-valid-exception",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name length must be between 6-10"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "age",
+                                  "message": "Age cannot be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "confirmPassword",
+                                  "message": "Password and confirm password do not match"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/method-argument-not-valid-exception")
     public void methodArgumentNotValidException(@RequestBody @Validated MvcProblemDetailRequest problemDetailRequest) {
         logger.info("methodArgumentNotValidException, problemDetailRequest: {}", problemDetailRequest);
@@ -189,8 +434,29 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#cookieValue(CookieValue, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException cookieValue",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-cookie-value",
+                              "errors": [
+                                {
+                                  "type": "COOKIE",
+                                  "target": "name",
+                                  "message": "Name length must be at least 2"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-cookie-value")
-    public void handlerMethodValidationExceptionCookieValue(@CookieValue @Length(min = 2, message = "Name length must be at least 2") String name) {
+    public void handlerMethodValidationExceptionCookieValue(@Parameter(example = "a") @CookieValue @Length(min = 2, message = "Name length must be at least 2") String name) {
         logger.info("handlerMethodValidationExceptionCookieValue, name: {}", name);
     }
 
@@ -198,9 +464,30 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#matrixVariable(MatrixVariable, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException matrixVariable",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "list",
+                                  "message": "Maximum size is 2"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-matrix-variable/{id}")
-    public void handlerMethodValidationExceptionMatrixVariable(@PathVariable String id,
-                                                               @MatrixVariable @Size(max = 2, message = "Maximum size is 2") List<String> list) {
+    public void handlerMethodValidationExceptionMatrixVariable(@Parameter(example = "abc") @PathVariable String id,
+                                                               @Parameter(example = "a,b,c") @MatrixVariable @Size(max = 2, message = "Maximum size is 2") List<String> list) {
         logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
     }
 
@@ -208,6 +495,27 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#modelAttribute(ModelAttribute, ParameterErrors)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException modelAttribute",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-model-attribute",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-model-attribute")
     public void handlerMethodValidationExceptionModelAttribute(@MvcCheckPassword(message = "Password cannot be empty") MvcProblemDetailRequest problemDetailRequest) {
         logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
@@ -217,8 +525,29 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#pathVariable(PathVariable, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException pathVariable",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "id",
+                                  "message": "ID minimum length is 2"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
-    public void handlerMethodValidationExceptionPathVariable(@PathVariable @Length(min = 2, message = "ID minimum length is 2") String id) {
+    public void handlerMethodValidationExceptionPathVariable(@Parameter(example = "a") @PathVariable @Length(min = 2, message = "ID minimum length is 2") String id) {
         logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
     }
 
@@ -226,6 +555,34 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestBody(RequestBody, ParameterErrors)
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example", value = """
+                    {
+                      "name": "abc"
+                    }
+                    """)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException requestBody",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-request-body",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/handler-method-validation-exception-request-body")
     public void handlerMethodValidationExceptionRequestBody(@RequestBody @MvcCheckPassword(message = "Password cannot be empty") MvcProblemDetailRequest problemDetailRequest) {
         logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
@@ -235,6 +592,34 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestBodyValidationResult(RequestBody, ParameterValidationResult)
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example", value = """
+                    [
+                      "",
+                      "a"
+                    ]
+                    """)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException requestBodyValidationResult",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "message": "Element cannot contain empty values"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
     public void handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
         logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
@@ -244,8 +629,29 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestHeader(RequestHeader, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException requestHeader",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-request-header",
+                              "errors": [
+                                {
+                                  "type": "HEADER",
+                                  "target": "headerValue",
+                                  "message": "Minimum length is 2"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-request-header")
-    public void handlerMethodValidationExceptionRequestHeader(@RequestHeader @Length(min = 2, message = "Minimum length is 2") String headerValue) {
+    public void handlerMethodValidationExceptionRequestHeader(@Parameter(example = "a") @RequestHeader @Length(min = 2, message = "Minimum length is 2") String headerValue) {
         logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
     }
 
@@ -253,9 +659,40 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestParam(RequestParam, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException requestParam",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-request-param",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "param",
+                                  "message": "Parameter cannot be empty"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "param2",
+                                  "message": "Parameter 2 cannot be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "param2",
+                                  "message": "Parameter 2 cannot be blank"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-request-param")
-    public void handlerMethodValidationExceptionRequestParam(@NotBlank(message = "Parameter cannot be empty") String param,
-                                                             @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
+    public void handlerMethodValidationExceptionRequestParam(@Parameter(example = "") @NotBlank(message = "Parameter cannot be empty") String param,
+                                                             @Parameter(example = "") @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
         logger.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
     }
 
@@ -263,8 +700,29 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestPart(RequestPart, ParameterErrors)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException requestPart",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-request-part",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "file",
+                                  "message": "File cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-request-part")
-    public void handlerMethodValidationExceptionRequestPart(@RequestPart(required = false) @MvcCheckMultipartFile(extensionIncludeMessage = "File type not supported",
+    public void handlerMethodValidationExceptionRequestPart(@Parameter(example = "demo.txt") @RequestPart(required = false) @MvcCheckMultipartFile(extensionIncludeMessage = "File type not supported",
             extensionInclude = "txt", requiredMessage = "File cannot be empty") MultipartFile file) {
         logger.info("handlerMethodValidationExceptionRequestPart, file: {}", file);
     }
@@ -273,6 +731,20 @@ public class MvcProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#other(ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException other",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/mvc-extended-problem-detail/handler-method-validation-exception-other"
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-other")
     public void handlerMethodValidationExceptionOther(@SessionAttribute(required = false) @NotBlank(message = "sessionAttribute cannot be empty")
                                                       String sessionAttribute,
@@ -285,6 +757,19 @@ public class MvcProblemDetailController {
     /**
      * @see AsyncRequestTimeoutException
      */
+    @ApiResponse(
+            responseCode = "503",
+            description = "AsyncRequestTimeoutException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Service Unavailable",
+                              "status": 503,
+                              "instance": "/mvc-extended-problem-detail/async-request-timeout-exception"
+                            }
+                            """)))
     @GetMapping("/async-request-timeout-exception")
     public DeferredResult<Void> asyncRequestTimeoutException() {
         logger.info("asyncRequestTimeoutException");
@@ -294,6 +779,19 @@ public class MvcProblemDetailController {
     /**
      * @see ErrorResponseException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ErrorResponseException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "instance": "/mvc-extended-problem-detail/error-response-exception"
+                            }
+                            """)))
     @GetMapping("/error-response-exception")
     public void errorResponseException() {
         logger.info("errorResponseException");
@@ -303,6 +801,30 @@ public class MvcProblemDetailController {
     /**
      * @see MvcExtendedErrorResponseException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "MvcExtendedErrorResponseException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Payment failed",
+                              "instance": "/mvc-extended-problem-detail/extended-error-response-exception",
+                              "errors": [
+                                {
+                                  "type": "BUSINESS",
+                                  "message": "Insufficient balance"
+                                },
+                                {
+                                  "type": "BUSINESS",
+                                  "message": "Payment frequent"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/extended-error-response-exception")
     public void extendedErrorResponseException() {
         logger.info("businessException");
@@ -318,6 +840,20 @@ public class MvcProblemDetailController {
     /**
      * @see ResponseStatusException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ResponseStatusException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "exception",
+                              "instance": "/mvc-extended-problem-detail/response-status-exception"
+                            }
+                            """)))
     @GetMapping("/response-status-exception")
     public void responseStatusException() {
         logger.info("responseStatusException");
@@ -327,6 +863,20 @@ public class MvcProblemDetailController {
     /**
      * @see ServerWebInputException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ServerWebInputException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "server web input error",
+                              "instance": "/mvc-extended-problem-detail/server-web-input-exception"
+                            }
+                            """)))
     @GetMapping("/server-web-input-exception")
     public void serverWebInputException() {
         logger.info("serverWebInputException");
@@ -336,6 +886,21 @@ public class MvcProblemDetailController {
     /**
      * @see UnsatisfiedRequestParameterException
      */
+    @Operation(parameters = @Parameter(name = "type", in = ParameterIn.QUERY, example = "1"))
+    @ApiResponse(
+            responseCode = "400",
+            description = "UnsatisfiedRequestParameterException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid request parameters.",
+                              "instance": "/mvc-extended-problem-detail/unsatisfied-request-parameter-exception"
+                            }
+                            """)))
     @GetMapping(path = "/unsatisfied-request-parameter-exception", params = {"type=1", "exist", "!debug"})
     public void unsatisfiedRequestParameterException() {
         logger.info("unsatisfiedRequestParameterException");
@@ -344,6 +909,20 @@ public class MvcProblemDetailController {
     /**
      * @see org.springframework.web.server.MissingRequestValueException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "org.springframework.web.server.MissingRequestValueException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required request param 'id' is not present.",
+                              "instance": "/mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception"
+                            }
+                            """)))
     @GetMapping("/org-springframework-web-server-missing-request-value-exception")
     public void orgSpringframeworkWebServerMissingRequestValueException(HttpServletRequest httpServletRequest,
                                                                         String id) throws Exception {
@@ -362,6 +941,50 @@ public class MvcProblemDetailController {
     /**
      * @see WebExchangeBindException
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example", value = """
+                    {
+                      "name": "abc",
+                      "password": "123"
+                    }
+                    """)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "WebExchangeBindException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid request content.",
+                              "instance": "/mvc-extended-problem-detail/web-exchange-bind-exception",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name length must be between 6-10"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "age",
+                                  "message": "Age cannot be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "confirmPassword",
+                                  "message": "Password and confirm password do not match"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/web-exchange-bind-exception")
     public void webExchangeBindException(HttpServletRequest httpServletRequest,
                                          @RequestBody @Validated MvcProblemDetailRequest problemDetailRequest,
@@ -381,6 +1004,21 @@ public class MvcProblemDetailController {
     /**
      * @see InvalidApiVersionException
      */
+    @Operation(parameters = @Parameter(name = "API-Version", in = ParameterIn.HEADER, example = "3"))
+    @ApiResponse(
+            responseCode = "400",
+            description = "InvalidApiVersionException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid API version: '3.0.0'.",
+                              "instance": "/mvc-extended-problem-detail/invalid-api-version-exception"
+                            }
+                            """)))
     @GetMapping("/invalid-api-version-exception")
     public void invalidApiVersionException() {
         logger.info("invalidApiVersionException");
@@ -389,6 +1027,21 @@ public class MvcProblemDetailController {
     /**
      * @see MissingApiVersionException
      */
+    @Operation(parameters = @Parameter(name = "API-Version", in = ParameterIn.HEADER, example = "1"))
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingApiVersionException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "API version is required.",
+                              "instance": "/mvc-extended-problem-detail/missing-api-version-exception"
+                            }
+                            """)))
     @GetMapping("/missing-api-version-exception")
     public void missingApiVersionException() {
         logger.info("missingApiVersionException");
@@ -397,6 +1050,21 @@ public class MvcProblemDetailController {
     /**
      * @see MethodNotAllowedException
      */
+    @ApiResponse(
+            responseCode = "405",
+            description = "MethodNotAllowedException",
+            headers = @Header(name = "Allow", schema = @Schema(type = "string", example = "GET, POST")),
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Method Not Allowed",
+                              "status": 405,
+                              "detail": "Supported methods: [GET, POST]",
+                              "instance": "/mvc-extended-problem-detail/method-not-allowed-exception"
+                            }
+                            """)))
     @DeleteMapping("/method-not-allowed-exception")
     public void methodNotAllowedException() {
         List<HttpMethod> supportedMethods = Arrays.asList(HttpMethod.GET, HttpMethod.POST);
@@ -407,6 +1075,21 @@ public class MvcProblemDetailController {
     /**
      * @see NotAcceptableStatusException
      */
+    @ApiResponse(
+            responseCode = "406",
+            description = "NotAcceptableStatusException",
+            headers = @Header(name = "Accept", schema = @Schema(type = "string", example = MediaType.APPLICATION_JSON_VALUE)),
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Not Acceptable",
+                              "status": 406,
+                              "detail": "Acceptable representations: [application/json].",
+                              "instance": "/mvc-extended-problem-detail/not-acceptable-status-exception"
+                            }
+                            """)))
     @GetMapping("/not-acceptable-status-exception")
     public void notAcceptableStatusException() {
         logger.info("notAcceptableStatusException");
@@ -416,8 +1099,21 @@ public class MvcProblemDetailController {
     /**
      * @see ContentTooLargeException
      */
+    @ApiResponse(
+            responseCode = "413",
+            description = "ContentTooLargeException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Content Too Large",
+                              "status": 413,
+                              "instance": "/mvc-extended-problem-detail/content-too-large-exception"
+                            }
+                            """)))
     @PostMapping("/content-too-large-exception")
-    public void contentTooLargeException(@RequestPart MultipartFile file) {
+    public void contentTooLargeException(@Parameter(example = "demo.txt") @RequestPart MultipartFile file) {
         logger.info("contentTooLargeException, file: {}", file);
         throw new ContentTooLargeException(new RuntimeException("content too large"));
     }
@@ -425,6 +1121,20 @@ public class MvcProblemDetailController {
     /**
      * @see UnsupportedMediaTypeStatusException
      */
+    @ApiResponse(
+            responseCode = "415",
+            description = "UnsupportedMediaTypeStatusException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Unsupported Media Type",
+                              "status": 415,
+                              "detail": "Could not parse Content-Type.",
+                              "instance": "/mvc-extended-problem-detail/unsupported-media-type-status-exception"
+                            }
+                            """)))
     @PostMapping("/unsupported-media-type-status-exception")
     public void unsupportedMediaTypeStatusException() {
         logger.info("unsupportedMediaTypeStatusException");
@@ -434,6 +1144,20 @@ public class MvcProblemDetailController {
     /**
      * @see ServerErrorException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "ServerErrorException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "server error",
+                              "instance": "/mvc-extended-problem-detail/server-error-exception"
+                            }
+                            """)))
     @GetMapping("/server-error-exception")
     public void serverErrorException() {
         logger.info("serverErrorException");
@@ -443,8 +1167,22 @@ public class MvcProblemDetailController {
     /**
      * @see PayloadTooLargeException
      */
+    @ApiResponse(
+            responseCode = "413",
+            description = "PayloadTooLargeException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Content Too Large",
+                              "status": 413,
+                              "detail": "payload too large",
+                              "instance": "/mvc-extended-problem-detail/payload-too-large-exception"
+                            }
+                            """)))
     @PostMapping("/payload-too-large-exception")
-    public void payloadTooLargeException(@RequestPart MultipartFile file) {
+    public void payloadTooLargeException(@Parameter(example = "demo.txt") @RequestPart MultipartFile file) {
         logger.info("payloadTooLargeException, file: {}", file);
         PayloadTooLargeException payloadTooLarge = new PayloadTooLargeException(new RuntimeException("payload too large"));
         payloadTooLarge.setDetail("payload too large");
@@ -454,16 +1192,44 @@ public class MvcProblemDetailController {
     /**
      * @see MaxUploadSizeExceededException
      */
+    @ApiResponse(
+            responseCode = "413",
+            description = "MaxUploadSizeExceededException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Content Too Large",
+                              "status": 413,
+                              "detail": "Maximum upload size exceeded",
+                              "instance": "/mvc-extended-problem-detail/max-upload-size-exceeded-exception"
+                            }
+                            """)))
     @PostMapping("/max-upload-size-exceeded-exception")
-    public void maxUploadSizeExceededException(@RequestPart MultipartFile file) {
+    public void maxUploadSizeExceededException(@Parameter(example = "oversized.txt") @RequestPart MultipartFile file) {
         logger.info("maxUploadSizeExceededException, file: {}", file);
     }
 
     /**
      * @see ConversionNotSupportedException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "ConversionNotSupportedException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Failed to convert 'null' with value: 'test-value'",
+                              "instance": "/mvc-extended-problem-detail/conversion-not-supported-exception"
+                            }
+                            """)))
     @GetMapping("/conversion-not-supported-exception")
-    public void conversionNotSupportedException(HttpServletRequest httpServletRequest, String data) throws Exception {
+    public void conversionNotSupportedException(HttpServletRequest httpServletRequest, @Parameter(example = "test-value") String data) throws Exception {
         logger.info("conversionNotSupportedException, data: {}", data);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         if (null == handlerExecutionChain) {
@@ -479,14 +1245,42 @@ public class MvcProblemDetailController {
     /**
      * @see MethodArgumentConversionNotSupportedException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "MethodArgumentConversionNotSupportedException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Failed to convert 'error' with value: 'test-value'",
+                              "instance": "/mvc-extended-problem-detail/method-argument-conversion-not-supported-exception"
+                            }
+                            """)))
     @GetMapping("/method-argument-conversion-not-supported-exception")
-    public void methodArgumentConversionNotSupportedException(@RequestParam MvcProblemDetailRequest error) {
+    public void methodArgumentConversionNotSupportedException(@Parameter(example = "test-value") @RequestParam MvcProblemDetailRequest error) {
         logger.info("methodArgumentConversionNotSupportedException, error: {}", error);
     }
 
     /**
      * @see TypeMismatchException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "TypeMismatchException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Failed to convert 'null' with value: 'test'",
+                              "instance": "/mvc-extended-problem-detail/type-mismatch-exception"
+                            }
+                            """)))
     @GetMapping("/type-mismatch-exception")
     public void typeMismatchException() {
         logger.info("typeMismatchException");
@@ -496,14 +1290,47 @@ public class MvcProblemDetailController {
     /**
      * @see MethodArgumentTypeMismatchException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MethodArgumentTypeMismatchException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Failed to convert 'integer' with value: 'a'",
+                              "instance": "/mvc-extended-problem-detail/method-argument-type-mismatch-exception"
+                            }
+                            """)))
     @GetMapping("/method-argument-type-mismatch-exception")
-    public void methodArgumentTypeMismatchException(Integer integer) {
+    public void methodArgumentTypeMismatchException(@Parameter(example = "a") Integer integer) {
         logger.info("methodArgumentTypeMismatchException, integer: {}", integer);
     }
 
     /**
      * @see HttpMessageNotReadableException
      */
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            examples = @ExampleObject(name = "example", value = """
+                    {"name":
+                    """)))
+    @ApiResponse(
+            responseCode = "400",
+            description = "HttpMessageNotReadableException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Failed to read request",
+                              "instance": "/mvc-extended-problem-detail/http-message-not-readable-exception"
+                            }
+                            """)))
     @PostMapping("/http-message-not-readable-exception")
     public void httpMessageNotReadableException(@RequestBody MvcProblemDetailRequest data) {
         logger.info("httpMessageNotReadableException, data: {}", data);
@@ -513,6 +1340,20 @@ public class MvcProblemDetailController {
      * @see HttpMessageNotWritableException
      * @see MvcProblemDetailResponseSerializer
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "HttpMessageNotWritableException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Failed to write request",
+                              "instance": "/mvc-extended-problem-detail/http-message-not-writable-exception"
+                            }
+                            """)))
     @GetMapping("/http-message-not-writable-exception")
     public MvcProblemDetailResponse httpMessageNotWritableException() {
         logger.info("httpMessageNotWritableException");
@@ -523,6 +1364,61 @@ public class MvcProblemDetailController {
      * @see MethodValidationException
      * @see MvcMethodValidationConfiguration#validationPostProcessor()
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "MethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Validation failed",
+                              "instance": "/mvc-extended-problem-detail/method-validation-exception",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "name must not be blank"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "name must not be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name cannot be blank"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "age",
+                                  "message": "Age cannot be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "confirmPassword",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name length must be between 6-10"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "message": "Name is not valid"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/method-validation-exception")
     public void methodValidationException() {
         logger.info("methodValidationException");
@@ -535,6 +1431,15 @@ public class MvcProblemDetailController {
     /**
      * @see AsyncRequestNotUsableException
      */
+    @ApiResponse(responseCode = "200", description = "AsyncRequestNotUsableException",
+            content = @Content(mediaType = "text/event-stream",
+                    examples = @ExampleObject(name = "example", value = """
+                            data:event 0
+                            
+                            data:event 1
+                            
+                            data:event 2
+                            """)))
     @GetMapping("/async-request-not-usable-exception")
     public SseEmitter asyncRequestNotUsableException() {
         logger.info("asyncRequestNotUsableException");
@@ -557,4 +1462,5 @@ public class MvcProblemDetailController {
         });
         return emitter;
     }
+
 }

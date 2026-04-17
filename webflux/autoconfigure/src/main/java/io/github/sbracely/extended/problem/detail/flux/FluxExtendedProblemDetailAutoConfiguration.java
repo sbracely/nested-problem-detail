@@ -6,6 +6,7 @@ import io.github.sbracely.extended.problem.detail.common.field.hide.ExtendedProb
 import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailFieldVisibility;
 import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailJacksonSerializer;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
+import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailStartupLogger;
 import io.github.sbracely.extended.problem.detail.flux.advice.FluxExtendedProblemDetailExceptionHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -104,6 +105,18 @@ public class FluxExtendedProblemDetailAutoConfiguration {
         module.addSerializer(new ProblemDetailJacksonSerializer(fieldVisibility));
         module.addSerializer(new ExtendedProblemDetailJacksonSerializer(fieldVisibility));
         return module;
+    }
+
+    /**
+     * Logs a startup reminder when the feature is enabled through the default value.
+     *
+     * @param environment the Spring environment
+     * @return the startup logger
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ExtendedProblemDetailStartupLogger extendedProblemDetailStartupLogger(Environment environment) {
+        return new ExtendedProblemDetailStartupLogger(environment, "Spring WebFlux");
     }
 
     /**
