@@ -64,7 +64,11 @@ class MvcExtendedProblemDetailAutoConfigurationTests {
                     new String[0],
                     context,
                     Duration.ZERO));
-            assertThat(output).contains("Extended Problem Detail is enabled by default for Spring WebMVC");
+            assertThat(output)
+                    .contains("Extended Problem Detail is enabled by default for Spring WebMVC")
+                    .contains("Defaults: extended.problem-detail.logging.at-level=INFO, "
+                            + "extended.problem-detail.logging.print-stack-trace=false")
+                    .contains("To disable it, set 'extended.problem-detail.enabled=false'");
             assertThat(output).contains("extended.problem-detail.enabled=false");
         });
     }

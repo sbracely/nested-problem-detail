@@ -18,6 +18,10 @@ public final class ExtendedProblemDetailStartupLogger implements ApplicationList
 
     static final String ENABLED_PROPERTY = "extended.problem-detail.enabled";
 
+    static final String LOGGING_AT_LEVEL_PROPERTY = "extended.problem-detail.logging.at-level";
+
+    static final String LOGGING_PRINT_STACK_TRACE_PROPERTY = "extended.problem-detail.logging.print-stack-trace";
+
     private final Log logger = LogFactory.getLog(getClass());
 
     private final Environment environment;
@@ -47,7 +51,9 @@ public final class ExtendedProblemDetailStartupLogger implements ApplicationList
         }
         if (this.logger.isInfoEnabled()) {
             this.logger.info("Extended Problem Detail is enabled by default for " + this.stackName
-                    + ". To disable it, set '" + ENABLED_PROPERTY + "=false'");
+                    + ". Defaults: " + LOGGING_AT_LEVEL_PROPERTY + "=INFO, "
+                    + LOGGING_PRINT_STACK_TRACE_PROPERTY + "=false. To disable it, set '"
+                    + ENABLED_PROPERTY + "=false'");
         }
     }
 
