@@ -3,6 +3,7 @@ package io.github.sbracely.extended.problem.detail.flux;
 import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailFieldVisibility;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailStartupLogger;
+import io.github.sbracely.extended.problem.detail.common.properties.ExtendedProblemDetailProperties;
 import io.github.sbracely.extended.problem.detail.flux.advice.FluxExtendedProblemDetailExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,6 +59,8 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
 
     @Test
     void shouldLogWhenEnabledByDefault(CapturedOutput output) {
+        ExtendedProblemDetailProperties.CommonLogging loggingDefaults =
+                new ExtendedProblemDetailProperties.CommonLogging();
         this.contextRunner.run(context -> {
             context.publishEvent(new ApplicationReadyEvent(
                     new SpringApplication(FluxExtendedProblemDetailAutoConfiguration.class),
@@ -66,8 +69,9 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
                     Duration.ZERO));
             assertThat(output)
                     .contains("Extended Problem Detail is enabled by default for Spring WebFlux")
-                    .contains("Defaults: extended.problem-detail.logging.at-level=INFO, "
-                            + "extended.problem-detail.logging.print-stack-trace=false")
+                    .contains("Defaults: extended.problem-detail.logging.at-level=" + loggingDefaults.getAtLevel() + ", "
+                            + "extended.problem-detail.logging.print-stack-trace="
+                            + loggingDefaults.isPrintStackTrace())
                     .contains("To disable it, set 'extended.problem-detail.enabled=false'");
             assertThat(output).contains("extended.problem-detail.enabled=false");
         });

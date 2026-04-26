@@ -6,6 +6,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
+import io.github.sbracely.extended.problem.detail.common.properties.ExtendedProblemDetailProperties;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -50,9 +51,12 @@ public final class ExtendedProblemDetailStartupLogger implements ApplicationList
             return;
         }
         if (this.logger.isInfoEnabled()) {
+            ExtendedProblemDetailProperties.CommonLogging loggingDefaults =
+                    new ExtendedProblemDetailProperties.CommonLogging();
             this.logger.info("Extended Problem Detail is enabled by default for " + this.stackName
-                    + ". Defaults: " + LOGGING_AT_LEVEL_PROPERTY + "=INFO, "
-                    + LOGGING_PRINT_STACK_TRACE_PROPERTY + "=false. To disable it, set '"
+                    + ". Defaults: " + LOGGING_AT_LEVEL_PROPERTY + "=" + loggingDefaults.getAtLevel() + ", "
+                    + LOGGING_PRINT_STACK_TRACE_PROPERTY + "=" + loggingDefaults.isPrintStackTrace()
+                    + ". To disable it, set '"
                     + ENABLED_PROPERTY + "=false'");
         }
     }
