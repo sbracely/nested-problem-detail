@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Strict OpenAPI contract tests for the <b>default</b> configuration scenario (WebFlux).
  * <p>
- * For every documented operation that carries {@code x-scenario: "default"} this test:
+ * For every default-scenario fixture this test:
  * <ol>
  *     <li>Executes the exact trigger request defined by {@link FluxOperationFixtures}.</li>
  *     <li>Reads {@code /v3/api-docs} and looks up the documented response example for the
@@ -45,12 +45,10 @@ class FluxOpenApiDefaultContractTests {
     private WebTestClient webTestClient;
 
     private JsonNode apiDocs;
-    private Map<String, String[]> operationPaths;
 
     @BeforeAll
     void fetchApiDocs() throws Exception {
         apiDocs = FluxOpenApiContractTestSupport.fetchApiDocs(webTestClient);
-        operationPaths = FluxOpenApiContractTestSupport.operationsByScenario(apiDocs, SCENARIO);
     }
 
     Collection<String> defaultFixtures() {
@@ -78,14 +76,11 @@ class FluxOpenApiDefaultContractTests {
                 .getResponseBody();
 
         // look up documented example from the API docs
-        String[] pathMethod = operationPaths.get(operationId);
-        assertThat(pathMethod)
-                .as("operationId '%s' should be present in API docs under scenario '%s'", operationId, SCENARIO)
-                .isNotNull();
         JsonNode docExample = FluxOpenApiContractTestSupport.extractDocumentedExample(
-                apiDocs, pathMethod[0], pathMethod[1]);
+                apiDocs, fixture.docPath(), fixture.docMethod());
         assertThat(docExample)
-                .as("documented example for operation '%s' at %s %s", operationId, pathMethod[1], pathMethod[0])
+                .as("documented example for operation '%s' at %s %s",
+                        operationId, fixture.docMethod(), fixture.docPath())
                 .isNotNull();
 
         // compare runtime vs documented
@@ -93,12 +88,20 @@ class FluxOpenApiDefaultContractTests {
     }
 
     /**
-     * Ensures that every operation documented under the {@code "default"} scenario in the
-     * API docs has a matching fixture in {@link FluxOperationFixtures}.
+     * Ensures that every default-scenario fixture still points at a documented OpenAPI example.
      */
     @Test
-    void allDefaultOperationsCovered() {
-        FluxOpenApiContractTestSupport.assertAllScenarioOperationsCovered(
-                apiDocs, SCENARIO, FluxOperationFixtures.all());
+    void allDefaultFixturesDocumented() {
+        FluxOperationFixtures.all().forEach((operationId, fixture) -> {
+            if (!SCENARIO.equals(fixture.scenario())) {
+                return;
+            }
+            JsonNode docExample = FluxOpenApiContractTestSupport.extractDocumentedExample(
+                    apiDocs, fixture.docPath(), fixture.docMethod());
+            assertThat(docExample)
+                    .as("documented example for default operation '%s' at %s %s",
+                            operationId, fixture.docMethod(), fixture.docPath())
+                    .isNotNull();
+        });
     }
 }

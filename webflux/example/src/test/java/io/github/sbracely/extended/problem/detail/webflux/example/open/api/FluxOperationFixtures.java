@@ -223,7 +223,7 @@ public final class FluxOperationFixtures {
         map.put("notAcceptableApiVersionException",
                 new FluxOperationFixture("api-version",
                         "/not-acceptable-api-version", "get",
-                        null, // trigger requires api-version properties and a versioned test controller – see FluxOpenApiApiVersionContractTests
+                        null, // trigger requires api-version properties so FluxApiVersionController is registered
                         400));
 
         return map;

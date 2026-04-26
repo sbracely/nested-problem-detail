@@ -2,7 +2,7 @@
 
 - Data source: real responses captured by starting the current WebFlux example application and sending real requests.
 - Ordering: follows the current `ResponseEntityExceptionHandler#handleException` dispatch order; subclasses are placed next to their parent class.
-- The 3 API-version rows are triggered with the controller-test configuration: `spring.webflux.apiversion.use.header=API-Version`, `spring.webflux.apiversion.supported=1,2`; `/not-acceptable-api-version` is a controller-test-only trigger endpoint.
+- The 3 API-version rows are triggered with the API-version configuration: `spring.webflux.apiversion.use.header=API-Version`, `spring.webflux.apiversion.supported=1,2`; `/not-acceptable-api-version` is registered by `FluxApiVersionController` only when that configuration is enabled.
 
 <table>
   <thead>

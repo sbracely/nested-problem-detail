@@ -1,5 +1,6 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.config;
 
+import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -20,16 +21,20 @@ import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.LinkedHashMap;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * OpenAPI configuration for the Spring WebFlux Extended Problem Detail example application.
+ * <p>
+ * Controller-backed examples are declared on {@code FluxExtendedProblemDetailController}. This
+ * class only supplies shared schema metadata and supplemental operations that are not generated from
+ * controller methods.
+ */
 @Configuration
 public class FluxOpenApiConfiguration {
 
-    private static final String PROBLEM_JSON = "application/problem+json";
-    private static final String ERROR_SCHEMA_REF = "#/components/schemas/Error";
-    private static final String EXTENDED_PROBLEM_DETAIL_SCHEMA_REF = "#/components/schemas/ExtendedProblemDetail";
+    private static final String SUPPLEMENTAL_OPERATIONS_TAG = "Supplemental Operations";
 
     @Bean
     OpenAPI webFluxExampleOpenApi() {
@@ -38,101 +43,121 @@ public class FluxOpenApiConfiguration {
                         .title("Extended Problem Detail Boot 4 WebFlux Example API")
                         .description("Example Spring Boot 4 WebFlux endpoints that demonstrate Extended Problem Detail responses.")
                         .version("1.1.0"))
+                .addTagsItem(new io.swagger.v3.oas.models.tags.Tag()
+                        .name(SUPPLEMENTAL_OPERATIONS_TAG)
+                        .description("Documented operations added outside FluxExtendedProblemDetailController, including framework fallback and other supplemental endpoints."))
                 .servers(List.of(new Server()
                         .url("/")
                         .description("Relative server URL")))
                 .components(new Components()
-                        .addSchemas("Error", errorSchema())
-                        .addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema())
-                        .addExamples("ValidationProblemDetailExample", validationProblemDetailExample())
-                        .addExamples("GenericBadRequestProblemDetailExample", genericBadRequestProblemDetailExample())
-                        .addExamples("MethodNotAllowedProblemDetailExample", methodNotAllowedProblemDetailExample())
-                        .addExamples("NotAcceptableProblemDetailExample", notAcceptableProblemDetailExample())
-                        .addExamples("UnsupportedMediaTypeProblemDetailExample", unsupportedMediaTypeProblemDetailExample())
-                        .addExamples("ServerProblemDetailExample", serverProblemDetailExample())
-                        .addExamples("BusinessProblemDetailExample", businessProblemDetailExample()));
+                        .addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema()));
     }
 
     @Bean
     OpenApiCustomizer webFluxErrorResponseCustomizer() {
-        return openApi -> {
-            ensureProblemSchemas(openApi);
-            if (openApi.getPaths() == null) {
-                return;
-            }
-            registerSyntheticOperations(openApi);
-            openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-                ApiResponses responses = operation.getResponses();
-                responses.remove("200");
-                responses.remove("201");
-                responses.remove("202");
-                responses.remove("204");
-                responses.remove("default");
-                FluxErrorResponseSpec errorResponseSpec = responseSpec(operation.getOperationId());
-                responses.addApiResponse(errorResponseSpec.statusCode(),
-                        response(errorResponseSpec.description(), errorResponseSpec.example()));
-                operation.setDescription(testGuidance(errorResponseSpec.trigger(),
-                        "src/test/java/io/github/sbracely/extended/problem/detail/webflux/example/controller/FluxControllerTests.java"));
-                String scenario = scenario(operation.getOperationId());
-                operation.addExtension("x-scenario", scenario);
-                operation.addTagsItem("scenario:" + scenario);
-            }));
-        };
+        return FluxOpenApiConfiguration::registerSupplementalOperations;
     }
 
-    private static void registerSyntheticOperations(OpenAPI openApi) {
-        addSyntheticGetOperation(openApi,
+    private static void registerSupplementalOperations(OpenAPI openApi) {
+        registerNoResourceFoundOperation(openApi);
+        registerNotAcceptableApiVersionOperation(openApi);
+    }
+
+    private static void registerNoResourceFoundOperation(OpenAPI openApi) {
+        ExtendedProblemDetail noResourceFoundExample = new ExtendedProblemDetail();
+        noResourceFoundExample.setTitle("Not Found");
+        noResourceFoundExample.setStatus(404);
+        noResourceFoundExample.setDetail("No static resource flux-extended-problem-detail/no-resource-found.");
+        noResourceFoundExample.setInstance(URI.create("/flux-extended-problem-detail/no-resource-found"));
+        addSupplementalGetOperation(openApi,
                 "/flux-extended-problem-detail/no-resource-found",
-                "noResourceFoundException");
-        addSyntheticGetOperation(openApi,
-                "/not-acceptable-api-version",
-                "notAcceptableApiVersionException");
+                "noResourceFoundException",
+                "404",
+                "404 no resource found error",
+                "Matches the documented example with the default WebFlux static-resource "
+                        + "fallback handling. If resource handling is customized or disabled, "
+                        + "the same request can produce a different fallback response shape.",
+                new Example().summary("No resource found").value(noResourceFoundExample));
     }
 
-    private static void addSyntheticGetOperation(OpenAPI openApi, String path, String operationId) {
+    private static void registerNotAcceptableApiVersionOperation(OpenAPI openApi) {
+        ExtendedProblemDetail notAcceptableApiVersionExample = new ExtendedProblemDetail();
+        notAcceptableApiVersionExample.setTitle("Bad Request");
+        notAcceptableApiVersionExample.setStatus(400);
+        notAcceptableApiVersionExample.setDetail("Invalid API version: '2.0.0'.");
+        notAcceptableApiVersionExample.setInstance(URI.create("/not-acceptable-api-version"));
+        addSupplementalGetOperation(openApi,
+                "/not-acceptable-api-version",
+                "notAcceptableApiVersionException",
+                "400",
+                "400 not acceptable API version error",
+                "Matches the documented example when API version negotiation is enabled for the "
+                        + "`API-Version` header (for example, "
+                        + "`spring.webflux.apiversion.use.header=API-Version` and "
+                        + "`spring.webflux.apiversion.supported=1,2`). The example application registers "
+                        + "a versioned `GET /not-acceptable-api-version` handler only in that setup.",
+                new Example().summary("Not acceptable API version").value(notAcceptableApiVersionExample));
+    }
+
+    private static void addSupplementalGetOperation(OpenAPI openApi,
+                                                    String path,
+                                                    String operationId,
+                                                    String statusCode,
+                                                    String description,
+                                                    String operationDescription,
+                                                    Example example) {
+        if (openApi.getPaths() == null) {
+            return;
+        }
         PathItem pathItem = openApi.getPaths().get(path);
         if (pathItem == null) {
             pathItem = new PathItem();
             openApi.getPaths().addPathItem(path, pathItem);
         }
         if (pathItem.getGet() == null) {
-            pathItem.setGet(new Operation()
-                    .operationId(operationId)
-                    .responses(new ApiResponses()));
+            MediaType mediaType = new MediaType();
+            mediaType.schema(new Schema<>().$ref("#/components/schemas/ExtendedProblemDetail"));
+            mediaType.addExamples("example", example);
+
+            Content content = new Content();
+            content.addMediaType(org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE, mediaType);
+
+            ApiResponse response = new ApiResponse();
+            response.description(description);
+            response.content(content);
+
+            ApiResponses responses = new ApiResponses();
+            responses.addApiResponse(statusCode, response);
+
+            Operation operation = new Operation();
+            operation.operationId(operationId);
+            operation.addTagsItem(SUPPLEMENTAL_OPERATIONS_TAG);
+            operation.description(operationDescription);
+            operation.responses(responses);
+            pathItem.setGet(operation);
         }
-    }
-
-    private static void ensureProblemSchemas(OpenAPI openApi) {
-        Components components = openApi.getComponents();
-        if (components == null) {
-            components = new Components();
-            openApi.setComponents(components);
-        }
-        components.addSchemas("Error", errorSchema());
-        components.addSchemas("ExtendedProblemDetail", extendedProblemDetailSchema());
-    }
-
-    private static Schema<?> errorSchema() {
-        return new ObjectSchema()
-                .description("Detailed error entry inside the Extended Problem Detail response.")
-                .addProperty("type", errorTypeSchema())
-                .addProperty("target", new StringSchema()
-                        .description("Field, parameter, cookie, header, or business target associated with the error."))
-                .addProperty("message", new StringSchema()
-                        .description("Human-readable explanation of the error."));
-    }
-
-    private static StringSchema errorTypeSchema() {
-        StringSchema schema = new StringSchema();
-        schema.description("Source of the error.");
-        schema.addEnumItemObject("PARAMETER");
-        schema.addEnumItemObject("COOKIE");
-        schema.addEnumItemObject("HEADER");
-        schema.addEnumItemObject("BUSINESS");
-        return schema;
     }
 
     private static Schema<?> extendedProblemDetailSchema() {
+        StringSchema errorType = new StringSchema();
+        errorType.description("Source of the error.");
+        errorType.addEnumItemObject("PARAMETER");
+        errorType.addEnumItemObject("COOKIE");
+        errorType.addEnumItemObject("HEADER");
+        errorType.addEnumItemObject("BUSINESS");
+
+        ObjectSchema errorItemSchema = new ObjectSchema();
+        errorItemSchema.description("Detailed error entry inside the Extended Problem Detail response.");
+        errorItemSchema.addProperty("type", errorType);
+        errorItemSchema.addProperty("target", new StringSchema()
+                .description("Field, parameter, cookie, header, or business target associated with the error."));
+        errorItemSchema.addProperty("message", new StringSchema()
+                .description("Human-readable explanation of the error."));
+
+        ArraySchema errorsSchema = new ArraySchema();
+        errorsSchema.description("Detailed validation or business errors.");
+        errorsSchema.items(errorItemSchema);
+
         return new ObjectSchema()
                 .description("RFC 9457 problem detail extended with an errors array.")
                 .addProperty("type", new StringSchema()
@@ -147,284 +172,6 @@ public class FluxOpenApiConfiguration {
                 .addProperty("instance", new StringSchema()
                         .format("uri")
                         .description("URI identifying the specific occurrence."))
-                .addProperty("errors", errorListSchema());
-    }
-
-    private static ArraySchema errorListSchema() {
-        ArraySchema schema = new ArraySchema();
-        schema.description("Detailed validation or business errors.");
-        Schema<Object> itemSchema = new Schema<>();
-        itemSchema.$ref(ERROR_SCHEMA_REF);
-        schema.items(itemSchema);
-        return schema;
-    }
-
-    private static ApiResponse response(String description, Example example) {
-        return new ApiResponse()
-                .description(description + ". See the WebFlux example tests for concrete triggering inputs.")
-                .content(problemDetailContent(example));
-    }
-
-    private static Content problemDetailContent(Example example) {
-        return new Content().addMediaType(PROBLEM_JSON, new MediaType()
-                .schema(new Schema<>().$ref(EXTENDED_PROBLEM_DETAIL_SCHEMA_REF))
-                .addExamples("example", example));
-    }
-
-    private static Example validationProblemDetailExample() {
-        return problemExample("Validation error", "Bad Request", 400, "Invalid request content.",
-                "/flux-extended-problem-detail/web-exchange-bind-exception",
-                List.of(
-                        error("PARAMETER", "name", "Name length must be between 6-10"),
-                        error("PARAMETER", "age", "Age cannot be null"),
-                        error("PARAMETER", "password", "Password and confirm password do not match"),
-                        error("PARAMETER", "confirmPassword", "Password and confirm password do not match")));
-    }
-
-    private static Example genericBadRequestProblemDetailExample() {
-        return problemExample("Bad request", "Bad Request", 400,
-                "Required query parameter 'id' is not present.",
-                "/flux-extended-problem-detail/missing-request-value-exception");
-    }
-
-    private static Example methodNotAllowedProblemDetailExample() {
-        return problemExample("Method not allowed", "Method Not Allowed", 405,
-                "Supported methods: [GET]",
-                "/flux-extended-problem-detail/method-not-allowed-exception");
-    }
-
-    private static Example notAcceptableProblemDetailExample() {
-        return problemExample("Not acceptable", "Not Acceptable", 406,
-                "Acceptable representations: [application/json].",
-                "/flux-extended-problem-detail/not-acceptable-status-exception");
-    }
-
-    private static Example unsupportedMediaTypeProblemDetailExample() {
-        return problemExample("Unsupported media type", "Unsupported Media Type", 415, null,
-                "/flux-extended-problem-detail/unsupported-media-type-status-exception");
-    }
-
-    private static Example serverProblemDetailExample() {
-        return problemExample("Server error", "Internal Server Error", 500,
-                "server error",
-                "/flux-extended-problem-detail/server-error-exception");
-    }
-
-    private static Example businessProblemDetailExample() {
-        return problemExample("Business error", "Payment failed title", 500, "Payment failed details",
-                "/flux-extended-problem-detail/extended-error-response-exception",
-                List.of(
-                        error("BUSINESS", null, "Insufficient balance"),
-                        error("BUSINESS", null, "Payment frequent")));
-    }
-
-    private static FluxErrorResponseSpec responseSpec(String operationId) {
-        return switch (operationId) {
-            case "methodNotAllowedException" ->
-                    new FluxErrorResponseSpec("405", "405 method not allowed error", methodNotAllowedProblemDetailExample(),
-                            "DELETE /flux-extended-problem-detail/method-not-allowed-exception");
-            case "notAcceptableStatusException" ->
-                    new FluxErrorResponseSpec("406", "406 not acceptable error", notAcceptableProblemDetailExample(),
-                            "GET /flux-extended-problem-detail/not-acceptable-status-exception");
-            case "unsupportedMediaTypeStatusException" ->
-                    new FluxErrorResponseSpec("415", "415 unsupported media type error", unsupportedMediaTypeProblemDetailExample(),
-                            "POST /flux-extended-problem-detail/unsupported-media-type-status-exception without Content-Type: application/xml");
-            case "extendedErrorResponseException" ->
-                    new FluxErrorResponseSpec("500", "500 business error", businessProblemDetailExample(),
-                            "GET /flux-extended-problem-detail/extended-error-response-exception");
-            case "errorResponseException" ->
-                    new FluxErrorResponseSpec("400", "400 error response exception",
-                            problemExample("Error response", "Error title", 400, "Error details",
-                                    "/flux-extended-problem-detail/error-response-exception",
-                                    List.of(
-                                            error("BUSINESS", null, "Error message 1"),
-                                            error("BUSINESS", null, "Error message 2"))),
-                            "GET /flux-extended-problem-detail/error-response-exception");
-            case "responseStatusException" ->
-                    new FluxErrorResponseSpec("400", "400 response status error",
-                            problemExample("Response status error", "Bad Request", 400, "exception",
-                                    "/flux-extended-problem-detail/response-status-exception"),
-                            "GET /flux-extended-problem-detail/response-status-exception");
-            case "missingRequestValueException" ->
-                    new FluxErrorResponseSpec("400", "400 missing request value error", genericBadRequestProblemDetailExample(),
-                            "GET /flux-extended-problem-detail/missing-request-value-exception without id");
-            case "unsatisfiedRequestParameterException" ->
-                    new FluxErrorResponseSpec("400", "400 invalid request parameters error",
-                            problemExample("Invalid request parameters", "Bad Request", 400,
-                                    "Invalid request parameters.",
-                                    "/flux-extended-problem-detail/unsatisfied-request-parameter-exception"),
-                            "GET /flux-extended-problem-detail/unsatisfied-request-parameter-exception");
-            case "contentTooLargeException" ->
-                    new FluxErrorResponseSpec("413", "413 content too large error",
-                            problemExample("Content too large", "Content Too Large", 413, null,
-                                    "/flux-extended-problem-detail/content-too-large-exception"),
-                            "POST /flux-extended-problem-detail/content-too-large-exception with a 1MB request body");
-            case "payloadTooLargeException" ->
-                    new FluxErrorResponseSpec("413", "413 content too large error",
-                            problemExample("Content too large", "Content Too Large", 413, null,
-                                    "/flux-extended-problem-detail/payload-too-large-exception"),
-                            "POST /flux-extended-problem-detail/payload-too-large-exception with body text");
-            case "serverWebInputException" ->
-                    new FluxErrorResponseSpec("400", "400 server web input error",
-                            problemExample("Server web input error", "Bad Request", 400, "server web input error",
-                                    "/flux-extended-problem-detail/server-web-input-exception"),
-                            "GET /flux-extended-problem-detail/server-web-input-exception");
-            case "noResourceFoundException" ->
-                    new FluxErrorResponseSpec("404", "404 no resource found error",
-                            problemExample("No resource found", "Not Found", 404, null,
-                                    "/flux-extended-problem-detail/no-resource-found"),
-                            "GET /flux-extended-problem-detail/no-resource-found");
-            case "serverErrorException" ->
-                    new FluxErrorResponseSpec("500", "500 server error", serverProblemDetailExample(),
-                            "GET /flux-extended-problem-detail/server-error-exception");
-            case "invalidApiVersionException" ->
-                    new FluxErrorResponseSpec("400", "400 invalid API version error",
-                            problemExample("Invalid API version", "Bad Request", 400, "Invalid API version: '3.0.0'.",
-                                    "/flux-extended-problem-detail/invalid-api-version-exception"),
-                            "GET /flux-extended-problem-detail/invalid-api-version-exception with header API-Version: 3");
-            case "missingApiVersionException" ->
-                    new FluxErrorResponseSpec("400", "400 missing API version error",
-                            problemExample("Missing API version", "Bad Request", 400, "API version is required.",
-                                    "/flux-extended-problem-detail/missing-api-version-exception"),
-                            "GET /flux-extended-problem-detail/missing-api-version-exception without API-Version header");
-            case "notAcceptableApiVersionException" ->
-                    new FluxErrorResponseSpec("400", "400 not acceptable API version error",
-                            problemExample("Not acceptable API version", "Bad Request", 400, "Invalid API version: '2.0.0'.",
-                                    "/not-acceptable-api-version"),
-                            "GET /not-acceptable-api-version with API-Version: 2 and a version=1 handler");
-            case "webExchangeBindException", "handlerMethodValidationExceptionCookieValue",
-                 "handlerMethodValidationExceptionMatrixVariable", "handlerMethodValidationExceptionModelAttribute",
-                  "handlerMethodValidationExceptionPathVariable", "handlerMethodValidationExceptionRequestBody",
-                  "handlerMethodValidationExceptionRequestBodyValidationResult", "handlerMethodValidationExceptionRequestHeader",
-                  "handlerMethodValidationExceptionRequestParam", "handlerMethodValidationExceptionRequestPart",
-                  "handlerMethodValidationExceptionOther", "methodValidationException" ->
-                    validationResponseSpec(operationId);
-            default -> new FluxErrorResponseSpec("400", "400 bad request error", genericBadRequestProblemDetailExample(),
-                    "See the referenced WebFlux test for the exact trigger");
-        };
-    }
-
-    private static FluxErrorResponseSpec validationResponseSpec(String operationId) {
-        return switch (operationId) {
-            case "webExchangeBindException" ->
-                    new FluxErrorResponseSpec("400", "400 validation error", validationProblemDetailExample(),
-                            "POST /flux-extended-problem-detail/web-exchange-bind-exception with application/json body {\"name\":\"abc\",\"password\":\"123\"}");
-            case "handlerMethodValidationExceptionCookieValue" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-cookie-value",
-                                    List.of(error("COOKIE", "cookieValue", "cookie cannot be empty"))),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-cookie-value with cookie cookieValue=");
-            case "handlerMethodValidationExceptionMatrixVariable" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c",
-                                    List.of(error("PARAMETER", "list", "list maximum size is 2"))),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c");
-            case "handlerMethodValidationExceptionModelAttribute" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-model-attribute",
-                                    List.of(error("PARAMETER", "password", "Password cannot be empty"))),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-model-attribute");
-            case "handlerMethodValidationExceptionPathVariable" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc",
-                                    List.of(error("PARAMETER", "id", "id length must be at least 5"))),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc");
-            case "handlerMethodValidationExceptionRequestBody" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-request-body",
-                                    List.of(error("PARAMETER", "password", "Password cannot be empty"))),
-                            "POST /flux-extended-problem-detail/handler-method-validation-exception-request-body with application/json body {\"name\":\"abc\"}");
-            case "handlerMethodValidationExceptionRequestBodyValidationResult" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result",
-                                    List.of(error("PARAMETER", null, "Element cannot contain empty values"))),
-                            "POST /flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result with application/json body [\"\",\"a\"]");
-            case "handlerMethodValidationExceptionRequestHeader" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-request-header",
-                                    List.of(error("HEADER", "headerValue", "Header cannot be empty"))),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-request-header with header headerValue=");
-            case "handlerMethodValidationExceptionRequestParam" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-request-param",
-                                    List.of(
-                                            error("PARAMETER", "param", "Parameter cannot be empty"),
-                                            error("PARAMETER", "value", "Length must be at least 5"))),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-request-param?param=&value=ab");
-            case "handlerMethodValidationExceptionRequestPart" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-request-part",
-                                    List.of(error("PARAMETER", "file", "File cannot be empty"))),
-                            "POST /flux-extended-problem-detail/handler-method-validation-exception-request-part with an empty body");
-            case "handlerMethodValidationExceptionOther" ->
-                    new FluxErrorResponseSpec("400", "400 validation error",
-                            validationFailureExample("/flux-extended-problem-detail/handler-method-validation-exception-other", null),
-                            "GET /flux-extended-problem-detail/handler-method-validation-exception-other");
-            case "methodValidationException" ->
-                    new FluxErrorResponseSpec("500", "500 validation error",
-                            problemExample("Validation failed", "Internal Server Error", 500, "Validation failed",
-                                    "/flux-extended-problem-detail/method-validation-exception",
-                                    List.of(
-                                            error("PARAMETER", "name", "name must not be blank"),
-                                            error("PARAMETER", "name", "name must not be null"),
-                                            error("PARAMETER", "password", "Password and confirm password do not match"),
-                                            error("PARAMETER", "name", "Name cannot be blank"),
-                                            error("PARAMETER", "age", "Age cannot be null"),
-                                            error("PARAMETER", "confirmPassword", "Password and confirm password do not match"),
-                                            error("PARAMETER", "name", "Name length must be between 6-10"),
-                                            error("PARAMETER", null, "Name is not valid"))),
-                            "GET /flux-extended-problem-detail/method-validation-exception");
-            default ->
-                    new FluxErrorResponseSpec("400", "400 validation error", validationProblemDetailExample(),
-                            "See the referenced WebFlux test for the exact validation trigger");
-        };
-    }
-
-    private static Example validationFailureExample(String instance, List<Map<String, Object>> errors) {
-        return problemExample("Validation error", "Bad Request", 400, "Validation failure", instance, errors);
-    }
-
-    private static Example problemExample(String summary, String title, int status, String detail, String instance) {
-        return problemExample(summary, title, status, detail, instance, null);
-    }
-
-    private static Example problemExample(String summary, String title, int status, String detail, String instance,
-                                          List<Map<String, Object>> errors) {
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("title", title);
-        payload.put("status", status);
-        if (detail != null) {
-            payload.put("detail", detail);
-        }
-        payload.put("instance", instance);
-        if (errors != null) {
-            payload.put("errors", errors);
-        }
-        return new Example().summary(summary).value(payload);
-    }
-
-    private static Map<String, Object> error(String type, String target, String message) {
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("type", type);
-        if (target != null) {
-            payload.put("target", target);
-        }
-        payload.put("message", message);
-        return payload;
-    }
-
-    private static String testGuidance(String trigger, String testPath) {
-        return "Real trigger from tests: " + trigger + ". "
-                + "For the exact request setup and assertions, see " + testPath + ".";
-    }
-
-    static String scenario(String operationId) {
-        return switch (operationId) {
-            case "invalidApiVersionException", "missingApiVersionException", "notAcceptableApiVersionException" -> "api-version";
-            default -> "default";
-        };
-    }
-
-    private record FluxErrorResponseSpec(String statusCode, String description, Example example, String trigger) {
+                .addProperty("errors", errorsSchema);
     }
 }

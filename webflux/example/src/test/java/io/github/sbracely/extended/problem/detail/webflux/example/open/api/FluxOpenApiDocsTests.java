@@ -37,7 +37,6 @@ class FluxOpenApiDocsTests {
         assertThat(body)
                 .contains("\"openapi\":\"3.1.0\"")
                 .contains("\"components\":{\"schemas\":")
-                .contains("\"Error\":{\"type\":\"object\"")
                 .contains("\"ExtendedProblemDetail\":{\"type\":\"object\"")
                 .contains("/flux-extended-problem-detail/method-not-allowed-exception")
                 .contains("Extended Problem Detail Boot 4 WebFlux Example API")
@@ -49,7 +48,6 @@ class FluxOpenApiDocsTests {
                 .contains("\"value\":{\"title\":\"Bad Request\",\"status\":400")
                 .contains("\"target\":\"name\"")
                 .contains("\"message\":\"Name length must be between 6-10\"")
-                .contains("FluxControllerTests.java")
                 .doesNotContain("\"responseStatusException\":{\"description\":\"OK\"")
                 .doesNotContain("\"notAcceptableStatusException\":{\"description\":\"OK\"");
     }
@@ -66,7 +64,6 @@ class FluxOpenApiDocsTests {
                 .contains("components:")
                 .contains("schemas:")
                 .contains("ExtendedProblemDetail:")
-                .contains("Error:")
                 .contains("/flux-extended-problem-detail/method-not-allowed-exception")
                 .contains("Extended Problem Detail Boot 4 WebFlux Example API")
                 .contains("Example Spring Boot 4 WebFlux endpoints")
@@ -79,7 +76,6 @@ class FluxOpenApiDocsTests {
                 .contains("detail: Invalid request content.")
                 .contains("target: name")
                 .contains("message: Name length must be between 6-10")
-                .contains("FluxControllerTests.java")
                 .doesNotContain("\"200\":");
     }
 
