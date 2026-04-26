@@ -8,6 +8,14 @@ import io.github.sbracely.extended.problem.detail.webflux.example.request.FluxPr
 import io.github.sbracely.extended.problem.detail.webflux.example.service.FluxProblemDetailService;
 import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.FluxCheckFilePart;
 import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.FluxCheckPassword;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -49,6 +57,21 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see MethodNotAllowedException
      */
+    @ApiResponse(
+            responseCode = "405",
+            description = "MethodNotAllowedException",
+            headers = @Header(name = "Allow", schema = @Schema(type = "string", example = "GET")),
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Method Not Allowed",
+                              "status": 405,
+                              "detail": "Supported methods: [GET]",
+                              "instance": "/flux-extended-problem-detail/method-not-allowed-exception"
+                            }
+                            """)))
     @GetMapping("/method-not-allowed-exception")
     public Mono<Void> methodNotAllowedException() {
         logger.info("methodNotAllowedException");
@@ -58,6 +81,21 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see NotAcceptableStatusException
      */
+    @Operation(parameters = @Parameter(name = "Accept", in = ParameterIn.HEADER, example = "application/xml"))
+    @ApiResponse(
+            responseCode = "406",
+            description = "NotAcceptableStatusException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Not Acceptable",
+                              "status": 406,
+                              "detail": "Acceptable representations: [application/json].",
+                              "instance": "/flux-extended-problem-detail/not-acceptable-status-exception"
+                            }
+                            """)))
     @GetMapping(path = "/not-acceptable-status-exception", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Void> notAcceptableStatusException() {
         logger.info("notAcceptableStatusException");
@@ -67,6 +105,19 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see UnsupportedMediaTypeStatusException
      */
+    @ApiResponse(
+            responseCode = "415",
+            description = "UnsupportedMediaTypeStatusException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Unsupported Media Type",
+                              "status": 415,
+                              "instance": "/flux-extended-problem-detail/unsupported-media-type-status-exception"
+                            }
+                            """)))
     @PostMapping(path = "/unsupported-media-type-status-exception", consumes = MediaType.APPLICATION_XML_VALUE)
     public Mono<Void> unsupportedMediaTypeStatusException() {
         logger.info("unsupportedMediaTypeStatusException");
@@ -76,8 +127,22 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see MissingRequestValueException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingRequestValueException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", summary = "Validation error", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Required query parameter 'id' is not present.",
+                              "instance": "/flux-extended-problem-detail/missing-request-value-exception"
+                            }
+                            """)))
     @GetMapping("/missing-request-value-exception")
-    public Mono<Void> missingRequestValueException(@RequestParam String id) {
+    public Mono<Void> missingRequestValueException(@Parameter(example = "1") @RequestParam String id) {
         logger.info("missingRequestValueException, id: {}", id);
         return Mono.empty();
     }
@@ -85,6 +150,21 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see UnsatisfiedRequestParameterException
      */
+    @Operation(parameters = @Parameter(name = "type", in = ParameterIn.QUERY, example = "1"))
+    @ApiResponse(
+            responseCode = "400",
+            description = "UnsatisfiedRequestParameterException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid request parameters.",
+                              "instance": "/flux-extended-problem-detail/unsatisfied-request-parameter-exception"
+                            }
+                            """)))
     @GetMapping(path = "/unsatisfied-request-parameter-exception", params = {"type=1", "exist", "!debug"})
     public Mono<Void> unsatisfiedRequestParameterException() {
         logger.info("unsatisfiedRequestParameterException");
@@ -94,6 +174,42 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see WebExchangeBindException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "WebExchangeBindException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid request content.",
+                              "instance": "/flux-extended-problem-detail/web-exchange-bind-exception",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name length must be between 6-10"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "age",
+                                  "message": "Age cannot be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "confirmPassword",
+                                  "message": "Password and confirm password do not match"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/web-exchange-bind-exception")
     public Mono<Void> webExchangeBindException(@RequestBody @Validated FluxProblemDetailRequest problemDetailRequest) {
         logger.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
@@ -104,6 +220,27 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#cookieValue(CookieValue, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-cookie-value",
+                              "errors": [
+                                {
+                                  "type": "COOKIE",
+                                  "target": "cookieValue",
+                                  "message": "cookie cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-cookie-value")
     public Mono<Void> handlerMethodValidationExceptionCookieValue(@CookieValue @NotBlank(message = "cookie cannot be empty") String cookieValue) {
         logger.info("handlerMethodValidationExceptionCookieValue, cookieValue: {}", cookieValue);
@@ -114,9 +251,30 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#matrixVariable(MatrixVariable, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "list",
+                                  "message": "list maximum size is 2"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-matrix/{id}")
-    public Mono<Void> handlerMethodValidationExceptionMatrixVariable(@PathVariable String id,
-                                                                     @MatrixVariable @Size(max = 2, message = "list maximum size is 2") List<String> list) {
+    public Mono<Void> handlerMethodValidationExceptionMatrixVariable(@Parameter(example = "abc") @PathVariable String id,
+                                                                      @MatrixVariable @Size(max = 2, message = "list maximum size is 2") List<String> list) {
         logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
         return Mono.empty();
     }
@@ -125,6 +283,27 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#modelAttribute(ModelAttribute, ParameterErrors)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-model-attribute",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-model-attribute")
     public Mono<Void> handlerMethodValidationExceptionModelAttribute(@FluxCheckPassword(message = "Password cannot be empty") FluxProblemDetailRequest problemDetailRequest) {
         logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
@@ -135,8 +314,29 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#pathVariable(PathVariable, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "id",
+                                  "message": "id length must be at least 5"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
-    public Mono<Void> handlerMethodValidationExceptionPathVariable(@PathVariable @Size(min = 5, message = "id length must be at least 5") String id) {
+    public Mono<Void> handlerMethodValidationExceptionPathVariable(@Parameter(example = "abc") @PathVariable @Size(min = 5, message = "id length must be at least 5") String id) {
         logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
         return Mono.empty();
     }
@@ -145,6 +345,27 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestBody(RequestBody, ParameterErrors)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-body",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/handler-method-validation-exception-request-body")
     public Mono<Void> handlerMethodValidationExceptionRequestBody(@RequestBody @FluxCheckPassword(message = "Password cannot be empty") FluxProblemDetailRequest problemDetailRequest) {
         logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
@@ -155,6 +376,26 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestBodyValidationResult(RequestBody, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "message": "Element cannot contain empty values"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
     public Mono<Void> handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
         logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
@@ -165,6 +406,27 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestHeader(RequestHeader, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-header",
+                              "errors": [
+                                {
+                                  "type": "HEADER",
+                                  "target": "headerValue",
+                                  "message": "Header cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping(path = "/handler-method-validation-exception-request-header")
     public Mono<Void> handlerMethodValidationExceptionRequestHeader(@RequestHeader @NotBlank(message = "Header cannot be empty") String headerValue) {
         logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
@@ -175,9 +437,35 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestParam(RequestParam, ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-param",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "param",
+                                  "message": "Parameter cannot be empty"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "value",
+                                  "message": "Length must be at least 5"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-request-param")
     public Mono<Void> handlerMethodValidationExceptionRequestParam(@RequestParam @NotBlank(message = "Parameter cannot be empty") String param,
-                                                                   @RequestParam @Size(min = 5, message = "Length must be at least 5") String value) {
+                                                                    @RequestParam @Size(min = 5, message = "Length must be at least 5") String value) {
         logger.info("handlerMethodValidationExceptionRequestParam, param: {}, value: {}", param, value);
         return Mono.empty();
     }
@@ -186,9 +474,30 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#requestPart(RequestPart, ParameterErrors)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-part",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "file",
+                                  "message": "File cannot be empty"
+                                }
+                              ]
+                            }
+                            """)))
     @PostMapping("/handler-method-validation-exception-request-part")
     public Mono<Void> handlerMethodValidationExceptionRequestPart(@RequestPart(required = false)
-                                                                  @FluxCheckFilePart(requiredMessage = "File cannot be empty") FilePart filePart) {
+                                                                   @FluxCheckFilePart(requiredMessage = "File cannot be empty") FilePart filePart) {
         logger.info("handlerMethodValidationExceptionRequestPart, filePart: {}", filePart);
         return Mono.empty();
     }
@@ -197,6 +506,20 @@ public class FluxExtendedProblemDetailController {
      * @see HandlerMethodValidationException
      * @see HandlerMethodValidationException.Visitor#other(ParameterValidationResult)
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "HandlerMethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Validation failure",
+                              "instance": "/flux-extended-problem-detail/handler-method-validation-exception-other"
+                            }
+                            """)))
     @GetMapping("/handler-method-validation-exception-other")
     public Mono<Void> handlerMethodValidationExceptionOther(
             @SessionAttribute(required = false) @NotBlank(message = "sessionAttribute cannot be empty") String sessionAttribute,
@@ -209,6 +532,20 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see ServerWebInputException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ServerWebInputException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "server web input error",
+                              "instance": "/flux-extended-problem-detail/server-web-input-exception"
+                            }
+                            """)))
     @GetMapping("/server-web-input-exception")
     public Mono<Void> serverWebInputException() {
         logger.info("serverWebInputException");
@@ -218,6 +555,20 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see ServerErrorException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "ServerErrorException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "server error",
+                              "instance": "/flux-extended-problem-detail/server-error-exception"
+                            }
+                            """)))
     @GetMapping("/server-error-exception")
     public Mono<Void> serverErrorException() {
         logger.info("serverErrorException");
@@ -227,6 +578,20 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see ResponseStatusException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ResponseStatusException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "exception",
+                              "instance": "/flux-extended-problem-detail/response-status-exception"
+                            }
+                            """)))
     @GetMapping("/response-status-exception")
     public Mono<Void> responseStatusException() {
         logger.info("responseStatusException");
@@ -236,6 +601,19 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see ContentTooLargeException
      */
+    @ApiResponse(
+            responseCode = "413",
+            description = "ContentTooLargeException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Content Too Large",
+                              "status": 413,
+                              "instance": "/flux-extended-problem-detail/content-too-large-exception"
+                            }
+                            """)))
     @PostMapping("/content-too-large-exception")
     public Mono<Void> contentTooLargeException(@RequestBody byte[] body) {
         logger.info("contentTooLargeException, body.length: {}", body.length);
@@ -245,6 +623,20 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see InvalidApiVersionException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "InvalidApiVersionException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "Invalid API version: '3.0.0'.",
+                              "instance": "/flux-extended-problem-detail/invalid-api-version-exception"
+                            }
+                            """)))
     @GetMapping("/invalid-api-version-exception")
     public Mono<Void> invalidApiVersionException() {
         logger.info("invalidApiVersionException");
@@ -254,6 +646,20 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see MissingApiVersionException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "MissingApiVersionException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Bad Request",
+                              "status": 400,
+                              "detail": "API version is required.",
+                              "instance": "/flux-extended-problem-detail/missing-api-version-exception"
+                            }
+                            """)))
     @GetMapping("/missing-api-version-exception")
     public Mono<Void> missingApiVersionException() {
         logger.info("missingApiVersionException");
@@ -263,6 +669,19 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see PayloadTooLargeException
      */
+    @ApiResponse(
+            responseCode = "413",
+            description = "PayloadTooLargeException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Content Too Large",
+                              "status": 413,
+                              "instance": "/flux-extended-problem-detail/payload-too-large-exception"
+                            }
+                            """)))
     @PostMapping("/payload-too-large-exception")
     public Mono<Void> payloadTooLargeException(@RequestBody byte[] body) {
         logger.info("payloadTooLargeException, body.length: {}", body.length);
@@ -272,6 +691,30 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see ErrorResponseException
      */
+    @ApiResponse(
+            responseCode = "400",
+            description = "ErrorResponseException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Error title",
+                              "status": 400,
+                              "detail": "Error details",
+                              "instance": "/flux-extended-problem-detail/error-response-exception",
+                              "errors": [
+                                {
+                                  "type": "BUSINESS",
+                                  "message": "Error message 1"
+                                },
+                                {
+                                  "type": "BUSINESS",
+                                  "message": "Error message 2"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/error-response-exception")
     public Mono<Void> errorResponseException() {
         logger.info("errorResponseException");
@@ -288,6 +731,30 @@ public class FluxExtendedProblemDetailController {
     /**
      * @see FluxExtendedErrorResponseException
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "FluxExtendedErrorResponseException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Payment failed title",
+                              "status": 500,
+                              "detail": "Payment failed details",
+                              "instance": "/flux-extended-problem-detail/extended-error-response-exception",
+                              "errors": [
+                                {
+                                  "type": "BUSINESS",
+                                  "message": "Insufficient balance"
+                                },
+                                {
+                                  "type": "BUSINESS",
+                                  "message": "Payment frequent"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/extended-error-response-exception")
     public Mono<Void> extendedErrorResponseException() {
         logger.info("extendedErrorResponseException");
@@ -305,6 +772,61 @@ public class FluxExtendedProblemDetailController {
      * @see MethodValidationException
      * @see FluxMethodValidationConfiguration#validationPostProcessor()
      */
+    @ApiResponse(
+            responseCode = "500",
+            description = "MethodValidationException",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "title": "Internal Server Error",
+                              "status": 500,
+                              "detail": "Validation failed",
+                              "instance": "/flux-extended-problem-detail/method-validation-exception",
+                              "errors": [
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "name must not be blank"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "name must not be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "password",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name cannot be blank"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "age",
+                                  "message": "Age cannot be null"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "confirmPassword",
+                                  "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "target": "name",
+                                  "message": "Name length must be between 6-10"
+                                },
+                                {
+                                  "type": "PARAMETER",
+                                  "message": "Name is not valid"
+                                }
+                              ]
+                            }
+                            """)))
     @GetMapping("/method-validation-exception")
     public Mono<Void> methodValidationException() {
         logger.info("methodValidationException");

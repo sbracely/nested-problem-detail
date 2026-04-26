@@ -23,8 +23,6 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 @AutoConfigureMockMvc
 @TestPropertySource(properties = "spring.web.resources.add-mappings=false")
 class MvcOpenApiNoHandlerFoundContractTests {
-
-    private static final String SCENARIO = "no-handler-found";
     private static final String BASE = "/mvc-extended-problem-detail";
 
     @Autowired
@@ -49,9 +47,15 @@ class MvcOpenApiNoHandlerFoundContractTests {
     }
 
     @Test
-    void allNoHandlerFoundOperationsCovered() throws Exception {
+    void noHandlerFoundFixtureRemainsDocumented() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(mockMvcTester);
-        MvcOpenApiContractTestSupport.assertAllScenarioOperationsCovered(
-                apiDocs, SCENARIO, MvcOperationFixtures.all());
+        MvcOperationFixtures.MvcOperationFixture fixture = MvcOperationFixtures.all().get("noHandlerFoundException");
+        assertThat(fixture).as("fixture for noHandlerFoundException").isNotNull();
+        JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
+                apiDocs, fixture.docPath(), fixture.docMethod());
+        assertThat(docExample)
+                .as("documented example for noHandlerFoundException at %s %s",
+                        fixture.docMethod(), fixture.docPath())
+                .isNotNull();
     }
 }

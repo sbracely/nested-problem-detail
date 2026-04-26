@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.test.context.TestPropertySource;
@@ -741,7 +740,6 @@ class FluxControllerTests {
             "spring.webflux.apiversion.supported=1,2",
     })
     @AutoConfigureWebTestClient(timeout = "PT1M")
-    @Import(FluxApiVersionTests.FluxNotAcceptableApiVersionController.class)
     class FluxApiVersionTests {
 
         /**
@@ -796,7 +794,7 @@ class FluxControllerTests {
 
         /**
          * @see NotAcceptableApiVersionException
-         * @see FluxNotAcceptableApiVersionController#notAcceptableApiVersion()
+         * @see FluxApiVersionController#notAcceptableApiVersion()
          */
         @Test
         void notAcceptableApiVersionException() {
@@ -819,16 +817,5 @@ class FluxControllerTests {
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
 
-        /**
-         * {@link NotAcceptableApiVersionException}
-         */
-        @RestController
-        static class FluxNotAcceptableApiVersionController {
-            @GetMapping(value = "/not-acceptable-api-version", version = "1")
-            public Mono<Void> notAcceptableApiVersion() {
-                logger.info("response status exception not acceptable api version");
-                return Mono.empty();
-            }
-        }
     }
 }

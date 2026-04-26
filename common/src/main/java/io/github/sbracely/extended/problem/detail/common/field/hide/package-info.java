@@ -1,6 +1,6 @@
 /**
- * Shared handler infrastructure for Extended Problem Detail, providing common error-resolving logic
- * for both Spring WebMVC and Spring WebFlux exception handlers.
+ * Field visibility support for Extended Problem Detail responses, including configuration
+ * resolution and Jackson serializers.
  */
 @NullMarked
 package io.github.sbracely.extended.problem.detail.common.field.hide;

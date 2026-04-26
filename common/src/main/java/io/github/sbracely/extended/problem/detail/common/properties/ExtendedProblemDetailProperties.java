@@ -133,11 +133,6 @@ public class ExtendedProblemDetailProperties {
     public static class CommonLogging {
 
         /**
-         * Default log level for extended problem detail logging.
-         */
-        public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
-
-        /**
          * The log level at which exceptions are recorded.
          * <p>
          * Specifies which level is used to emit the log entry when an exception is caught.
@@ -145,7 +140,7 @@ public class ExtendedProblemDetailProperties {
          * Set to {@link LogLevel#OFF} to disable logging.
          * </p>
          */
-        private LogLevel atLevel = DEFAULT_LOG_LEVEL;
+        private LogLevel atLevel = LogLevel.INFO;
 
         /**
          * Whether to print exception stack trace in logs.

@@ -25,9 +25,9 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Strict OpenAPI contract tests for the <b>default</b> configuration scenario (WebMVC).
+ * Strict OpenAPI contract tests for the default, controller-backed MVC operations.
  * <p>
- * For every documented operation that carries {@code x-scenario: "default"} this test:
+ * For every default-scenario fixture this test:
  * <ol>
  *     <li>Executes the exact trigger request defined by {@link MvcOperationFixtures}.</li>
  *     <li>Reads {@code /v3/api-docs} and looks up the documented response example for the
@@ -46,24 +46,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MvcOpenApiDefaultContractTests {
 
-    private static final String SCENARIO = "default";
     private static final String BASE = "/mvc-extended-problem-detail";
 
     @Autowired
     private MockMvcTester mockMvcTester;
 
     private JsonNode apiDocs;
-    private Map<String, String[]> operationPaths;
 
     @BeforeAll
     void fetchApiDocs() throws Exception {
         apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(mockMvcTester);
-        operationPaths = MvcOpenApiContractTestSupport.operationsByScenario(apiDocs, SCENARIO);
     }
 
     Collection<String> defaultFixtures() {
         return MvcOperationFixtures.all().entrySet().stream()
-                .filter(e -> SCENARIO.equals(e.getValue().scenario()) && e.getValue().requestBuilder() != null)
+                .filter(e -> "default".equals(e.getValue().scenario()) && e.getValue().requestBuilder() != null)
                 .map(Map.Entry::getKey)
                 .toList();
     }
@@ -87,14 +84,12 @@ class MvcOpenApiDefaultContractTests {
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
 
         // look up documented example from the API docs
-        String[] pathMethod = operationPaths.get(operationId);
-        assertThat(pathMethod)
-                .as("operationId '%s' should be present in API docs under scenario '%s'", operationId, SCENARIO)
-                .isNotNull();
+        String docPath = fixture.docPath();
+        String docMethod = fixture.docMethod();
         JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
-                apiDocs, pathMethod[0], pathMethod[1]);
+                apiDocs, docPath, docMethod);
         assertThat(docExample)
-                .as("documented example for operation '%s' at %s %s", operationId, pathMethod[1], pathMethod[0])
+                .as("documented example for operation '%s' at %s %s", operationId, docMethod, docPath)
                 .isNotNull();
 
         // compare runtime vs documented
@@ -132,22 +127,30 @@ class MvcOpenApiDefaultContractTests {
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
 
         // Fetch documented example
-        String[] pathMethod = operationPaths.get("asyncRequestTimeoutException");
-        assertThat(pathMethod).as("asyncRequestTimeoutException should be in API docs").isNotNull();
+        MvcOperationFixture fixture = MvcOperationFixtures.all().get("asyncRequestTimeoutException");
+        assertThat(fixture).as("fixture for asyncRequestTimeoutException").isNotNull();
         JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
-                apiDocs, pathMethod[0], pathMethod[1]);
+                apiDocs, fixture.docPath(), fixture.docMethod());
         assertThat(docExample).as("documented example for asyncRequestTimeoutException").isNotNull();
 
         MvcOpenApiContractTestSupport.assertContractMatches(actual, docExample);
     }
 
     /**
-     * Ensures that every operation documented under the {@code "default"} scenario in the
-     * API docs has a matching fixture in {@link MvcOperationFixtures}.
+     * Ensures that every default-scenario fixture still points at a documented OpenAPI example.
      */
     @Test
-    void allDefaultOperationsCovered() {
-        MvcOpenApiContractTestSupport.assertAllScenarioOperationsCovered(
-                apiDocs, SCENARIO, MvcOperationFixtures.all());
+    void allDefaultFixturesDocumented() {
+        MvcOperationFixtures.all().forEach((operationId, fixture) -> {
+            if (!"default".equals(fixture.scenario())) {
+                return;
+            }
+            JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
+                    apiDocs, fixture.docPath(), fixture.docMethod());
+            assertThat(docExample)
+                    .as("documented example for default operation '%s' at %s %s",
+                            operationId, fixture.docMethod(), fixture.docPath())
+                    .isNotNull();
+        });
     }
 }

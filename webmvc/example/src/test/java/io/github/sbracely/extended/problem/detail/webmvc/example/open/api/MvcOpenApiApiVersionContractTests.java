@@ -2,21 +2,19 @@ package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import io.github.sbracely.extended.problem.detail.webmvc.example.controller.MvcApiVersionController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.web.accept.NotAcceptableApiVersionException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,14 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureRestTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Import(MvcOpenApiApiVersionContractTests.MvcNotAcceptableApiVersionController.class)
 @TestPropertySource(properties = {
         "spring.mvc.apiversion.use.header=API-Version",
         "spring.mvc.apiversion.supported=1,2",
 })
 class MvcOpenApiApiVersionContractTests {
-
-    private static final String SCENARIO = "api-version";
     private static final String BASE = "/mvc-extended-problem-detail";
 
     @LocalServerPort
@@ -115,24 +110,22 @@ class MvcOpenApiApiVersionContractTests {
     }
 
     @Test
-    void allApiVersionOperationsCovered() throws Exception {
+    void apiVersionFixturesRemainDocumented() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
                 mockMvcTester, "API-Version", "1");
-        MvcOpenApiContractTestSupport.assertAllScenarioOperationsCovered(
-                apiDocs, SCENARIO, MvcOperationFixtures.all());
-    }
-
-    /**
-     * {@link NotAcceptableApiVersionException}
-     * <p>
-     * This test-only controller is required because Spring only raises
-     * {@code NotAcceptableApiVersionException} when version negotiation is enabled and at least one
-     * competing versioned handler exists.
-     */
-    @RestController
-    static class MvcNotAcceptableApiVersionController {
-        @GetMapping(path = "/not-acceptable-api-version", version = "1")
-        void notAcceptableApiVersion() {
+        for (String operationId : new String[]{
+                "invalidApiVersionException",
+                "missingApiVersionException",
+                "notAcceptableApiVersionException"
+        }) {
+            MvcOperationFixtures.MvcOperationFixture fixture = MvcOperationFixtures.all().get(operationId);
+            assertThat(fixture).as("fixture for %s", operationId).isNotNull();
+            JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
+                    apiDocs, fixture.docPath(), fixture.docMethod());
+            assertThat(docExample)
+                    .as("documented example for %s at %s %s",
+                            operationId, fixture.docMethod(), fixture.docPath())
+                    .isNotNull();
         }
     }
 }

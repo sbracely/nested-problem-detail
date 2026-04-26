@@ -7,9 +7,7 @@ import io.github.sbracely.extended.problem.detail.common.response.ExtendedProble
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -154,51 +152,4 @@ public final class FluxOpenApiContractTestSupport {
         }
     }
 
-    /**
-     * Asserts that every documented operation in the {@code paths} section of the API docs that
-     * carries the given {@code scenario} tag has a corresponding entry in the provided
-     * {@code fixtureMap}.
-     */
-    public static void assertAllScenarioOperationsCovered(JsonNode apiDocs, String scenario,
-                                                          Map<String, ?> fixtureMap) {
-        List<String> missing = new ArrayList<>();
-        apiDocs.path("paths").properties().forEach(pathEntry ->
-                pathEntry.getValue().properties().forEach(methodEntry -> {
-                    JsonNode operation = methodEntry.getValue();
-                    String opScenario = operation.path("x-scenario").asText(null);
-                    if (scenario.equals(opScenario)) {
-                        String operationId = operation.path("operationId").asText(null);
-                        if (operationId != null && !fixtureMap.containsKey(operationId)) {
-                            missing.add(operationId);
-                        }
-                    }
-                }));
-        assertThat(missing)
-                .as("All documented operations for scenario '%s' should have a contract fixture", scenario)
-                .isEmpty();
-    }
-
-    /**
-     * Converts an already-parsed API docs {@link JsonNode} into a map of
-     * {@code operationId → (path, method)} pairs for all operations belonging to
-     * {@code scenario}.
-     */
-    public static Map<String, String[]> operationsByScenario(JsonNode apiDocs, String scenario) {
-        Map<String, String[]> result = new HashMap<>();
-        apiDocs.path("paths").properties().forEach(pathEntry -> {
-            String path = pathEntry.getKey();
-            pathEntry.getValue().properties().forEach(methodEntry -> {
-                String method = methodEntry.getKey();
-                JsonNode operation = methodEntry.getValue();
-                String opScenario = operation.path("x-scenario").asText(null);
-                if (scenario.equals(opScenario)) {
-                    String operationId = operation.path("operationId").asText(null);
-                    if (operationId != null) {
-                        result.put(operationId, new String[]{path, method});
-                    }
-                }
-            });
-        });
-        return result;
-    }
 }

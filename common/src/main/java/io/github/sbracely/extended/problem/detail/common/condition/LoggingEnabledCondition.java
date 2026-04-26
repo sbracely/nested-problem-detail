@@ -24,7 +24,7 @@ public final class LoggingEnabledCondition implements Condition {
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         LogLevel level = Binder.get(context.getEnvironment())
                 .bind("extended.problem-detail.logging.at-level", LogLevel.class)
-                .orElse(ExtendedProblemDetailProperties.CommonLogging.DEFAULT_LOG_LEVEL);
+                .orElseGet(() -> new ExtendedProblemDetailProperties.CommonLogging().getAtLevel());
         return level != LogLevel.OFF;
     }
 }

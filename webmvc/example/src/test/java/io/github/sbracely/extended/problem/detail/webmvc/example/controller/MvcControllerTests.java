@@ -6,6 +6,7 @@ import io.github.sbracely.extended.problem.detail.webmvc.example.config.MvcMetho
 import io.github.sbracely.extended.problem.detail.webmvc.example.endpoint.MvcDemoEndpoint;
 import io.github.sbracely.extended.problem.detail.webmvc.example.exception.MvcExtendedErrorResponseException;
 import io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest;
+import io.github.sbracely.extended.problem.detail.webmvc.example.response.serializer.MvcProblemDetailResponseSerializer;
 import io.github.sbracely.extended.problem.detail.webmvc.example.service.MvcProblemDetailService;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncListener;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.actuate.endpoint.web.AbstractWebMvcEndpointHandlerMapping;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.web.MockAsyncContext;
