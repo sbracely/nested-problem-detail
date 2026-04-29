@@ -70,11 +70,19 @@ running the example module test lifecycle also refreshes the exported files in `
 
 Generate WebMVC offline docs:
 
+```sh
+./mvnw -pl webmvc/example -Poffline-openapi-docs verify
+```
+
 ```powershell
 .\mvnw.cmd -pl webmvc\example -Poffline-openapi-docs verify
 ```
 
 Generate WebFlux offline docs:
+
+```sh
+./mvnw -pl webflux/example -Poffline-openapi-docs verify
+```
 
 ```powershell
 .\mvnw.cmd -pl webflux\example -Poffline-openapi-docs verify
@@ -329,4 +337,3 @@ The root, `webmvc`, and `webflux` aggregator POMs are reactor-only and are not p
 
 - [RFC 9457 - Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc9457)
 - [Spring Framework - ProblemDetail](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ProblemDetail.html)
-
