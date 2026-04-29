@@ -7,7 +7,10 @@ import io.github.sbracely.extended.problem.detail.common.response.ExtendedProble
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.method.MethodValidationException;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -197,10 +200,9 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
-        log(ex, "handleMethodValidationException");
-        List<Error> errors = resolveMethodValidationException(ex);
-        ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, exchange);
-        ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(body, errors);
-        return handleExceptionInternal(ex, extendedProblemDetail, null, status, exchange);
+        log(ex, "[exception#{}] handleMethodValidationException",
+                Integer.toHexString(System.identityHashCode(ex)));
+        resolveMethodValidationException(ex);
+        return super.handleMethodValidationException(ex, status, exchange);
     }
 }

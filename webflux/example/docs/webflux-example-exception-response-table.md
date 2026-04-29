@@ -729,47 +729,6 @@ Content-Type: application/problem+json
   "title": "Internal Server Error",
   "status": 500,
   "detail": "Validation failed",
-  "instance": "/flux-extended-problem-detail/method-validation-exception",
-  "errors": [
-    {
-      "type": "PARAMETER",
-      "target": "name",
-      "message": "name must not be blank"
-    },
-    {
-      "type": "PARAMETER",
-      "target": "name",
-      "message": "name must not be null"
-    },
-    {
-      "type": "PARAMETER",
-      "target": "password",
-      "message": "Password and confirm password do not match"
-    },
-    {
-      "type": "PARAMETER",
-      "target": "name",
-      "message": "Name cannot be blank"
-    },
-    {
-      "type": "PARAMETER",
-      "target": "age",
-      "message": "Age cannot be null"
-    },
-    {
-      "type": "PARAMETER",
-      "target": "confirmPassword",
-      "message": "Password and confirm password do not match"
-    },
-    {
-      "type": "PARAMETER",
-      "target": "name",
-      "message": "Name length must be between 6-10"
-    },
-    {
-      "type": "PARAMETER",
-      "message": "Name is not valid"
-    }
-  ]
+  "instance": "/flux-extended-problem-detail/method-validation-exception"
 }
 ```

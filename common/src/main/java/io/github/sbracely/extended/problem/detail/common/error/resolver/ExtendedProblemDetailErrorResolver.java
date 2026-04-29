@@ -16,6 +16,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Shared error resolving logic for Extended Problem Detail exception handlers.
@@ -315,35 +316,94 @@ public interface ExtendedProblemDetailErrorResolver {
 
 
     /**
-     * Resolves errors from {@link MethodValidationException}.
+     * Resolves and logs diagnostic messages from {@link MethodValidationException}.
      *
      * @param ex the MethodValidationException to resolve
-     * @return list of Error objects representing all errors
      */
-    default List<Error> resolveMethodValidationException(MethodValidationException ex) {
-        List<Error> errors = new ArrayList<>();
-        ex.getParameterValidationResults().forEach(parameterValidationResult -> {
-            if (parameterValidationResult instanceof ParameterErrors parameterErrors) {
-                parameterErrors.getAllErrors().stream()
-                        .map(this::objectErrorToError)
-                        .forEach(errors::add);
-            } else {
-                String parameterName = parameterValidationResult.getMethodParameter().getParameterName();
-                parameterValidationResult.getResolvableErrors().stream()
-                        .map(messageSourceResolvable -> new Error(
-                                Error.Type.PARAMETER,
-                                parameterName,
-                                messageSourceResolvable.getDefaultMessage()))
-                        .forEach(errors::add);
-            }
-        });
+    default void resolveMethodValidationException(MethodValidationException ex) {
+        List<String> validationMessages = new ArrayList<>();
+
+        ex.getParameterValidationResults().stream()
+                .flatMap(this::parameterValidationMessages)
+                .forEach(validationMessages::add);
+
         ex.getCrossParameterValidationResults().stream()
-                .map(parameterValidationResult -> new Error(
-                        Error.Type.PARAMETER,
-                        null,
-                        parameterValidationResult.getDefaultMessage()))
-                .forEach(errors::add);
-        return errors;
+                .map(result -> methodValidationMessage(
+                        "cross-parameter",
+                        result.getDefaultMessage()))
+                .forEach(validationMessages::add);
+
+        log("[exception#{}] MethodValidationException validation errors: {}",
+                Integer.toHexString(System.identityHashCode(ex)), validationMessages);
+    }
+
+    /**
+     * Resolves diagnostic messages from one method parameter validation result.
+     *
+     * @param result the method parameter validation result
+     * @return stream of diagnostic messages
+     */
+    private Stream<String> parameterValidationMessages(ParameterValidationResult result) {
+        if (result instanceof ParameterErrors parameterErrors) {
+            String parameterName = result.getMethodParameter().getParameterName();
+            return parameterErrors.getAllErrors().stream()
+                    .map(error -> objectErrorToMessage(parameterName, error));
+        }
+
+        String parameterName = result.getMethodParameter().getParameterName();
+        return result.getResolvableErrors().stream()
+                .map(error -> methodValidationMessage(parameterName, error.getDefaultMessage()));
+    }
+
+    /**
+     * Converts an {@link ObjectError} to a diagnostic message for server-side logging.
+     *
+     * @param parameterName the method parameter name
+     * @param objectError   the object error to convert
+     * @return diagnostic message with target and validation message
+     */
+    private String objectErrorToMessage(@Nullable String parameterName, ObjectError objectError) {
+        String target = parameterName;
+        if (objectError instanceof FieldError fieldError) {
+            target = methodValidationTarget(parameterName, fieldError.getField());
+        } else if (target == null || target.isBlank()) {
+            target = objectError.getObjectName();
+        }
+        return methodValidationMessage(target, objectError.getDefaultMessage());
+    }
+
+    /**
+     * Builds a method validation target path.
+     *
+     * @param parameterName the method parameter name
+     * @param fieldName     the field name within the parameter object
+     * @return target path that distinguishes method parameters from nested fields
+     */
+    private String methodValidationTarget(@Nullable String parameterName, String fieldName) {
+        if (parameterName == null || parameterName.isBlank()) {
+            return fieldName;
+        }
+        if (fieldName == null || fieldName.isBlank()) {
+            return parameterName;
+        }
+        return parameterName + "." + fieldName;
+    }
+
+    /**
+     * Formats a method validation diagnostic message for server-side logging.
+     *
+     * @param target  the validated target
+     * @param message the validation message
+     * @return formatted diagnostic message
+     */
+    private String methodValidationMessage(@Nullable String target, @Nullable String message) {
+        if (target == null || target.isBlank()) {
+            return message == null ? "" : message;
+        }
+        if (message == null || message.isBlank()) {
+            return target;
+        }
+        return target + ": " + message;
     }
 
     /**

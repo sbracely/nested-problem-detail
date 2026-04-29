@@ -9,7 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.method.MethodValidationException;
@@ -294,11 +297,10 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
                                                                                HttpHeaders headers,
                                                                                HttpStatus status,
                                                                                WebRequest request) {
-        log(ex, "handleMethodValidationException");
-        List<Error> errors = resolveMethodValidationException(ex);
-        ProblemDetail body = createProblemDetail(ex, status, "Validation failed", null, null, request);
-        ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(body, errors);
-        return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
+        log(ex, "[exception#{}] handleMethodValidationException",
+                Integer.toHexString(System.identityHashCode(ex)));
+        resolveMethodValidationException(ex);
+        return super.handleMethodValidationException(ex, headers, status, request);
     }
 
     /**
