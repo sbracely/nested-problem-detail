@@ -17,10 +17,10 @@ Content-Type: application/problem+json
 Allow: GET
 
 {
-  &quot;detail&quot; : &quot;Supported methods: [GET]&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/method-not-allowed-exception&quot;,
-  &quot;status&quot; : 405,
-  &quot;title&quot; : &quot;Method Not Allowed&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Supported methods: [GET]&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/method-not-allowed-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 405,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Method Not Allowed&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -31,10 +31,10 @@ Content-Type: application/problem+json
 Accept: application/json
 
 {
-  &quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/not-acceptable-status-exception&quot;,
-  &quot;status&quot; : 406,
-  &quot;title&quot; : &quot;Not Acceptable&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/not-acceptable-status-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 406,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Not Acceptable&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -45,9 +45,9 @@ Content-Type: application/problem+json
 Accept: application/xml
 
 {
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/unsupported-media-type-status-exception&quot;,
-  &quot;status&quot; : 415,
-  &quot;title&quot; : &quot;Unsupported Media Type&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/unsupported-media-type-status-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 415,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Unsupported Media Type&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -57,10 +57,10 @@ Accept: application/xml
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required query parameter &#x27;id&#x27; is not present.&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/missing-request-value-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required query parameter &#x27;id&#x27; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/missing-request-value-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -70,10 +70,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid request parameters.&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/unsatisfied-request-parameter-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid request parameters.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/unsatisfied-request-parameter-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -83,27 +83,32 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid request content.&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;confirmPassword&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;age&quot;,
-    &quot;message&quot; : &quot;Age cannot be null&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/web-exchange-bind-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid request content.&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name length must be between 6-10&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;confirmPassword&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;age&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Age cannot be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/web-exchange-bind-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -113,15 +118,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;COOKIE&quot;,
-    &quot;target&quot; : &quot;cookieValue&quot;,
-    &quot;message&quot; : &quot;cookie cannot be empty&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-cookie-value&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;COOKIE&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;cookieValue&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;cookie cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-cookie-value&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -131,15 +138,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;list&quot;,
-    &quot;message&quot; : &quot;list maximum size is 2&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;list&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;list maximum size is 2&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -149,15 +158,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password cannot be empty&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-model-attribute&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-model-attribute&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -167,15 +178,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;id&quot;,
-    &quot;message&quot; : &quot;id length must be at least 5&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;id&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;id length must be at least 5&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -185,15 +198,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password cannot be empty&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-body&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-body&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -203,15 +218,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Element cannot contain empty values&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Element cannot contain empty values&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -221,15 +238,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;HEADER&quot;,
-    &quot;target&quot; : &quot;headerValue&quot;,
-    &quot;message&quot; : &quot;Header cannot be empty&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-header&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;HEADER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;headerValue&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Header cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-header&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -239,19 +258,22 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;param&quot;,
-    &quot;message&quot; : &quot;Parameter cannot be empty&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;value&quot;,
-    &quot;message&quot; : &quot;Length must be at least 5&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-param&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;param&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Parameter cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;value&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Length must be at least 5&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-param&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -261,15 +283,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;file&quot;,
-    &quot;message&quot; : &quot;File cannot be empty&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-part&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;file&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;File cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-request-part&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -279,10 +303,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-other&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/handler-method-validation-exception-other&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -292,10 +316,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;server web input error&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/server-web-input-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;server web input error&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/server-web-input-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -305,10 +329,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;server error&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/server-error-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;server error&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/server-error-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -318,10 +342,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;exception&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/response-status-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;exception&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/response-status-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -331,9 +355,9 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/content-too-large-exception&quot;,
-  &quot;status&quot; : 413,
-  &quot;title&quot; : &quot;Content Too Large&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/content-too-large-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 413,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Content Too Large&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -343,10 +367,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid API version: &#x27;3.0.0&#x27;.&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/invalid-api-version-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid API version: &#x27;3.0.0&#x27;.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/invalid-api-version-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -356,10 +380,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;API version is required.&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/missing-api-version-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;API version is required.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/missing-api-version-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -369,10 +393,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid API version: &#x27;2.0.0&#x27;.&quot;,
-  &quot;instance&quot; : &quot;/not-acceptable-api-version&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid API version: &#x27;2.0.0&#x27;.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/not-acceptable-api-version&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -382,10 +406,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;No static resource flux-extended-problem-detail/no-resource-found.&quot;,
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/no-resource-found&quot;,
-  &quot;status&quot; : 404,
-  &quot;title&quot; : &quot;Not Found&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;No static resource flux-extended-problem-detail/no-resource-found.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/no-resource-found&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 404,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Not Found&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -395,9 +419,9 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/payload-too-large-exception&quot;,
-  &quot;status&quot; : 413,
-  &quot;title&quot; : &quot;Content Too Large&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/payload-too-large-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 413,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Content Too Large&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -407,19 +431,22 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Error details&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;BUSINESS&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Error message 1&quot;
-  }, {
-    &quot;type&quot; : &quot;BUSINESS&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Error message 2&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/error-response-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Error title&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Error details&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;BUSINESS&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Error message 1&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;BUSINESS&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Error message 2&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/error-response-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Error title&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -429,19 +456,22 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Payment failed details&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;BUSINESS&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Insufficient balance&quot;
-  }, {
-    &quot;type&quot; : &quot;BUSINESS&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Payment frequent&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/extended-error-response-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Payment failed title&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Payment failed details&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;BUSINESS&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Insufficient balance&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;BUSINESS&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Payment frequent&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/extended-error-response-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Payment failed title&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -451,43 +481,52 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failed&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;name must not be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;name must not be blank&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name cannot be blank&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;age&quot;,
-    &quot;message&quot; : &quot;Age cannot be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;confirmPassword&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Name is not valid&quot;
-  } ],
-  &quot;instance&quot; : &quot;/flux-extended-problem-detail/method-validation-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failed&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;name must not be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;name must not be blank&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name cannot be blank&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;age&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Age cannot be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name length must be between 6-10&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;confirmPassword&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name is not valid&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/flux-extended-problem-detail/method-validation-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
   </tbody>

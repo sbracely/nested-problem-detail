@@ -19,10 +19,10 @@ Content-Type: application/problem+json
 Allow: GET
 
 {
-  &quot;detail&quot; : &quot;Method &#39;POST&#39; is not supported.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-request-method-not-supported-exception&quot;,
-  &quot;status&quot; : 405,
-  &quot;title&quot; : &quot;Method Not Allowed&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Method &#39;POST&#39; is not supported.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-request-method-not-supported-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 405,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Method Not Allowed&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -33,10 +33,10 @@ Content-Type: application/problem+json
 Accept: application/json
 
 {
-  &quot;detail&quot; : &quot;Content-Type &#39;null&#39; is not supported.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-media-type-not-supported-exception&quot;,
-  &quot;status&quot; : 415,
-  &quot;title&quot; : &quot;Unsupported Media Type&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Content-Type &#39;null&#39; is not supported.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-media-type-not-supported-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 415,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Unsupported Media Type&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -47,10 +47,10 @@ Content-Type: application/problem+json
 Accept: application/json
 
 {
-  &quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-media-type-not-acceptable-exception&quot;,
-  &quot;status&quot; : 406,
-  &quot;title&quot; : &quot;Not Acceptable&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-media-type-not-acceptable-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 406,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Not Acceptable&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -60,10 +60,10 @@ Accept: application/json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required path variable &#39;id&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-path-variable-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required path variable &#39;id&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-path-variable-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -73,10 +73,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required parameter &#39;id&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-servlet-request-parameter-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required parameter &#39;id&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-servlet-request-parameter-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -86,10 +86,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required part &#39;file&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-servlet-request-part-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required part &#39;file&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-servlet-request-part-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -99,9 +99,9 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/servlet-request-binding-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/servlet-request-binding-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -111,10 +111,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid request parameters.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid request parameters.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsatisfied-servlet-request-parameter-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -124,9 +124,9 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/org-spring-web-bind-missing-request-value-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -136,10 +136,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required path parameter &#39;list&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required path parameter &#39;list&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-matrix-variable-exception/abc;list1=a,b,c&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -149,10 +149,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required cookie &#39;cookieValue&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-request-cookie-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required cookie &#39;cookieValue&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-request-cookie-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -162,10 +162,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required header &#39;header&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-request-header-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required header &#39;header&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-request-header-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -175,32 +175,32 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid request content.&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;age&quot;,
-      &quot;message&quot; : &quot;Age cannot be null&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;password&quot;,
-      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;confirmPassword&quot;,
-      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-not-valid-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid request content.&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;age&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Age cannot be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;confirmPassword&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name length must be between 6-10&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-not-valid-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -210,17 +210,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;COOKIE&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;Name length must be at least 2&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-cookie-value&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;COOKIE&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name length must be at least 2&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-cookie-value&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -230,17 +230,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;list&quot;,
-      &quot;message&quot; : &quot;Maximum size is 2&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;list&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Maximum size is 2&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -250,17 +250,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;password&quot;,
-      &quot;message&quot; : &quot;Password cannot be empty&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-model-attribute&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-model-attribute&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -270,17 +270,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;id&quot;,
-      &quot;message&quot; : &quot;ID minimum length is 2&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;id&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;ID minimum length is 2&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -290,17 +290,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;password&quot;,
-      &quot;message&quot; : &quot;Password cannot be empty&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -310,17 +310,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : null,
-      &quot;message&quot; : &quot;Element cannot contain empty values&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Element cannot contain empty values&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -330,17 +330,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;HEADER&quot;,
-      &quot;target&quot; : &quot;headerValue&quot;,
-      &quot;message&quot; : &quot;Minimum length is 2&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-header&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;HEADER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;headerValue&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Minimum length is 2&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-header&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -350,27 +350,27 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;param&quot;,
-      &quot;message&quot; : &quot;Parameter cannot be empty&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;param2&quot;,
-      &quot;message&quot; : &quot;Parameter 2 cannot be null&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;param2&quot;,
-      &quot;message&quot; : &quot;Parameter 2 cannot be blank&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-param&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;param&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Parameter cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;param2&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Parameter 2 cannot be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;param2&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Parameter 2 cannot be blank&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-param&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -380,17 +380,17 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;file&quot;,
-      &quot;message&quot; : &quot;File cannot be empty&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-part&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;file&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;File cannot be empty&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-part&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -400,10 +400,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-other&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failure&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-other&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -413,10 +413,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/no-handler-found-exception&quot;,
-  &quot;status&quot; : 404,
-  &quot;title&quot; : &quot;Not Found&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/no-handler-found-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 404,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Not Found&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -426,10 +426,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;No static resource mvc-extended-problem-detail/no-resource-found-exception.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/no-resource-found-exception&quot;,
-  &quot;status&quot; : 404,
-  &quot;title&quot; : &quot;Not Found&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;No static resource mvc-extended-problem-detail/no-resource-found-exception.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/no-resource-found-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 404,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Not Found&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -439,9 +439,9 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/async-request-timeout-exception&quot;,
-  &quot;status&quot; : 503,
-  &quot;title&quot; : &quot;Service Unavailable&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/async-request-timeout-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 503,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Service Unavailable&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -451,9 +451,9 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/error-response-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/error-response-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -463,22 +463,22 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Payment failed&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;BUSINESS&quot;,
-      &quot;target&quot; : null,
-      &quot;message&quot; : &quot;Insufficient balance&quot;
-    },
-    {
-      &quot;type&quot; : &quot;BUSINESS&quot;,
-      &quot;target&quot; : null,
-      &quot;message&quot; : &quot;Payment frequent&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/extended-error-response-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Payment failed&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;BUSINESS&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Insufficient balance&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;BUSINESS&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Payment frequent&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/extended-error-response-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -489,10 +489,10 @@ Content-Type: application/problem+json
 Allow: GET,POST
 
 {
-  &quot;detail&quot; : &quot;Supported methods: [GET, POST]&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-not-allowed-exception&quot;,
-  &quot;status&quot; : 405,
-  &quot;title&quot; : &quot;Method Not Allowed&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Supported methods: [GET, POST]&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-not-allowed-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 405,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Method Not Allowed&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -503,10 +503,10 @@ Content-Type: application/problem+json
 Accept: application/json
 
 {
-  &quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/not-acceptable-status-exception&quot;,
-  &quot;status&quot; : 406,
-  &quot;title&quot; : &quot;Not Acceptable&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Acceptable representations: [application/json].&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/not-acceptable-status-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 406,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Not Acceptable&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -516,9 +516,9 @@ Accept: application/json
 Content-Type: application/problem+json
 
 {
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/content-too-large-exception&quot;,
-  &quot;status&quot; : 413,
-  &quot;title&quot; : &quot;Content Too Large&quot;
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/content-too-large-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 413,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Content Too Large&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -528,10 +528,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Could not parse Content-Type.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsupported-media-type-status-exception&quot;,
-  &quot;status&quot; : 415,
-  &quot;title&quot; : &quot;Unsupported Media Type&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Could not parse Content-Type.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsupported-media-type-status-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 415,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Unsupported Media Type&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -541,10 +541,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;exception&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/response-status-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;exception&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/response-status-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -555,10 +555,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Missing parameters: param1,param2&quot;,
-  &quot;instance&quot; : &quot;/actuator/demo/name&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Missing parameters: param1,param2&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/actuator/demo/name&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -568,10 +568,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;server web input error&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/server-web-input-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;server web input error&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/server-web-input-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -581,32 +581,32 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid request content.&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;age&quot;,
-      &quot;message&quot; : &quot;Age cannot be null&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;password&quot;,
-      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;confirmPassword&quot;,
-      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/web-exchange-bind-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid request content.&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name length must be between 6-10&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;age&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Age cannot be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;confirmPassword&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/web-exchange-bind-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -616,10 +616,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Required request param &#39;id&#39; is not present.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Required request param &#39;id&#39; is not present.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/org-springframework-web-server-missing-request-value-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -629,10 +629,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Invalid request parameters.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsatisfied-request-parameter-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid request parameters.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/unsatisfied-request-parameter-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -642,10 +642,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;server error&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/server-error-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;server error&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/server-error-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -655,10 +655,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;payload too large&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/payload-too-large-exception&quot;,
-  &quot;status&quot; : 413,
-  &quot;title&quot; : &quot;Content Too Large&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;payload too large&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/payload-too-large-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 413,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Content Too Large&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -671,10 +671,10 @@ date: Fri, 10 Apr 2026 20:45:01 GMT
 transfer-encoding: chunked
 
 {
-  &quot;detail&quot; : &quot;Invalid API version: &#39;3.0.0&#39;.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/invalid-api-version-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid API version: &#39;3.0.0&#39;.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/invalid-api-version-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -687,10 +687,10 @@ date: Fri, 10 Apr 2026 20:45:01 GMT
 transfer-encoding: chunked
 
 {
-  &quot;detail&quot; : &quot;API version is required.&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-api-version-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;API version is required.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/missing-api-version-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -703,10 +703,10 @@ date: Fri, 10 Apr 2026 20:45:01 GMT
 transfer-encoding: chunked
 
 {
-  &quot;detail&quot; : &quot;Invalid API version: &#39;2.0.0&#39;.&quot;,
-  &quot;instance&quot; : &quot;/not-acceptable-api-version&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Invalid API version: &#39;2.0.0&#39;.&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/not-acceptable-api-version&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -719,10 +719,10 @@ date: Fri, 10 Apr 2026 20:45:01 GMT
 transfer-encoding: chunked
 
 {
-  &quot;detail&quot; : &quot;Maximum upload size exceeded&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/max-upload-size-exceeded-exception&quot;,
-  &quot;status&quot; : 413,
-  &quot;title&quot; : &quot;Content Too Large&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Maximum upload size exceeded&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/max-upload-size-exceeded-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 413,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Content Too Large&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -732,10 +732,10 @@ transfer-encoding: chunked
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Failed to convert &#39;null&#39; with value: &#39;test-value&#39;&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/conversion-not-supported-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Failed to convert &#39;null&#39; with value: &#39;test-value&#39;&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/conversion-not-supported-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -745,10 +745,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Failed to convert &#39;error&#39; with value: &#39;test-value&#39;&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-conversion-not-supported-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Failed to convert &#39;error&#39; with value: &#39;test-value&#39;&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-conversion-not-supported-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -758,10 +758,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Failed to convert &#39;null&#39; with value: &#39;test&#39;&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/type-mismatch-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Failed to convert &#39;null&#39; with value: &#39;test&#39;&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/type-mismatch-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -771,10 +771,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Failed to convert &#39;integer&#39; with value: &#39;a&#39;&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-type-mismatch-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Failed to convert &#39;integer&#39; with value: &#39;a&#39;&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-type-mismatch-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -784,10 +784,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Failed to read request&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-message-not-readable-exception&quot;,
-  &quot;status&quot; : 400,
-  &quot;title&quot; : &quot;Bad Request&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Failed to read request&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-message-not-readable-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 400,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Bad Request&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -797,10 +797,10 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Failed to write request&quot;,
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-message-not-writable-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Failed to write request&quot;,
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/http-message-not-writable-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
@@ -810,52 +810,52 @@ Content-Type: application/problem+json
 Content-Type: application/problem+json
 
 {
-  &quot;detail&quot; : &quot;Validation failed&quot;,
-  &quot;errors&quot; : [
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;name must not be blank&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;name must not be null&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;confirmPassword&quot;,
-      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;age&quot;,
-      &quot;message&quot; : &quot;Age cannot be null&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;password&quot;,
-      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : &quot;name&quot;,
-      &quot;message&quot; : &quot;Name cannot be blank&quot;
-    },
-    {
-      &quot;type&quot; : &quot;PARAMETER&quot;,
-      &quot;target&quot; : null,
-      &quot;message&quot; : &quot;Name is not valid&quot;
-    }
-  ],
-  &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-validation-exception&quot;,
-  &quot;status&quot; : 500,
-  &quot;title&quot; : &quot;Internal Server Error&quot;
+&nbsp;&nbsp;&quot;detail&quot; : &quot;Validation failed&quot;,
+&nbsp;&nbsp;&quot;errors&quot; : [
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;name must not be blank&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;name must not be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;confirmPassword&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name length must be between 6-10&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;age&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Age cannot be null&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;password&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Password and confirm password do not match&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : &quot;name&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name cannot be blank&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;type&quot; : &quot;PARAMETER&quot;,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;target&quot; : null,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;message&quot; : &quot;Name is not valid&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;],
+&nbsp;&nbsp;&quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-validation-exception&quot;,
+&nbsp;&nbsp;&quot;status&quot; : 500,
+&nbsp;&nbsp;&quot;title&quot; : &quot;Internal Server Error&quot;
 }</pre></td>
     </tr>
         <tr>
