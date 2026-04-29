@@ -1,19 +1,11 @@
 package io.github.sbracely.extended.problem.detail.mvc;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.github.sbracely.extended.problem.detail.common.condition.FieldHideConfiguredCondition;
 import io.github.sbracely.extended.problem.detail.common.condition.LoggingEnabledCondition;
-import io.github.sbracely.extended.problem.detail.common.field.hide.ErrorJacksonSerializer;
-import io.github.sbracely.extended.problem.detail.common.field.hide.ExtendedProblemDetailJacksonSerializer;
-import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailFieldVisibility;
-import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailJacksonSerializer;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailStartupLogger;
 import io.github.sbracely.extended.problem.detail.mvc.advice.MvcExtendedProblemDetailExceptionHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -21,7 +13,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
-import java.util.List;
 
 /**
  * Spring WebMVC Extended Problem Detail Auto Configuration Class.
@@ -75,39 +66,6 @@ public class MvcExtendedProblemDetailAutoConfiguration {
     @ConditionalOnMissingBean
     public ExtendedProblemDetailLog extendedProblemDetailLog(MvcExtendedProblemDetailProperties properties) {
         return new ExtendedProblemDetailLog(properties.getLogging().getAtLevel(), properties.getLogging().isPrintStackTrace());
-    }
-
-    /**
-     * Creates the effective field visibility rules for ProblemDetail serialization.
-     *
-     * @param properties  the WebMVC Extended Problem Detail configuration properties
-     * @param environment the Spring environment
-     * @return the effective field visibility rules
-     */
-    @Bean
-    @Conditional(FieldHideConfiguredCondition.class)
-    @ConditionalOnMissingBean
-    public ProblemDetailFieldVisibility problemDetailFieldVisibility(
-            MvcExtendedProblemDetailProperties properties,
-            Environment environment) {
-        return ProblemDetailFieldVisibility.from(properties.getField(), List.of(environment.getActiveProfiles()));
-    }
-
-    /**
-     * Registers the ProblemDetail serializers that apply field visibility rules.
-     *
-     * @param fieldVisibility the effective field visibility rules
-     * @return the object mapper builder customizer
-     */
-    @Bean
-    @ConditionalOnBean(ProblemDetailFieldVisibility.class)
-    public Module extendedProblemDetailJacksonModule(
-            ProblemDetailFieldVisibility fieldVisibility) {
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(new ProblemDetailJacksonSerializer(fieldVisibility));
-        module.addSerializer(new ExtendedProblemDetailJacksonSerializer(fieldVisibility));
-        module.addSerializer(new ErrorJacksonSerializer(fieldVisibility));
-        return module;
     }
 
     /**

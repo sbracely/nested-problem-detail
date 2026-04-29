@@ -1,11 +1,9 @@
 package io.github.sbracely.extended.problem.detail.flux;
 
-import io.github.sbracely.extended.problem.detail.common.field.hide.ProblemDetailFieldVisibility;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailStartupLogger;
 import io.github.sbracely.extended.problem.detail.common.properties.ExtendedProblemDetailProperties;
 import io.github.sbracely.extended.problem.detail.flux.advice.FluxExtendedProblemDetailExceptionHandler;
-import com.fasterxml.jackson.databind.Module;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.SpringApplication;
@@ -38,9 +36,6 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
             assertThat(context).hasSingleBean(FluxExtendedProblemDetailProperties.class);
             assertThat(context).hasSingleBean(ExtendedProblemDetailLog.class);
             assertThat(context).hasSingleBean(ExtendedProblemDetailStartupLogger.class);
-            assertThat(context).doesNotHaveBean(ProblemDetailFieldVisibility.class);
-            assertThat(context).doesNotHaveBean(Module.class);
-            assertThat(context).doesNotHaveBean("extendedProblemDetailJacksonModule");
             assertThat(context).hasSingleBean(FluxExtendedProblemDetailExceptionHandler.class);
         });
     }
@@ -152,32 +147,9 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
                 .withPropertyValues("extended.problem-detail.logging.at-level=OFF")
                 .run(context -> {
                     assertThat(context).doesNotHaveBean(ExtendedProblemDetailLog.class);
-                    assertThat(context).doesNotHaveBean(Module.class);
                     assertThat(context).hasSingleBean(FluxExtendedProblemDetailExceptionHandler.class);
                     assertThat(context.getBean(FluxExtendedProblemDetailExceptionHandler.class).getExtendedProblemDetailLog())
                             .isNull();
-                });
-    }
-
-    @Test
-    void shouldCreateFieldVisibilityFromActiveProfiles() {
-        this.contextRunner
-                .withPropertyValues(
-                        "spring.profiles.active=dev,prod",
-                        "extended.problem-detail.field.hide[0]=title",
-                        "extended.problem-detail.field.profiles.dev.hide[0]=status",
-                        "extended.problem-detail.field.profiles.prod.hide[0]=detail",
-                        "extended.problem-detail.field.profiles.prod.hide[1]=errors.target"
-                )
-                .run(context -> {
-                    ProblemDetailFieldVisibility fieldVisibility = context.getBean(ProblemDetailFieldVisibility.class);
-                    assertThat(context).hasSingleBean(Module.class);
-                    assertThat(context).hasBean("extendedProblemDetailJacksonModule");
-                    assertThat(fieldVisibility.isVisible("errors")).isTrue();
-                    assertThat(fieldVisibility.isVisible("title")).isTrue();
-                    assertThat(fieldVisibility.isVisible("status")).isFalse();
-                    assertThat(fieldVisibility.isVisible("detail")).isFalse();
-                    assertThat(fieldVisibility.isErrorFieldVisible("target")).isFalse();
                 });
     }
 
