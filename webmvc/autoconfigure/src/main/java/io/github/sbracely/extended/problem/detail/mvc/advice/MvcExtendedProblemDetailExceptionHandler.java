@@ -315,6 +315,6 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
     protected @Nullable ResponseEntity<Object> handleAsyncRequestNotUsableException(
             AsyncRequestNotUsableException ex, WebRequest request) {
         log(ex, "handleAsyncRequestNotUsableException");
-        return null;
+        return super.handleAsyncRequestNotUsableException(ex, request);
     }
 }
