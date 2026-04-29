@@ -176,23 +176,28 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Invalid request content.&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;age&quot;,
-    &quot;message&quot; : &quot;Age cannot be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;confirmPassword&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;age&quot;,
+      &quot;message&quot; : &quot;Age cannot be null&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;password&quot;,
+      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;confirmPassword&quot;,
+      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;Name length must be between 6-10&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-argument-not-valid-exception&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -206,11 +211,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;COOKIE&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name length must be at least 2&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;COOKIE&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;Name length must be at least 2&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-cookie-value&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -224,11 +231,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;list&quot;,
-    &quot;message&quot; : &quot;Maximum size is 2&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;list&quot;,
+      &quot;message&quot; : &quot;Maximum size is 2&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-matrix-variable/abc;list=a,b,c&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -242,11 +251,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password cannot be empty&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;password&quot;,
+      &quot;message&quot; : &quot;Password cannot be empty&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-model-attribute&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -260,11 +271,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;id&quot;,
-    &quot;message&quot; : &quot;ID minimum length is 2&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;id&quot;,
+      &quot;message&quot; : &quot;ID minimum length is 2&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-path-variable/a&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -278,11 +291,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password cannot be empty&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;password&quot;,
+      &quot;message&quot; : &quot;Password cannot be empty&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -296,11 +311,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Element cannot contain empty values&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : null,
+      &quot;message&quot; : &quot;Element cannot contain empty values&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-body-validation-result&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -314,11 +331,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;HEADER&quot;,
-    &quot;target&quot; : &quot;headerValue&quot;,
-    &quot;message&quot; : &quot;Minimum length is 2&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;HEADER&quot;,
+      &quot;target&quot; : &quot;headerValue&quot;,
+      &quot;message&quot; : &quot;Minimum length is 2&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-header&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -332,19 +351,23 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;param&quot;,
-    &quot;message&quot; : &quot;Parameter cannot be empty&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;param2&quot;,
-    &quot;message&quot; : &quot;Parameter 2 cannot be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;param2&quot;,
-    &quot;message&quot; : &quot;Parameter 2 cannot be blank&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;param&quot;,
+      &quot;message&quot; : &quot;Parameter cannot be empty&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;param2&quot;,
+      &quot;message&quot; : &quot;Parameter 2 cannot be null&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;param2&quot;,
+      &quot;message&quot; : &quot;Parameter 2 cannot be blank&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-param&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -358,11 +381,13 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failure&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;file&quot;,
-    &quot;message&quot; : &quot;File cannot be empty&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;file&quot;,
+      &quot;message&quot; : &quot;File cannot be empty&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/handler-method-validation-exception-request-part&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -439,15 +464,18 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Payment failed&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;BUSINESS&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Insufficient balance&quot;
-  }, {
-    &quot;type&quot; : &quot;BUSINESS&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Payment frequent&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;BUSINESS&quot;,
+      &quot;target&quot; : null,
+      &quot;message&quot; : &quot;Insufficient balance&quot;
+    },
+    {
+      &quot;type&quot; : &quot;BUSINESS&quot;,
+      &quot;target&quot; : null,
+      &quot;message&quot; : &quot;Payment frequent&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/extended-error-response-exception&quot;,
   &quot;status&quot; : 500,
   &quot;title&quot; : &quot;Internal Server Error&quot;
@@ -554,23 +582,28 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Invalid request content.&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;age&quot;,
-    &quot;message&quot; : &quot;Age cannot be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;confirmPassword&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;Name length must be between 6-10&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;age&quot;,
+      &quot;message&quot; : &quot;Age cannot be null&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;password&quot;,
+      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;confirmPassword&quot;,
+      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/web-exchange-bind-exception&quot;,
   &quot;status&quot; : 400,
   &quot;title&quot; : &quot;Bad Request&quot;
@@ -778,39 +811,48 @@ Content-Type: application/problem+json
 
 {
   &quot;detail&quot; : &quot;Validation failed&quot;,
-  &quot;errors&quot; : [ {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;name must not be blank&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;name must not be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;confirmPassword&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name length must be between 6-10&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;age&quot;,
-    &quot;message&quot; : &quot;Age cannot be null&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;password&quot;,
-    &quot;message&quot; : &quot;Password and confirm password do not match&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : &quot;name&quot;,
-    &quot;message&quot; : &quot;Name cannot be blank&quot;
-  }, {
-    &quot;type&quot; : &quot;PARAMETER&quot;,
-    &quot;target&quot; : null,
-    &quot;message&quot; : &quot;Name is not valid&quot;
-  } ],
+  &quot;errors&quot; : [
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;name must not be blank&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;name must not be null&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;confirmPassword&quot;,
+      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;Name length must be between 6-10&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;age&quot;,
+      &quot;message&quot; : &quot;Age cannot be null&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;password&quot;,
+      &quot;message&quot; : &quot;Password and confirm password do not match&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : &quot;name&quot;,
+      &quot;message&quot; : &quot;Name cannot be blank&quot;
+    },
+    {
+      &quot;type&quot; : &quot;PARAMETER&quot;,
+      &quot;target&quot; : null,
+      &quot;message&quot; : &quot;Name is not valid&quot;
+    }
+  ],
   &quot;instance&quot; : &quot;/mvc-extended-problem-detail/method-validation-exception&quot;,
   &quot;status&quot; : 500,
   &quot;title&quot; : &quot;Internal Server Error&quot;
