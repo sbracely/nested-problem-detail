@@ -751,7 +751,7 @@ Content-Type: application/problem+json
 }
 ```
 
-## 28. `io.github.sbracely.extended.problem.detail.webmvc.example.exception.MvcExtendedErrorResponseException`
+## 28. `io.github.sbracely.extended.problem.detail.webmvc.example.exception.PayFailedException`
 
 _extends ErrorResponseException_
 

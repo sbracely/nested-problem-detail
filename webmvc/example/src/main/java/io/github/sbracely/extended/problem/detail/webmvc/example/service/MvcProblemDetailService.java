@@ -17,8 +17,8 @@ public class MvcProblemDetailService {
     private static final Logger logger = LoggerFactory.getLogger(MvcProblemDetailService.class);
 
     @MvcCheckName(nameIndex = 0, problemDetailRequestIndex = 1)
-    public void createProblemDetail(@NotBlank(message = "name must not be blank")
-                                    @NotNull(message = "name must not be null") String name,
+    public void createProblemDetail(@NotBlank(message = "{mvc.example.validation.service.name.not-blank}")
+                                    @NotNull(message = "{mvc.example.validation.service.name.not-null}") String name,
                                     @Valid MvcProblemDetailRequest problemDetailRequest) {
         logger.info("createProblemDetail, name: {}, problemDetailRequest: {}", name, problemDetailRequest);
     }

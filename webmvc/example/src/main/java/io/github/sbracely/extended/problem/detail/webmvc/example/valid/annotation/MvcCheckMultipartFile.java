@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MvcCheckMultipartFileValidator.class)
 public @interface MvcCheckMultipartFile {
-    String message() default "Check file error";
+    String message() default "{mvc.example.validation.file.check-error}";
 
     Class<?>[] groups() default {};
 
@@ -19,9 +19,9 @@ public @interface MvcCheckMultipartFile {
 
     String[] extensionInclude() default {};
 
-    String extensionIncludeMessage() default "Extension not support";
+    String extensionIncludeMessage() default "{mvc.example.validation.file.extension-not-supported}";
 
     boolean required() default true;
 
-    String requiredMessage() default "File required";
+    String requiredMessage() default "{mvc.example.validation.file.required}";
 }

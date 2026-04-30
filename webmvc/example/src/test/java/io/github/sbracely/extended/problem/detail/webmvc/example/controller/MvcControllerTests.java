@@ -4,7 +4,7 @@ import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webmvc.example.config.MvcMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webmvc.example.endpoint.MvcDemoEndpoint;
-import io.github.sbracely.extended.problem.detail.webmvc.example.exception.MvcExtendedErrorResponseException;
+import io.github.sbracely.extended.problem.detail.webmvc.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest;
 import io.github.sbracely.extended.problem.detail.webmvc.example.response.serializer.MvcProblemDetailResponseSerializer;
 import io.github.sbracely.extended.problem.detail.webmvc.example.service.MvcProblemDetailService;
@@ -717,7 +717,7 @@ class MvcControllerTests {
     }
 
     /**
-     * @see MvcExtendedErrorResponseException
+     * @see PayFailedException
      * @see MvcProblemDetailController#extendedErrorResponseException()
      */
     @Test

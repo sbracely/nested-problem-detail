@@ -1,9 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.controller;
 
-import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webmvc.example.config.MvcMethodValidationConfiguration;
-import io.github.sbracely.extended.problem.detail.webmvc.example.exception.MvcExtendedErrorResponseException;
+import io.github.sbracely.extended.problem.detail.webmvc.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest;
 import io.github.sbracely.extended.problem.detail.webmvc.example.response.MvcProblemDetailResponse;
 import io.github.sbracely.extended.problem.detail.webmvc.example.response.serializer.MvcProblemDetailResponseSerializer;
@@ -456,7 +454,7 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-cookie-value")
-    public void handlerMethodValidationExceptionCookieValue(@Parameter(example = "a") @CookieValue @Length(min = 2, message = "Name length must be at least 2") String name) {
+    public void handlerMethodValidationExceptionCookieValue(@Parameter(example = "a") @CookieValue @Length(min = 2, message = "{mvc.example.validation.cookie.name.length}") String name) {
         logger.info("handlerMethodValidationExceptionCookieValue, name: {}", name);
     }
 
@@ -487,7 +485,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-matrix-variable/{id}")
     public void handlerMethodValidationExceptionMatrixVariable(@Parameter(example = "abc") @PathVariable String id,
-                                                               @Parameter(example = "a,b,c") @MatrixVariable @Size(max = 2, message = "Maximum size is 2") List<String> list) {
+                                                               @Parameter(example = "a,b,c") @MatrixVariable @Size(max = 2, message = "{mvc.example.validation.matrix.list.size}") List<String> list) {
         logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
     }
 
@@ -517,7 +515,7 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-model-attribute")
-    public void handlerMethodValidationExceptionModelAttribute(@MvcCheckPassword(message = "Password cannot be empty") MvcProblemDetailRequest problemDetailRequest) {
+    public void handlerMethodValidationExceptionModelAttribute(@MvcCheckPassword(message = "{mvc.example.validation.password.not-empty}") MvcProblemDetailRequest problemDetailRequest) {
         logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
     }
 
@@ -547,7 +545,7 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
-    public void handlerMethodValidationExceptionPathVariable(@Parameter(example = "a") @PathVariable @Length(min = 2, message = "ID minimum length is 2") String id) {
+    public void handlerMethodValidationExceptionPathVariable(@Parameter(example = "a") @PathVariable @Length(min = 2, message = "{mvc.example.validation.id.length}") String id) {
         logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
     }
 
@@ -584,7 +582,7 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @PostMapping("/handler-method-validation-exception-request-body")
-    public void handlerMethodValidationExceptionRequestBody(@RequestBody @MvcCheckPassword(message = "Password cannot be empty") MvcProblemDetailRequest problemDetailRequest) {
+    public void handlerMethodValidationExceptionRequestBody(@RequestBody @MvcCheckPassword(message = "{mvc.example.validation.password.not-empty}") MvcProblemDetailRequest problemDetailRequest) {
         logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
     }
 
@@ -621,7 +619,7 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
-    public void handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "Element cannot contain empty values") String> list) {
+    public void handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "{mvc.example.validation.list.element.not-blank}") String> list) {
         logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
     }
 
@@ -651,7 +649,7 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-request-header")
-    public void handlerMethodValidationExceptionRequestHeader(@Parameter(example = "a") @RequestHeader @Length(min = 2, message = "Minimum length is 2") String headerValue) {
+    public void handlerMethodValidationExceptionRequestHeader(@Parameter(example = "a") @RequestHeader @Length(min = 2, message = "{mvc.example.validation.header.length}") String headerValue) {
         logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
     }
 
@@ -691,8 +689,8 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-request-param")
-    public void handlerMethodValidationExceptionRequestParam(@Parameter(example = "") @NotBlank(message = "Parameter cannot be empty") String param,
-                                                             @Parameter(example = "") @NotNull(message = "Parameter 2 cannot be null") @NotBlank(message = "Parameter 2 cannot be blank") String param2) {
+    public void handlerMethodValidationExceptionRequestParam(@Parameter @NotBlank(message = "{mvc.example.validation.param.not-blank}") String param,
+                                                             @Parameter @NotNull(message = "{mvc.example.validation.param2.not-null}") @NotBlank(message = "{mvc.example.validation.param2.not-blank}") String param2) {
         logger.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
     }
 
@@ -722,8 +720,8 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-request-part")
-    public void handlerMethodValidationExceptionRequestPart(@Parameter(example = "demo.txt") @RequestPart(required = false) @MvcCheckMultipartFile(extensionIncludeMessage = "File type not supported",
-            extensionInclude = "txt", requiredMessage = "File cannot be empty") MultipartFile file) {
+    public void handlerMethodValidationExceptionRequestPart(@Parameter(example = "demo.txt") @RequestPart(required = false) @MvcCheckMultipartFile(extensionIncludeMessage = "{mvc.example.validation.file.type-not-supported}",
+            extensionInclude = "txt", requiredMessage = "{mvc.example.validation.file.not-empty}") MultipartFile file) {
         logger.info("handlerMethodValidationExceptionRequestPart, file: {}", file);
     }
 
@@ -746,11 +744,11 @@ public class MvcProblemDetailController {
                             }
                             """)))
     @GetMapping("/handler-method-validation-exception-other")
-    public void handlerMethodValidationExceptionOther(@SessionAttribute(required = false) @NotBlank(message = "sessionAttribute cannot be empty")
+    public void handlerMethodValidationExceptionOther(@SessionAttribute(required = false) @NotBlank(message = "{mvc.example.validation.session-attribute.not-blank}")
                                                       String sessionAttribute,
-                                                      @RequestAttribute(required = false) @NotBlank(message = "requestAttribute cannot be empty")
+                                                      @RequestAttribute(required = false) @NotBlank(message = "{mvc.example.validation.request-attribute.not-blank}")
                                                       String requestAttribute,
-                                                      @Value("") @NotBlank(message = "value cannot be empty") String value) {
+                                                      @Value("") @NotBlank(message = "{mvc.example.validation.value.not-blank}") String value) {
         logger.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
     }
 
@@ -799,7 +797,7 @@ public class MvcProblemDetailController {
     }
 
     /**
-     * @see MvcExtendedErrorResponseException
+     * @see PayFailedException
      */
     @ApiResponse(
             responseCode = "500",
@@ -828,13 +826,11 @@ public class MvcProblemDetailController {
     @GetMapping("/extended-error-response-exception")
     public void extendedErrorResponseException() {
         logger.info("businessException");
-        ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail();
-        extendedProblemDetail.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        extendedProblemDetail.setDetail("Payment failed");
-        extendedProblemDetail.setErrors(Arrays.asList(
-                new Error(Error.Type.BUSINESS, null, "Insufficient balance"),
-                new Error(Error.Type.BUSINESS, null, "Payment frequent")));
-        throw new MvcExtendedErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, extendedProblemDetail);
+        List<String> errorCodes = List.of(
+                "{mvc.example.business.insufficient-balance}",
+                "{mvc.example.business.payment-frequent}"
+        );
+        throw new PayFailedException(errorCodes);
     }
 
     /**

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MvcConfirmPasswordValidator.class)
 public @interface MvcConfirmPassword {
-    String message() default "Confirm password error";
+    String message() default "{mvc.example.validation.confirm-password}";
 
     Class<?>[] groups() default {};
 

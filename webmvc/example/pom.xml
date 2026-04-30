@@ -107,33 +107,6 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <jmxPort>${offline.openapi.jmx.port}</jmxPort>
-                            <jvmArguments>
-                                -Dspring.application.admin.enabled=true
-                                -Dserver.port=${offline.openapi.server.port}
-                            </jvmArguments>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-openapi-docs-app</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-openapi-docs-app</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.springdoc</groupId>
                         <artifactId>springdoc-openapi-maven-plugin</artifactId>
                         <version>1.4</version>
@@ -161,6 +134,33 @@
                                     <outputDir>${offline.openapi.docs.dir}</outputDir>
                                     <outputFileName>openapi.yaml</outputFileName>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <jmxPort>${offline.openapi.jmx.port}</jmxPort>
+                            <jvmArguments>
+                                -Dspring.application.admin.enabled=true
+                                -Dserver.port=${offline.openapi.server.port}
+                            </jvmArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-openapi-docs-app</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-openapi-docs-app</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
