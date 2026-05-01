@@ -89,7 +89,7 @@ class MvcControllerTests {
                 .hasHeader(ALLOW, GET.name());
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
@@ -113,7 +113,7 @@ class MvcControllerTests {
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
@@ -138,7 +138,7 @@ class MvcControllerTests {
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
@@ -161,7 +161,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -184,7 +184,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -207,7 +207,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -230,7 +230,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -272,7 +272,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -295,7 +295,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -318,7 +318,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -341,7 +341,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -369,7 +369,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -398,7 +398,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -423,7 +423,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -448,7 +448,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -473,7 +473,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -502,7 +502,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -529,7 +529,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -555,7 +555,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -580,7 +580,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -609,7 +609,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -634,7 +634,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -656,7 +656,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
@@ -685,7 +685,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(SERVICE_UNAVAILABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(SERVICE_UNAVAILABLE.value());
@@ -708,7 +708,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getDetail()).isNull();
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
@@ -731,7 +731,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -822,7 +822,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -845,7 +845,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -868,7 +868,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -916,7 +916,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -948,7 +948,7 @@ class MvcControllerTests {
                 .matches(h -> ((String) h).contains(GET.name()) && ((String) h).contains(POST.name()));
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
@@ -973,7 +973,7 @@ class MvcControllerTests {
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
@@ -996,7 +996,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
@@ -1019,7 +1019,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1044,7 +1044,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo("Content Too Large");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(PAYLOAD_TOO_LARGE.value());
@@ -1067,7 +1067,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1090,7 +1090,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1113,7 +1113,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -1136,7 +1136,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -1161,7 +1161,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
@@ -1185,7 +1185,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1210,7 +1210,7 @@ class MvcControllerTests {
                 .hasContentType(APPLICATION_PROBLEM_JSON);
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+        logger.info("extendedProblemDetail: " + extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -1235,7 +1235,7 @@ class MvcControllerTests {
                     .hasContentType(APPLICATION_PROBLEM_JSON);
             ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                     .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
+            logger.info("extendedProblemDetail: " + extendedProblemDetail);
             assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());

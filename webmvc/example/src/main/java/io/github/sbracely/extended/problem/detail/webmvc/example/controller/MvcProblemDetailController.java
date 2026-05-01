@@ -135,7 +135,7 @@ public class MvcProblemDetailController {
                             """)))
     @PutMapping(path = "/http-media-type-not-supported-exception", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void httpMediaTypeNotSupportedException(MvcProblemDetailRequest problemDetailRequest) {
-        logger.info("httpMediaTypeNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("httpMediaTypeNotSupportedException, problemDetailRequest: " + problemDetailRequest);
     }
 
     /**
@@ -170,7 +170,7 @@ public class MvcProblemDetailController {
                             """)))
     @PutMapping(path = "/http-media-type-not-acceptable-exception", produces = MediaType.APPLICATION_JSON_VALUE)
     public void httpMediaTypeNotAcceptableException(MvcProblemDetailRequest problemDetailRequest) {
-        logger.info("httpMediaTypeNotAcceptableException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("httpMediaTypeNotAcceptableException, problemDetailRequest: " + problemDetailRequest);
     }
 
     /**
@@ -192,7 +192,7 @@ public class MvcProblemDetailController {
                             """)))
     @DeleteMapping("/missing-path-variable-exception")
     public void missingPathVariableException(@Parameter(example = "1") @PathVariable Integer id) {
-        logger.info("missingPathVariableException, id: {}", id);
+        logger.info("missingPathVariableException, id: " + id);
     }
 
     /**
@@ -214,7 +214,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/missing-servlet-request-parameter-exception")
     public void missingServletRequestParameterException(@Parameter(example = "1") @RequestParam Integer id) {
-        logger.info("missingServletRequestParameterException, id: {}", id);
+        logger.info("missingServletRequestParameterException, id: " + id);
     }
 
     /**
@@ -236,7 +236,7 @@ public class MvcProblemDetailController {
                             """)))
     @PutMapping("/missing-servlet-request-part-exception")
     public void missingServletRequestPartException(@Parameter(example = "demo.txt") @RequestPart MultipartFile file) {
-        logger.info("missingServletRequestPartException, file: {}", file);
+        logger.info("missingServletRequestPartException, file: " + file);
     }
 
     /**
@@ -327,7 +327,7 @@ public class MvcProblemDetailController {
     @GetMapping("/missing-matrix-variable-exception/{id}")
     public void missingMatrixVariableException(@Parameter(example = "abc") @PathVariable String id,
                                                @Parameter(example = "a,b,c") @MatrixVariable List<String> list) {
-        logger.info("missingMatrixVariableException, id: {}, list: {}", id, list);
+        logger.info("missingMatrixVariableException, id: " + id + ", list: " + list);
     }
 
     /**
@@ -349,7 +349,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/missing-request-cookie-exception")
     public void missingRequestCookieException(@Parameter(example = "cookie-value") @CookieValue String cookieValue) {
-        logger.info("missingRequestCookieException, cookieValue: {}", cookieValue);
+        logger.info("missingRequestCookieException, cookieValue: " + cookieValue);
     }
 
     /**
@@ -371,7 +371,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/missing-request-header-exception")
     public void missingRequestHeaderException(@Parameter(example = "header-value") @RequestHeader String header) {
-        logger.info("missingRequestHeaderException, header: {}", header);
+        logger.info("missingRequestHeaderException, header: " + header);
     }
 
     /**
@@ -423,7 +423,7 @@ public class MvcProblemDetailController {
                             """)))
     @PostMapping("/method-argument-not-valid-exception")
     public void methodArgumentNotValidException(@RequestBody @Validated MvcProblemDetailRequest problemDetailRequest) {
-        logger.info("methodArgumentNotValidException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("methodArgumentNotValidException, problemDetailRequest: " + problemDetailRequest);
     }
 
     /**
@@ -453,7 +453,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-cookie-value")
     public void handlerMethodValidationExceptionCookieValue(@Parameter(example = "a") @CookieValue @Length(min = 2, message = "{mvc.example.request.cookie.name.length}") String name) {
-        logger.info("handlerMethodValidationExceptionCookieValue, name: {}", name);
+        logger.info("handlerMethodValidationExceptionCookieValue, name: " + name);
     }
 
     /**
@@ -484,7 +484,7 @@ public class MvcProblemDetailController {
     @GetMapping("/handler-method-validation-exception-matrix-variable/{id}")
     public void handlerMethodValidationExceptionMatrixVariable(@Parameter(example = "abc") @PathVariable String id,
                                                                @Parameter(example = "a,b,c") @MatrixVariable @Size(max = 2, message = "{mvc.example.request.matrix.list.size}") List<String> list) {
-        logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
+        logger.info("handlerMethodValidationExceptionMatrixVariable, id: " + id + ", list: " + list);
     }
 
     /**
@@ -514,7 +514,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-model-attribute")
     public void handlerMethodValidationExceptionModelAttribute(@MvcCheckPassword(message = "{mvc.example.request.password.required}") MvcProblemDetailRequest problemDetailRequest) {
-        logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: " + problemDetailRequest);
     }
 
     /**
@@ -544,7 +544,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
     public void handlerMethodValidationExceptionPathVariable(@Parameter(example = "a") @PathVariable @Length(min = 2, message = "{mvc.example.request.id.length}") String id) {
-        logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
+        logger.info("handlerMethodValidationExceptionPathVariable, id: " + id);
     }
 
     /**
@@ -581,7 +581,7 @@ public class MvcProblemDetailController {
                             """)))
     @PostMapping("/handler-method-validation-exception-request-body")
     public void handlerMethodValidationExceptionRequestBody(@RequestBody @MvcCheckPassword(message = "{mvc.example.request.password.required}") MvcProblemDetailRequest problemDetailRequest) {
-        logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: " + problemDetailRequest);
     }
 
     /**
@@ -618,7 +618,7 @@ public class MvcProblemDetailController {
                             """)))
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
     public void handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "{mvc.example.request.list.element.blank}") String> list) {
-        logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
+        logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: " + list);
     }
 
     /**
@@ -648,7 +648,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-request-header")
     public void handlerMethodValidationExceptionRequestHeader(@Parameter(example = "a") @RequestHeader @Length(min = 2, message = "{mvc.example.request.header.length}") String headerValue) {
-        logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
+        logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: " + headerValue);
     }
 
     /**
@@ -689,7 +689,7 @@ public class MvcProblemDetailController {
     @GetMapping("/handler-method-validation-exception-request-param")
     public void handlerMethodValidationExceptionRequestParam(@Parameter @NotBlank(message = "{mvc.example.request.parameter.blank}") String param,
                                                              @Parameter @NotNull(message = "{mvc.example.request.parameter-secondary.missing}") @NotBlank(message = "{mvc.example.request.parameter-secondary.blank}") String param2) {
-        logger.info("handlerMethodValidationExceptionRequestParam, param: {}, param2: {}", param, param2);
+        logger.info("handlerMethodValidationExceptionRequestParam, param: " + param + ", param2: " + param2);
     }
 
     /**
@@ -720,7 +720,7 @@ public class MvcProblemDetailController {
     @GetMapping("/handler-method-validation-exception-request-part")
     public void handlerMethodValidationExceptionRequestPart(@Parameter(example = "demo.txt") @RequestPart(required = false) @MvcCheckMultipartFile(extensionIncludeMessage = "{mvc.example.upload.file.unsupported-type}",
             extensionInclude = "txt", requiredMessage = "{mvc.example.upload.file.not-empty}") MultipartFile file) {
-        logger.info("handlerMethodValidationExceptionRequestPart, file: {}", file);
+        logger.info("handlerMethodValidationExceptionRequestPart, file: " + file);
     }
 
     /**
@@ -747,7 +747,8 @@ public class MvcProblemDetailController {
                                                       @RequestAttribute(required = false) @NotBlank(message = "{mvc.example.request.request-attribute.blank}")
                                                       String requestAttribute,
                                                       @Value("") @NotBlank(message = "{mvc.example.request.value.blank}") String value) {
-        logger.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
+        logger.info("handlerMethodValidationExceptionOther, sessionAttribute: " + sessionAttribute
+                + ", requestAttribute: " + requestAttribute + ", value: " + value);
     }
 
     /**
@@ -920,7 +921,7 @@ public class MvcProblemDetailController {
     @GetMapping("/org-springframework-web-server-missing-request-value-exception")
     public void orgSpringframeworkWebServerMissingRequestValueException(HttpServletRequest httpServletRequest,
                                                                         String id) throws Exception {
-        logger.info("missingRequestValueException, id: {}", id);
+        logger.info("missingRequestValueException, id: " + id);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         Optional.ofNullable(handlerExecutionChain)
                 .map(HandlerExecutionChain::getHandler)
@@ -983,7 +984,7 @@ public class MvcProblemDetailController {
     public void webExchangeBindException(HttpServletRequest httpServletRequest,
                                          @RequestBody @Validated MvcProblemDetailRequest problemDetailRequest,
                                          BindingResult bindingResult) throws Exception {
-        logger.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("webExchangeBindException, problemDetailRequest: " + problemDetailRequest);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         Optional.ofNullable(handlerExecutionChain)
                 .map(HandlerExecutionChain::getHandler)
@@ -1109,7 +1110,7 @@ public class MvcProblemDetailController {
                             """)))
     @PostMapping("/payload-too-large-exception")
     public void payloadTooLargeException(@Parameter(example = "demo.txt") @RequestPart MultipartFile file) {
-        logger.info("payloadTooLargeException, file: {}", file);
+        logger.info("payloadTooLargeException, file: " + file);
         PayloadTooLargeException payloadTooLarge = new PayloadTooLargeException(new RuntimeException("payload too large"));
         payloadTooLarge.setDetail("payload too large");
         throw payloadTooLarge;
@@ -1134,7 +1135,7 @@ public class MvcProblemDetailController {
                             """)))
     @PostMapping("/max-upload-size-exceeded-exception")
     public void maxUploadSizeExceededException(@Parameter(example = "oversized.txt") @RequestPart MultipartFile file) {
-        logger.info("maxUploadSizeExceededException, file: {}", file);
+        logger.info("maxUploadSizeExceededException, file: " + file);
     }
 
     /**
@@ -1156,7 +1157,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/conversion-not-supported-exception")
     public void conversionNotSupportedException(HttpServletRequest httpServletRequest, @Parameter(example = "test-value") String data) throws Exception {
-        logger.info("conversionNotSupportedException, data: {}", data);
+        logger.info("conversionNotSupportedException, data: " + data);
         HandlerExecutionChain handlerExecutionChain = requestMappingHandlerMapping.getHandler(httpServletRequest);
         if (null == handlerExecutionChain) {
             throw new MissingServletRequestParameterException("data", "String");
@@ -1165,7 +1166,7 @@ public class MvcProblemDetailController {
         MethodParameter[] methodParameters = handlerMethod.getMethodParameters();
         SimpleTypeConverter simpleTypeConverter = new SimpleTypeConverter();
         MvcProblemDetailRequest problemDetailRequest = simpleTypeConverter.convertIfNecessary(data, MvcProblemDetailRequest.class, methodParameters[0]);
-        logger.info("conversionNotSupportedException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("conversionNotSupportedException, problemDetailRequest: " + problemDetailRequest);
     }
 
     /**
@@ -1187,7 +1188,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/method-argument-conversion-not-supported-exception")
     public void methodArgumentConversionNotSupportedException(@Parameter(example = "test-value") @RequestParam MvcProblemDetailRequest error) {
-        logger.info("methodArgumentConversionNotSupportedException, error: {}", error);
+        logger.info("methodArgumentConversionNotSupportedException, error: " + error);
     }
 
     /**
@@ -1232,7 +1233,7 @@ public class MvcProblemDetailController {
                             """)))
     @GetMapping("/method-argument-type-mismatch-exception")
     public void methodArgumentTypeMismatchException(@Parameter(example = "a") Integer integer) {
-        logger.info("methodArgumentTypeMismatchException, integer: {}", integer);
+        logger.info("methodArgumentTypeMismatchException, integer: " + integer);
     }
 
     /**
@@ -1259,7 +1260,7 @@ public class MvcProblemDetailController {
                             """)))
     @PostMapping("/http-message-not-readable-exception")
     public void httpMessageNotReadableException(@RequestBody MvcProblemDetailRequest data) {
-        logger.info("httpMessageNotReadableException, data: {}", data);
+        logger.info("httpMessageNotReadableException, data: " + data);
     }
 
     /**
@@ -1328,7 +1329,7 @@ public class MvcProblemDetailController {
             try {
                 for (int i = 0; i < 20; i++) {
                     Thread.sleep(100);
-                    logger.info("asyncRequestNotUsableException, emitter send: {}", i);
+                    logger.info("asyncRequestNotUsableException, emitter send: " + i);
                     emitter.send("event " + i);
                 }
                 emitter.complete();
@@ -1336,7 +1337,7 @@ public class MvcProblemDetailController {
                 logger.error("Thread sleep interrupted", e);
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                logger.error("Emitter error: {}", e.getClass().getSimpleName());
+                logger.error("Emitter error: " + e.getClass().getSimpleName());
                 emitter.completeWithError(e);
             }
         });

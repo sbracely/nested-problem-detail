@@ -141,7 +141,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping("/missing-request-value-exception")
     public Mono<Void> missingRequestValueException(@Parameter(example = "1") @RequestParam String id) {
-        logger.info("missingRequestValueException, id: {}", id);
+        logger.info("missingRequestValueException, id: " + id);
         return Mono.empty();
     }
 
@@ -210,7 +210,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @PostMapping("/web-exchange-bind-exception")
     public Mono<Void> webExchangeBindException(@RequestBody @Validated FluxProblemDetailRequest problemDetailRequest) {
-        logger.info("webExchangeBindException, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("webExchangeBindException, problemDetailRequest: " + problemDetailRequest);
         return Mono.empty();
     }
 
@@ -241,7 +241,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-cookie-value")
     public Mono<Void> handlerMethodValidationExceptionCookieValue(@CookieValue @NotBlank(message = "{flux.example.request.cookie.blank}") String cookieValue) {
-        logger.info("handlerMethodValidationExceptionCookieValue, cookieValue: {}", cookieValue);
+        logger.info("handlerMethodValidationExceptionCookieValue, cookieValue: " + cookieValue);
         return Mono.empty();
     }
 
@@ -273,7 +273,7 @@ public class FluxExtendedProblemDetailController {
     @GetMapping("/handler-method-validation-exception-matrix/{id}")
     public Mono<Void> handlerMethodValidationExceptionMatrixVariable(@Parameter(example = "abc") @PathVariable String id,
                                                                       @MatrixVariable @Size(max = 2, message = "{flux.example.request.matrix.list.size}") List<String> list) {
-        logger.info("handlerMethodValidationExceptionMatrixVariable, id: {}, list: {}", id, list);
+        logger.info("handlerMethodValidationExceptionMatrixVariable, id: " + id + ", list: " + list);
         return Mono.empty();
     }
 
@@ -304,7 +304,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-model-attribute")
     public Mono<Void> handlerMethodValidationExceptionModelAttribute(@FluxCheckPassword(message = "{flux.example.request.password.required}") FluxProblemDetailRequest problemDetailRequest) {
-        logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionModelAttribute, problemDetailRequest: " + problemDetailRequest);
         return Mono.empty();
     }
 
@@ -335,7 +335,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-path-variable/{id}")
     public Mono<Void> handlerMethodValidationExceptionPathVariable(@Parameter(example = "abc") @PathVariable @Size(min = 5, message = "{flux.example.request.id.length}") String id) {
-        logger.info("handlerMethodValidationExceptionPathVariable, id: {}", id);
+        logger.info("handlerMethodValidationExceptionPathVariable, id: " + id);
         return Mono.empty();
     }
 
@@ -366,7 +366,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @PostMapping("/handler-method-validation-exception-request-body")
     public Mono<Void> handlerMethodValidationExceptionRequestBody(@RequestBody @FluxCheckPassword(message = "{flux.example.request.password.required}") FluxProblemDetailRequest problemDetailRequest) {
-        logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: {}", problemDetailRequest);
+        logger.info("handlerMethodValidationExceptionRequestBody, problemDetailRequest: " + problemDetailRequest);
         return Mono.empty();
     }
 
@@ -396,7 +396,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @PostMapping("/handler-method-validation-exception-request-body-validation-result")
     public Mono<Void> handlerMethodValidationExceptionRequestBodyValidationResult(@RequestBody List<@NotBlank(message = "{flux.example.request.list.element.blank}") String> list) {
-        logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: {}", list);
+        logger.info("handlerMethodValidationExceptionRequestBodyValidationResult, list: " + list);
         return Mono.empty();
     }
 
@@ -427,7 +427,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping(path = "/handler-method-validation-exception-request-header")
     public Mono<Void> handlerMethodValidationExceptionRequestHeader(@RequestHeader @NotBlank(message = "{flux.example.request.header.blank}") String headerValue) {
-        logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: {}", headerValue);
+        logger.info("handlerMethodValidationExceptionRequestHeader, headerValue: " + headerValue);
         return Mono.empty();
     }
 
@@ -464,7 +464,7 @@ public class FluxExtendedProblemDetailController {
     @GetMapping("/handler-method-validation-exception-request-param")
     public Mono<Void> handlerMethodValidationExceptionRequestParam(@RequestParam @NotBlank(message = "{flux.example.request.parameter.blank}") String param,
                                                                     @RequestParam @Size(min = 5, message = "{flux.example.request.value.length}") String value) {
-        logger.info("handlerMethodValidationExceptionRequestParam, param: {}, value: {}", param, value);
+        logger.info("handlerMethodValidationExceptionRequestParam, param: " + param + ", value: " + value);
         return Mono.empty();
     }
 
@@ -496,7 +496,7 @@ public class FluxExtendedProblemDetailController {
     @PostMapping("/handler-method-validation-exception-request-part")
     public Mono<Void> handlerMethodValidationExceptionRequestPart(@RequestPart(required = false)
                                                                    @FluxCheckFilePart(requiredMessage = "{flux.example.upload.file.not-empty}") FilePart filePart) {
-        logger.info("handlerMethodValidationExceptionRequestPart, filePart: {}", filePart);
+        logger.info("handlerMethodValidationExceptionRequestPart, filePart: " + filePart);
         return Mono.empty();
     }
 
@@ -523,7 +523,8 @@ public class FluxExtendedProblemDetailController {
             @SessionAttribute(required = false) @NotBlank(message = "{flux.example.request.session-attribute.blank}") String sessionAttribute,
             @RequestAttribute(required = false) @NotBlank(message = "{flux.example.request.request-attribute.blank}") String requestAttribute,
             @Value("") @NotBlank(message = "{flux.example.request.value.blank}") String value) {
-        logger.info("handlerMethodValidationExceptionOther, sessionAttribute: {}, requestAttribute: {}, value: {}", sessionAttribute, requestAttribute, value);
+        logger.info("handlerMethodValidationExceptionOther, sessionAttribute: " + sessionAttribute
+                + ", requestAttribute: " + requestAttribute + ", value: " + value);
         return Mono.empty();
     }
 
@@ -614,7 +615,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @PostMapping("/content-too-large-exception")
     public Mono<Void> contentTooLargeException(@RequestBody byte[] body) {
-        logger.info("contentTooLargeException, body.length: {}", body.length);
+        logger.info("contentTooLargeException, body.length: " + body.length);
         return Mono.empty();
     }
 
@@ -636,7 +637,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @PostMapping("/payload-too-large-exception")
     public Mono<Void> payloadTooLargeException(@RequestBody byte[] body) {
-        logger.info("payloadTooLargeException, body.length: {}", body.length);
+        logger.info("payloadTooLargeException, body.length: " + body.length);
         throw new PayloadTooLargeException(new RuntimeException("payload too large"));
     }
 

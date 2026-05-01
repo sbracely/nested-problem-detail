@@ -20,6 +20,6 @@ public class MvcProblemDetailService {
     public void createProblemDetail(@NotBlank(message = "{mvc.example.service.name.blank}")
                                     @NotNull(message = "{mvc.example.service.name.missing}") String name,
                                     @Valid MvcProblemDetailRequest problemDetailRequest) {
-        logger.info("createProblemDetail, name: {}, problemDetailRequest: {}", name, problemDetailRequest);
+        logger.info("createProblemDetail, name: " + name + ", problemDetailRequest: " + problemDetailRequest);
     }
 }

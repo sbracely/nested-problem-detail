@@ -134,8 +134,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveCookieValue(HandlerMethodValidationException ex, CookieValue cookieValue,
                                     ParameterValidationResult result, List<Error> errorList) {
-        log("[exception#{}] resolveCookieValue",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveCookieValue");
         addParameterErrors(result, Error.Type.COOKIE, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -153,8 +152,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveMatrixVariable(HandlerMethodValidationException ex, MatrixVariable matrixVariable,
                                        ParameterValidationResult result, List<Error> errorList) {
-        log("[exception#{}] resolveMatrixVariable",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveMatrixVariable");
         addParameterErrors(result, Error.Type.PARAMETER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -172,8 +170,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveModelAttribute(HandlerMethodValidationException ex, @Nullable ModelAttribute modelAttribute,
                                        ParameterErrors errors, List<Error> errorList) {
-        log("[exception#{}] resolveModelAttribute",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveModelAttribute");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -193,8 +190,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolvePathVariable(HandlerMethodValidationException ex, PathVariable pathVariable,
                                      ParameterValidationResult result, List<Error> errorList) {
-        log("[exception#{}] resolvePathVariable",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolvePathVariable");
         addParameterErrors(result, Error.Type.PARAMETER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -212,8 +208,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestBody(HandlerMethodValidationException ex, RequestBody requestBody,
                                     ParameterErrors errors, List<Error> errorList) {
-        log("[exception#{}] resolveRequestBody",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveRequestBody");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -233,8 +228,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestBodyValidationResult(HandlerMethodValidationException ex, RequestBody requestBody,
                                                     ParameterValidationResult result, List<Error> errorList) {
-        log("[exception#{}] resolveRequestBodyValidationResult",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveRequestBodyValidationResult");
         addParameterErrors(result, Error.Type.PARAMETER, null, errorList);
     }
 
@@ -252,8 +246,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestHeader(HandlerMethodValidationException ex, RequestHeader requestHeader,
                                       ParameterValidationResult result, List<Error> errorList) {
-        log("[exception#{}] resolveRequestHeader",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveRequestHeader");
         addParameterErrors(result, Error.Type.HEADER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -271,8 +264,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestParam(HandlerMethodValidationException ex, @Nullable RequestParam requestParam,
                                      ParameterValidationResult result, List<Error> errorList) {
-        log("[exception#{}] resolveRequestParam",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveRequestParam");
         addParameterErrors(result, Error.Type.PARAMETER, result.getMethodParameter().getParameterName(), errorList);
     }
 
@@ -290,8 +282,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveRequestPart(HandlerMethodValidationException ex, RequestPart requestPart,
                                     ParameterErrors errors, List<Error> errorList) {
-        log("[exception#{}] resolveRequestPart",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveRequestPart");
         errors.getAllErrors().stream()
                 .map(this::objectErrorToError)
                 .forEach(errorList::add);
@@ -310,8 +301,7 @@ public interface ExtendedProblemDetailErrorResolver {
      */
     default void resolveOther(HandlerMethodValidationException ex, ParameterValidationResult result,
                               List<Error> errorList) {
-        log("[exception#{}] resolveOther",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex)) + "] resolveOther");
     }
 
 
@@ -333,8 +323,8 @@ public interface ExtendedProblemDetailErrorResolver {
                         result.getDefaultMessage()))
                 .forEach(validationMessages::add);
 
-        log("[exception#{}] MethodValidationException validation errors: {}",
-                Integer.toHexString(System.identityHashCode(ex)), validationMessages);
+        log("[exception#" + Integer.toHexString(System.identityHashCode(ex))
+                + "] MethodValidationException validation errors: " + validationMessages);
     }
 
     /**
@@ -451,12 +441,11 @@ public interface ExtendedProblemDetailErrorResolver {
     /**
      * Logs a correlated message without an exception.
      *
-     * @param message the message with optional placeholders
-     * @param args    the arguments to replace placeholders
+     * @param message the message to log
      */
-    default void log(String message, @Nullable Object... args) {
+    default void log(String message) {
         if (getExtendedProblemDetailLog() != null) {
-            getExtendedProblemDetailLog().log(getLogger(), message, args);
+            getExtendedProblemDetailLog().log(getLogger(), message);
         }
     }
 
@@ -464,12 +453,11 @@ public interface ExtendedProblemDetailErrorResolver {
      * Logs a message with an optional exception.
      *
      * @param throwable the exception to log, or {@code null} for message-only logging
-     * @param message   the message with optional placeholders
-     * @param args      the arguments to replace placeholders
+     * @param message   the message to log
      */
-    default void log(@Nullable Throwable throwable, String message, @Nullable Object... args) {
+    default void log(@Nullable Throwable throwable, String message) {
         if (getExtendedProblemDetailLog() != null) {
-            getExtendedProblemDetailLog().log(getLogger(), throwable, message, args);
+            getExtendedProblemDetailLog().log(getLogger(), throwable, message);
         }
     }
 }

@@ -188,8 +188,8 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      */
     @Override
     public @Nullable ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        log(ex, "[exception#{}] handleHandlerMethodValidationException",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log(ex, "[exception#" + Integer.toHexString(System.identityHashCode(ex))
+                + "] handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
@@ -297,8 +297,8 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
                                                                                HttpHeaders headers,
                                                                                HttpStatus status,
                                                                                WebRequest request) {
-        log(ex, "[exception#{}] handleMethodValidationException",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log(ex, "[exception#" + Integer.toHexString(System.identityHashCode(ex))
+                + "] handleMethodValidationException");
         resolveMethodValidationException(ex);
         return super.handleMethodValidationException(ex, headers, status, request);
     }

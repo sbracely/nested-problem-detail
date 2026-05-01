@@ -21,7 +21,7 @@ class ExtendedProblemDetailLogTest {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.DEBUG, true);
         Exception exception = new RuntimeException("test error");
 
-        log.log(logger, exception, "Error occurred: {}", "details");
+        log.log(logger, exception, "Error occurred: details");
 
         assertThat(logger.events()).containsExactly(new CommonLogEvent("debug", "Error occurred: details", exception));
     }
@@ -31,7 +31,7 @@ class ExtendedProblemDetailLogTest {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.DEBUG, false);
         Exception exception = new RuntimeException("test error");
 
-        log.log(logger, exception, "Error occurred: {}", "details");
+        log.log(logger, exception, "Error occurred: details");
 
         assertThat(logger.events()).containsExactly(new CommonLogEvent("debug", "Error occurred: details", null));
     }
@@ -74,10 +74,10 @@ class ExtendedProblemDetailLogTest {
     }
 
     @Test
-    void shouldHandleMultiplePlaceholders() {
+    void shouldLogMessageAsProvided() {
         ExtendedProblemDetailLog log = new ExtendedProblemDetailLog(LogLevel.DEBUG, false);
 
-        log.log(logger, "Error: {} - Code: {} - Status: {}", "validation", 400, "BAD_REQUEST");
+        log.log(logger, "Error: validation - Code: 400 - Status: BAD_REQUEST");
 
         assertThat(logger.events()).containsExactly(
                 new CommonLogEvent("debug", "Error: validation - Code: 400 - Status: BAD_REQUEST", null));

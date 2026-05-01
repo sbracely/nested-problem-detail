@@ -155,8 +155,8 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
-        log(ex, "[exception#{}] handleHandlerMethodValidationException",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log(ex, "[exception#" + Integer.toHexString(System.identityHashCode(ex))
+                + "] handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
         return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
@@ -200,8 +200,8 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {
-        log(ex, "[exception#{}] handleMethodValidationException",
-                Integer.toHexString(System.identityHashCode(ex)));
+        log(ex, "[exception#" + Integer.toHexString(System.identityHashCode(ex))
+                + "] handleMethodValidationException");
         resolveMethodValidationException(ex);
         return super.handleMethodValidationException(ex, status, exchange);
     }

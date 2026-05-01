@@ -2,14 +2,13 @@ package io.github.sbracely.extended.problem.detail.common.logging;
 
 import org.apache.commons.logging.Log;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.helpers.MessageFormatter;
 import org.springframework.boot.logging.LogLevel;
 
 /**
  * Logger for extended problem detail with configurable log level and stack trace printing.
  * <p>
  * This class provides a convenient way to log messages at a dynamically
- * configured log level, supporting SLF4J-style placeholder syntax.
+ * configured log level.
  * </p>
  *
  * @since 1.0.0
@@ -31,45 +30,33 @@ public final class ExtendedProblemDetailLog {
     }
 
     /**
-     * Logs a message with placeholder support.
-     * <p>
-     * Supports SLF4J-style placeholders: {@code log(logger, "Error processing {}", name)}
-     * </p>
+     * Logs a message at the configured level.
      *
      * @param logger  the logger to use
-     * @param message the message with optional placeholders
-     * @param args    the arguments to replace placeholders
+     * @param message the message to log
      */
-    public void log(Log logger, String message, @Nullable Object... args) {
-        log(logger, null, message, args);
+    public void log(Log logger, String message) {
+        log(logger, null, message);
     }
 
     /**
-     * Logs a message with placeholder support and optional exception.
-     * <p>
-     * Supports SLF4J-style placeholders: {@code log(logger, ex, "Error processing {}", name)}
-     * </p>
+     * Logs a message at the configured level with an optional exception.
      *
      * @param logger  the logger to use
      * @param ex      the exception to log (can be null)
-     * @param message the message with optional placeholders
-     * @param args    the arguments to replace placeholders
+     * @param message the message to log
      */
-    public void log(Log logger,
-                    @Nullable Throwable ex,
-                    String message,
-                    @Nullable Object... args) {
+    public void log(Log logger, @Nullable Throwable ex, String message) {
         if (logLevel == LogLevel.OFF) {
             return;
         }
 
-        String formattedMessage = MessageFormatter.arrayFormat(message, args).getMessage();
         boolean shouldPrintStackTrace = ex != null && this.printStackTrace;
 
         if (shouldPrintStackTrace) {
-            logLevel.log(logger, formattedMessage, ex);
+            logLevel.log(logger, message, ex);
         } else {
-            logLevel.log(logger, formattedMessage);
+            logLevel.log(logger, message);
         }
     }
 }

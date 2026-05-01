@@ -20,6 +20,6 @@ public class FluxProblemDetailService {
     public void createProblemDetail(@NotBlank(message = "{flux.example.service.name.blank}")
                                     @NotNull(message = "{flux.example.service.name.missing}") String name,
                                     @Valid FluxProblemDetailRequest problemDetailRequest) {
-        logger.info("createProblemDetail, name: {}, problemDetailRequest: {}", name, problemDetailRequest);
+        logger.info("createProblemDetail, name: " + name + ", problemDetailRequest: " + problemDetailRequest);
     }
 }
