@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FluxCheckNameValidator.class)
 public @interface FluxCheckName {
-    String message() default "Name is not valid";
+    String message() default "{flux.example.request.name.invalid}";
 
     Class<?>[] groups() default {};
 

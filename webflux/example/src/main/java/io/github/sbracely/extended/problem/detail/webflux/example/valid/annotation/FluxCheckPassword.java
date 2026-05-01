@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FluxCheckPasswordValidator.class)
 public @interface FluxCheckPassword {
-    String message() default "Check password error";
+    String message() default "{flux.example.request.password.invalid}";
 
     Class<?>[] groups() default {};
 

@@ -2,6 +2,7 @@ package io.github.sbracely.extended.problem.detail.webflux.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +10,8 @@ import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTest
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +31,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FluxOpenApiApiVersionContractTests {
 
     private static final String BASE = "/flux-extended-problem-detail";
+
+    @BeforeAll
+    static void useEnglishLocale() {
+        Locale.setDefault(Locale.ENGLISH);
+    }
 
     @Autowired
     private WebTestClient webTestClient;

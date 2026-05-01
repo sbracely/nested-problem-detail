@@ -687,7 +687,7 @@ paths:
       operationId: extendedErrorResponseException
       responses:
         "500":
-          description: FluxExtendedErrorResponseException
+          description: PayFailedException
           content:
             application/problem+json:
               schema:
@@ -696,15 +696,15 @@ paths:
                 example:
                   description: example
                   value:
-                    title: Payment failed title
+                    title: Payment failed
                     status: 500
-                    detail: Payment failed details
+                    detail: The payment request could not be processed.
                     instance: /flux-extended-problem-detail/extended-error-response-exception
                     errors:
                     - type: BUSINESS
                       message: Insufficient balance
                     - type: BUSINESS
-                      message: Payment frequent
+                      message: Payment is too frequent
   /flux-extended-problem-detail/error-response-exception:
     get:
       tags:

@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 class MvcOpenApiApiVersionContractTests {
     private static final String BASE = "/mvc-extended-problem-detail";
+    private static final String DEFAULT_LANGUAGE = "en";
 
     @LocalServerPort
     private int port;
@@ -47,7 +48,7 @@ class MvcOpenApiApiVersionContractTests {
     @Test
     void invalidApiVersionExceptionContractMatches() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
-                mockMvcTester, "API-Version", "1");
+                mockMvcTester, "API-Version", "1", "Accept-Language", DEFAULT_LANGUAGE);
         JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
                 apiDocs, BASE + "/invalid-api-version-exception", "get");
         assertThat(docExample)
@@ -57,6 +58,7 @@ class MvcOpenApiApiVersionContractTests {
         EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                 .uri(uri)
                 .header("API-Version", "3")
+                .header("Accept-Language", DEFAULT_LANGUAGE)
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
@@ -69,7 +71,7 @@ class MvcOpenApiApiVersionContractTests {
     @Test
     void missingApiVersionExceptionContractMatches() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
-                mockMvcTester, "API-Version", "1");
+                mockMvcTester, "API-Version", "1", "Accept-Language", DEFAULT_LANGUAGE);
         JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
                 apiDocs, BASE + "/missing-api-version-exception", "get");
         assertThat(docExample)
@@ -78,6 +80,7 @@ class MvcOpenApiApiVersionContractTests {
         String uri = "http://localhost:" + port + BASE + "/missing-api-version-exception";
         EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                 .uri(uri)
+                .header("Accept-Language", DEFAULT_LANGUAGE)
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
@@ -90,7 +93,7 @@ class MvcOpenApiApiVersionContractTests {
     @Test
     void notAcceptableApiVersionExceptionContractMatches() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
-                mockMvcTester, "API-Version", "1");
+                mockMvcTester, "API-Version", "1", "Accept-Language", DEFAULT_LANGUAGE);
         JsonNode docExample = MvcOpenApiContractTestSupport.extractDocumentedExample(
                 apiDocs, "/not-acceptable-api-version", "get");
         assertThat(docExample)
@@ -100,6 +103,7 @@ class MvcOpenApiApiVersionContractTests {
         EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                 .uri(uri)
                 .header("API-Version", "2")
+                .header("Accept-Language", DEFAULT_LANGUAGE)
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
@@ -112,7 +116,7 @@ class MvcOpenApiApiVersionContractTests {
     @Test
     void apiVersionFixturesRemainDocumented() throws Exception {
         JsonNode apiDocs = MvcOpenApiContractTestSupport.fetchApiDocs(
-                mockMvcTester, "API-Version", "1");
+                mockMvcTester, "API-Version", "1", "Accept-Language", DEFAULT_LANGUAGE);
         for (String operationId : new String[]{
                 "invalidApiVersionException",
                 "missingApiVersionException",

@@ -1,4 +1,4 @@
-package io.github.sbracely.extended.problem.detail.webmvc.example.exception;
+package io.github.sbracely.extended.problem.detail.webflux.example.exception;
 
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
@@ -39,7 +39,8 @@ public class PayFailedException extends ErrorResponseException {
                 .map(code -> new Error(
                         Error.Type.BUSINESS,
                         null,
-                        message(code, messageSource, locale)))
+                        message(code, messageSource, locale)
+                ))
                 .toList();
 
         extendedProblemDetail.setErrors(localizedErrors);

@@ -47,6 +47,7 @@ class MvcControllerRandomPortTests {
 
     private static final Logger logger = LoggerFactory.getLogger(MvcControllerRandomPortTests.class);
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
+    private static final String DEFAULT_LANGUAGE = "en";
     @LocalServerPort
     private int port;
 
@@ -102,6 +103,7 @@ class MvcControllerRandomPortTests {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            headers.setAcceptLanguageAsLocales(java.util.List.of(java.util.Locale.ENGLISH));
 
             String uri = BASE_PATH + "/max-upload-size-exceeded-exception";
             ResponseEntity<ExtendedProblemDetail> response = testRestTemplate.postForEntity(
@@ -150,6 +152,7 @@ class MvcControllerRandomPortTests {
             EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                     .uri(uri)
                     .header("API-Version", "3")
+                    .header("Accept-Language", DEFAULT_LANGUAGE)
                     .exchange()
                     .expectStatus()
                     .isEqualTo(BAD_REQUEST)
@@ -179,6 +182,7 @@ class MvcControllerRandomPortTests {
             EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                     .uri(uri)
                     .header("API-Version", "2")
+                    .header("Accept-Language", DEFAULT_LANGUAGE)
                     .exchange()
                     .expectStatus()
                     .isEqualTo(BAD_REQUEST)
@@ -207,6 +211,7 @@ class MvcControllerRandomPortTests {
             String uri = "http://localhost:" + port + BASE_PATH + "/missing-api-version-exception";
             EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
                     .uri(uri)
+                    .header("Accept-Language", DEFAULT_LANGUAGE)
                     .exchange()
                     .expectStatus()
                     .isEqualTo(BAD_REQUEST)

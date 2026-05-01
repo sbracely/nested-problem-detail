@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FluxCheckFilePartValidator.class)
 public @interface FluxCheckFilePart {
-    String message() default "Check file error";
+    String message() default "{flux.example.upload.file.invalid}";
 
     Class<?>[] groups() default {};
 
@@ -19,9 +19,9 @@ public @interface FluxCheckFilePart {
 
     String[] extensionInclude() default {};
 
-    String extensionIncludeMessage() default "Extension not support";
+    String extensionIncludeMessage() default "{flux.example.upload.file.unsupported-extension}";
 
     boolean required() default true;
 
-    String requiredMessage() default "File required";
+    String requiredMessage() default "{flux.example.upload.file.required}";
 }

@@ -17,8 +17,8 @@ public class FluxProblemDetailService {
     private static final Logger logger = LoggerFactory.getLogger(FluxProblemDetailService.class);
 
     @FluxCheckName(nameIndex = 0, problemDetailRequestIndex = 1)
-    public void createProblemDetail(@NotBlank(message = "name must not be blank")
-                                    @NotNull(message = "name must not be null") String name,
+    public void createProblemDetail(@NotBlank(message = "{flux.example.service.name.blank}")
+                                    @NotNull(message = "{flux.example.service.name.missing}") String name,
                                     @Valid FluxProblemDetailRequest problemDetailRequest) {
         logger.info("createProblemDetail, name: {}, problemDetailRequest: {}", name, problemDetailRequest);
     }

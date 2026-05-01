@@ -64,6 +64,7 @@ class MvcOpenApiMultipartContractTests {
         body.add("file", resource);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setAcceptLanguageAsLocales(java.util.List.of(java.util.Locale.ENGLISH));
 
         String uri = BASE + "/max-upload-size-exceeded-exception";
         ResponseEntity<ExtendedProblemDetail> response = testRestTemplate.postForEntity(

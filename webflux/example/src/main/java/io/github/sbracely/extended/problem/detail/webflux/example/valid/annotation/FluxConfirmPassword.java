@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FluxConfirmPasswordValidator.class)
 public @interface FluxConfirmPassword {
-    String message() default "Confirm password error";
+    String message() default "{flux.example.request.password.confirmation-mismatch}";
 
     Class<?>[] groups() default {};
 

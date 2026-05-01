@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MvcCheckNameValidator.class)
 public @interface MvcCheckName {
-    String message() default "{mvc.example.validation.name.invalid}";
+    String message() default "{mvc.example.request.name.invalid}";
 
     Class<?>[] groups() default {};
 

@@ -754,7 +754,7 @@ Content-Type: application/problem+json
 }
 ```
 
-## 27. `io.github.sbracely.extended.problem.detail.webflux.example.exception.FluxExtendedErrorResponseException`
+## 27. `io.github.sbracely.extended.problem.detail.webflux.example.exception.PayFailedException`
 
 _extends ErrorResponseException_
 
@@ -772,7 +772,7 @@ status: 500
 Content-Type: application/problem+json
 
 {
-  "detail" : "Payment failed details",
+  "detail" : "The payment request could not be processed.",
   "errors" : [
     {
       "type" : "BUSINESS",
@@ -782,12 +782,12 @@ Content-Type: application/problem+json
     {
       "type" : "BUSINESS",
       "target" : null,
-      "message" : "Payment frequent"
+      "message" : "Payment is too frequent"
     }
   ],
   "instance" : "/flux-extended-problem-detail/extended-error-response-exception",
   "status" : 500,
-  "title" : "Payment failed title"
+  "title" : "Payment failed"
 }
 ```
 

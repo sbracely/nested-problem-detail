@@ -3,10 +3,13 @@ package io.github.sbracely.extended.problem.detail.webflux.example.controller;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
 import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webflux.example.config.FluxMethodValidationConfiguration;
-import io.github.sbracely.extended.problem.detail.webflux.example.exception.FluxExtendedErrorResponseException;
+import io.github.sbracely.extended.problem.detail.webflux.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webflux.example.request.FluxProblemDetailRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +32,11 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.server.*;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT;
@@ -48,6 +51,12 @@ class FluxControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(FluxControllerTests.class);
     private static final String BASE_PATH = "/flux-extended-problem-detail";
+
+    @BeforeAll
+    static void useEnglishLocale() {
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
     @Autowired
     private WebTestClient webTestClient;
 
@@ -669,7 +678,7 @@ class FluxControllerTests {
     }
 
     /**
-     * @see FluxExtendedErrorResponseException
+     * @see PayFailedException
      * @see FluxExtendedProblemDetailController#extendedErrorResponseException()
      */
     @Test
@@ -684,14 +693,36 @@ class FluxControllerTests {
         logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail).isNotNull();
         assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed title");
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Payment failed details");
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, "Insufficient balance"),
-                new Error(Error.Type.BUSINESS, null, "Payment frequent")
+                new Error(Error.Type.BUSINESS, null, "Payment is too frequent")
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            en,Insufficient balance,Payment is too frequent
+            zh-CN,余额不足,支付过于频繁
+            fr,Solde insuffisant,Le paiement est trop fréquent
+            """)
+    void extendedErrorResponseExceptionLocalized(String language, String firstError, String secondError) {
+        String uri = BASE_PATH + "/extended-error-response-exception";
+        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+                .header("Accept-Language", language)
+                .exchange()
+                .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
+                .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                .expectBody(ExtendedProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+                new Error(Error.Type.BUSINESS, null, firstError),
+                new Error(Error.Type.BUSINESS, null, secondError)
         );
     }
 

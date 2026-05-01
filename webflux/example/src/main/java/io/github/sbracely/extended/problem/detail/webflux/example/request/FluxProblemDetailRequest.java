@@ -7,18 +7,18 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
-@FluxConfirmPassword(message = "Password and confirm password do not match", fields = {"password", "confirmPassword"})
+@FluxConfirmPassword(message = "{flux.example.request.password.confirmation-mismatch}", fields = {"password", "confirmPassword"})
 @Schema(name = "FluxProblemDetailRequest", description = "Sample request payload used by the example endpoints.")
 public class FluxProblemDetailRequest {
 
-    @NotBlank(message = "Name cannot be blank")
-    @NotNull(message = "Name cannot be null")
-    @Length(min = 6, max = 10, message = "Name length must be between 6-10")
+    @NotBlank(message = "{flux.example.request.name.blank}")
+    @NotNull(message = "{flux.example.request.name.missing}")
+    @Length(min = 6, max = 10, message = "{flux.example.request.name.length}")
     @Schema(description = "User name used by validation examples.", example = "springdoc")
     private String name;
 
-    @NotNull(message = "Age cannot be null")
-    @Range(min = 0, max = 150, message = "Age range is 0-150")
+    @NotNull(message = "{flux.example.request.age.missing}")
+    @Range(min = 0, max = 150, message = "{flux.example.request.age.range}")
     @Schema(description = "User age used by validation examples.", example = "28", minimum = "0", maximum = "150")
     private Integer age;
 

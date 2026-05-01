@@ -1236,15 +1236,15 @@ paths:
                 example:
                   description: example
                   value:
-                    title: Internal Server Error
+                    title: Payment failed
                     status: 500
-                    detail: Payment failed
+                    detail: The payment request could not be processed.
                     instance: /mvc-extended-problem-detail/extended-error-response-exception
                     errors:
                     - type: BUSINESS
                       message: Insufficient balance
                     - type: BUSINESS
-                      message: Payment frequent
+                      message: Payment is too frequent
   /mvc-extended-problem-detail/error-response-exception:
     get:
       tags:
