@@ -14,6 +14,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -729,15 +731,37 @@ class MvcControllerTests {
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
         logger.info("extendedProblemDetail: {}", extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Payment failed");
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, "Insufficient balance"),
-                new Error(Error.Type.BUSINESS, null, "Payment frequent")
+                new Error(Error.Type.BUSINESS, null, "Payment is too frequent")
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            en,Insufficient balance,Payment is too frequent
+            zh-CN,余额不足,支付过于频繁
+            fr,Solde insuffisant,Le paiement est trop fréquent
+            """)
+    void extendedErrorResponseExceptionLocalized(String language, String firstError, String secondError) {
+        String uri = BASE_PATH + "/extended-error-response-exception";
+        MvcTestResult result = mockMvcTester.get().uri(uri)
+                .header(ACCEPT_LANGUAGE, language)
+                .exchange();
+        assertThat(result)
+                .hasStatus(INTERNAL_SERVER_ERROR)
+                .hasContentType(APPLICATION_PROBLEM_JSON);
+        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
+                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+                new Error(Error.Type.BUSINESS, null, firstError),
+                new Error(Error.Type.BUSINESS, null, secondError)
         );
     }
 

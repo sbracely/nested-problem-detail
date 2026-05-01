@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MvcCheckPasswordValidator.class)
 public @interface MvcCheckPassword {
-    String message() default "{mvc.example.validation.password.check-error}";
+    String message() default "{mvc.example.request.password.invalid}";
 
     Class<?>[] groups() default {};
 

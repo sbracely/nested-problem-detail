@@ -1,7 +1,8 @@
 # WebFlux Example Application Exception Response Table
 
-- Data source: response bodies come from the current `3.x` branch `openapi.json` examples that are kept aligned with runtime by contract tests; controller-only scenarios are added from the current controller tests.
-- Ordering: follows the current `ResponseEntityExceptionHandler#handleException` dispatch order on the `3.x` line; subclasses are placed next to their parent class.
+- Data source: real responses captured by starting the current WebFlux example application and sending real requests.
+- Ordering: follows the current `ResponseEntityExceptionHandler#handleException` dispatch order; subclasses are placed next to their parent class.
+- The 3 API-version rows are triggered with the API-version configuration: `spring.webflux.apiversion.use.header=API-Version`, `spring.webflux.apiversion.supported=1,2`; `/not-acceptable-api-version` is registered by `FluxApiVersionController` only when that configuration is enabled.
 
 ## 1. `org.springframework.web.server.MethodNotAllowedException`
 
@@ -22,11 +23,10 @@ Content-Type: application/problem+json
 Allow: GET
 
 {
-  "type": "about:blank",
-  "title": "Method Not Allowed",
-  "status": 405,
-  "detail": "Supported methods: [GET]",
-  "instance": "/flux-extended-problem-detail/method-not-allowed-exception"
+  "detail" : "Supported methods: [GET]",
+  "instance" : "/flux-extended-problem-detail/method-not-allowed-exception",
+  "status" : 405,
+  "title" : "Method Not Allowed"
 }
 ```
 
@@ -49,11 +49,10 @@ Content-Type: application/problem+json
 Accept: application/json
 
 {
-  "type": "about:blank",
-  "title": "Not Acceptable",
-  "status": 406,
-  "detail": "Acceptable representations: [application/json].",
-  "instance": "/flux-extended-problem-detail/not-acceptable-status-exception"
+  "detail" : "Acceptable representations: [application/json].",
+  "instance" : "/flux-extended-problem-detail/not-acceptable-status-exception",
+  "status" : 406,
+  "title" : "Not Acceptable"
 }
 ```
 
@@ -76,10 +75,9 @@ Content-Type: application/problem+json
 Accept: application/xml
 
 {
-  "type": "about:blank",
-  "title": "Unsupported Media Type",
-  "status": 415,
-  "instance": "/flux-extended-problem-detail/unsupported-media-type-status-exception"
+  "instance" : "/flux-extended-problem-detail/unsupported-media-type-status-exception",
+  "status" : 415,
+  "title" : "Unsupported Media Type"
 }
 ```
 
@@ -101,11 +99,10 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Required query parameter 'id' is not present.",
-  "instance": "/flux-extended-problem-detail/missing-request-value-exception"
+  "detail" : "Required query parameter 'id' is not present.",
+  "instance" : "/flux-extended-problem-detail/missing-request-value-exception",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -127,11 +124,10 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Invalid request parameters.",
-  "instance": "/flux-extended-problem-detail/unsatisfied-request-parameter-exception"
+  "detail" : "Invalid request parameters.",
+  "instance" : "/flux-extended-problem-detail/unsatisfied-request-parameter-exception",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -143,7 +139,7 @@ _extends ServerWebInputException → ResponseStatusException_
 
 ```text
 POST /flux-extended-problem-detail/web-exchange-bind-exception
-Content-Type: application/json; Body: {"name":"abc","password":"123"}
+Content-Type: application/json；Body: {"name":"abc","password":"123"}
 ```
 
 **Response**
@@ -153,33 +149,32 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Invalid request content.",
-  "instance": "/flux-extended-problem-detail/web-exchange-bind-exception",
-  "errors": [
+  "detail" : "Invalid request content.",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "name",
-      "message": "Name length must be between 6-10"
+      "type" : "PARAMETER",
+      "target" : "name",
+      "message" : "Name length must be between 6-10"
     },
     {
-      "type": "PARAMETER",
-      "target": "age",
-      "message": "Age cannot be null"
+      "type" : "PARAMETER",
+      "target" : "confirmPassword",
+      "message" : "Password and confirm password do not match"
     },
     {
-      "type": "PARAMETER",
-      "target": "password",
-      "message": "Password and confirm password do not match"
+      "type" : "PARAMETER",
+      "target" : "password",
+      "message" : "Password and confirm password do not match"
     },
     {
-      "type": "PARAMETER",
-      "target": "confirmPassword",
-      "message": "Password and confirm password do not match"
+      "type" : "PARAMETER",
+      "target" : "age",
+      "message" : "Age cannot be null"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/web-exchange-bind-exception",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -201,18 +196,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-cookie-value",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "COOKIE",
-      "target": "cookieValue",
-      "message": "cookie cannot be empty"
+      "type" : "COOKIE",
+      "target" : "cookieValue",
+      "message" : "cookie cannot be empty"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-cookie-value",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -234,18 +228,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "list",
-      "message": "list maximum size is 2"
+      "type" : "PARAMETER",
+      "target" : "list",
+      "message" : "list maximum size is 2"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-matrix/abc;list=a,b,c",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -267,18 +260,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-model-attribute",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "password",
-      "message": "Password cannot be empty"
+      "type" : "PARAMETER",
+      "target" : "password",
+      "message" : "Password cannot be empty"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-model-attribute",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -300,18 +292,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "id",
-      "message": "id length must be at least 5"
+      "type" : "PARAMETER",
+      "target" : "id",
+      "message" : "id length must be at least 5"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-path-variable/abc",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -323,7 +314,7 @@ _extends ResponseStatusException → ErrorResponseException_
 
 ```text
 POST /flux-extended-problem-detail/handler-method-validation-exception-request-body
-Content-Type: application/json; Body: {"name":"abc"}
+Content-Type: application/json；Body: {"name":"abc"}
 ```
 
 **Response**
@@ -333,18 +324,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-body",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "password",
-      "message": "Password cannot be empty"
+      "type" : "PARAMETER",
+      "target" : "password",
+      "message" : "Password cannot be empty"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-request-body",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -356,7 +346,7 @@ _extends ResponseStatusException → ErrorResponseException_
 
 ```text
 POST /flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result
-Content-Type: application/json; Body: ["","a"]
+Content-Type: application/json；Body: ["","a"]
 ```
 
 **Response**
@@ -366,17 +356,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "message": "Element cannot contain empty values"
+      "type" : "PARAMETER",
+      "target" : null,
+      "message" : "Element cannot contain empty values"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-request-body-validation-result",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -398,18 +388,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-header",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "HEADER",
-      "target": "headerValue",
-      "message": "Header cannot be empty"
+      "type" : "HEADER",
+      "target" : "headerValue",
+      "message" : "Header cannot be empty"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-request-header",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -421,7 +410,7 @@ _extends ResponseStatusException → ErrorResponseException_
 
 ```text
 GET /flux-extended-problem-detail/handler-method-validation-exception-request-param?param=&value=ab
-Query: param=; value=ab
+Query: param=；value=ab
 ```
 
 **Response**
@@ -431,23 +420,22 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-param",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "param",
-      "message": "Parameter cannot be empty"
+      "type" : "PARAMETER",
+      "target" : "param",
+      "message" : "Parameter cannot be empty"
     },
     {
-      "type": "PARAMETER",
-      "target": "value",
-      "message": "Length must be at least 5"
+      "type" : "PARAMETER",
+      "target" : "value",
+      "message" : "Length must be at least 5"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-request-param",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -469,18 +457,17 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-request-part",
-  "errors": [
+  "detail" : "Validation failure",
+  "errors" : [
     {
-      "type": "PARAMETER",
-      "target": "file",
-      "message": "File cannot be empty"
+      "type" : "PARAMETER",
+      "target" : "file",
+      "message" : "File cannot be empty"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-request-part",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -502,11 +489,10 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failure",
-  "instance": "/flux-extended-problem-detail/handler-method-validation-exception-other"
+  "detail" : "Validation failure",
+  "instance" : "/flux-extended-problem-detail/handler-method-validation-exception-other",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -528,11 +514,10 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "server web input error",
-  "instance": "/flux-extended-problem-detail/server-web-input-exception"
+  "detail" : "server web input error",
+  "instance" : "/flux-extended-problem-detail/server-web-input-exception",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
@@ -554,11 +539,10 @@ status: 500
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Internal Server Error",
-  "status": 500,
-  "detail": "server error",
-  "instance": "/flux-extended-problem-detail/server-error-exception"
+  "detail" : "server error",
+  "instance" : "/flux-extended-problem-detail/server-error-exception",
+  "status" : 500,
+  "title" : "Internal Server Error"
 }
 ```
 
@@ -580,15 +564,113 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "exception",
-  "instance": "/flux-extended-problem-detail/response-status-exception"
+  "detail" : "exception",
+  "instance" : "/flux-extended-problem-detail/response-status-exception",
+  "status" : 400,
+  "title" : "Bad Request"
 }
 ```
 
-## 20. `org.springframework.web.reactive.resource.NoResourceFoundException`
+## 20. `org.springframework.web.server.ContentTooLargeException`
+
+_extends ResponseStatusException → ErrorResponseException_
+
+**Request**
+
+```text
+POST /flux-extended-problem-detail/content-too-large-exception
+Body: "x" × 1048576
+```
+
+**Response**
+
+```http
+status: 413
+Content-Type: application/problem+json
+
+{
+  "instance" : "/flux-extended-problem-detail/content-too-large-exception",
+  "status" : 413,
+  "title" : "Content Too Large"
+}
+```
+
+## 21. `org.springframework.web.accept.InvalidApiVersionException`
+
+_extends ResponseStatusException → ErrorResponseException_
+
+**Request**
+
+```text
+GET /flux-extended-problem-detail/invalid-api-version-exception
+Header: API-Version=3; requires `spring.webflux.apiversion.*`
+```
+
+**Response**
+
+```http
+status: 400
+Content-Type: application/problem+json
+
+{
+  "detail" : "Invalid API version: '3.0.0'.",
+  "instance" : "/flux-extended-problem-detail/invalid-api-version-exception",
+  "status" : 400,
+  "title" : "Bad Request"
+}
+```
+
+## 22. `org.springframework.web.accept.MissingApiVersionException`
+
+_extends ResponseStatusException → ErrorResponseException_
+
+**Request**
+
+```text
+GET /flux-extended-problem-detail/missing-api-version-exception
+Requires `spring.webflux.apiversion.*`; API-Version not sent
+```
+
+**Response**
+
+```http
+status: 400
+Content-Type: application/problem+json
+
+{
+  "detail" : "API version is required.",
+  "instance" : "/flux-extended-problem-detail/missing-api-version-exception",
+  "status" : 400,
+  "title" : "Bad Request"
+}
+```
+
+## 23. `org.springframework.web.accept.NotAcceptableApiVersionException`
+
+_extends InvalidApiVersionException → ResponseStatusException_
+
+**Request**
+
+```text
+GET /not-acceptable-api-version
+Header: API-Version=2; requires `spring.webflux.apiversion.*`
+```
+
+**Response**
+
+```http
+status: 400
+Content-Type: application/problem+json
+
+{
+  "detail" : "Invalid API version: '2.0.0'.",
+  "instance" : "/not-acceptable-api-version",
+  "status" : 400,
+  "title" : "Bad Request"
+}
+```
+
+## 24. `org.springframework.web.reactive.resource.NoResourceFoundException`
 
 _extends ResponseStatusException → ErrorResponseException_
 
@@ -606,15 +688,14 @@ status: 404
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Not Found",
-  "status": 404,
-  "detail": "No static resource flux-extended-problem-detail/no-resource-found.",
-  "instance": "/flux-extended-problem-detail/no-resource-found"
+  "detail" : "No static resource flux-extended-problem-detail/no-resource-found.",
+  "instance" : "/flux-extended-problem-detail/no-resource-found",
+  "status" : 404,
+  "title" : "Not Found"
 }
 ```
 
-## 21. `org.springframework.web.server.PayloadTooLargeException`
+## 25. `org.springframework.web.server.PayloadTooLargeException`
 
 _extends ResponseStatusException → ErrorResponseException_
 
@@ -632,14 +713,13 @@ status: 413
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Payload Too Large",
-  "status": 413,
-  "instance": "/flux-extended-problem-detail/payload-too-large-exception"
+  "instance" : "/flux-extended-problem-detail/payload-too-large-exception",
+  "status" : 413,
+  "title" : "Content Too Large"
 }
 ```
 
-## 22. `org.springframework.web.ErrorResponseException`
+## 26. `org.springframework.web.ErrorResponseException`
 
 **Request**
 
@@ -655,25 +735,26 @@ status: 400
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Error title",
-  "status": 400,
-  "detail": "Error details",
-  "instance": "/flux-extended-problem-detail/error-response-exception",
-  "errors": [
+  "detail" : "Error details",
+  "errors" : [
     {
-      "type": "BUSINESS",
-      "message": "Error message 1"
+      "type" : "BUSINESS",
+      "target" : null,
+      "message" : "Error message 1"
     },
     {
-      "type": "BUSINESS",
-      "message": "Error message 2"
+      "type" : "BUSINESS",
+      "target" : null,
+      "message" : "Error message 2"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/error-response-exception",
+  "status" : 400,
+  "title" : "Error title"
 }
 ```
 
-## 23. `io.github.sbracely.extended.problem.detail.webflux.example.exception.FluxExtendedErrorResponseException`
+## 27. `io.github.sbracely.extended.problem.detail.webflux.example.exception.PayFailedException`
 
 _extends ErrorResponseException_
 
@@ -691,25 +772,26 @@ status: 500
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Payment failed title",
-  "status": 500,
-  "detail": "Payment failed details",
-  "instance": "/flux-extended-problem-detail/extended-error-response-exception",
-  "errors": [
+  "detail" : "The payment request could not be processed.",
+  "errors" : [
     {
-      "type": "BUSINESS",
-      "message": "Insufficient balance"
+      "type" : "BUSINESS",
+      "target" : null,
+      "message" : "Insufficient balance"
     },
     {
-      "type": "BUSINESS",
-      "message": "Payment frequent"
+      "type" : "BUSINESS",
+      "target" : null,
+      "message" : "Payment is too frequent"
     }
-  ]
+  ],
+  "instance" : "/flux-extended-problem-detail/extended-error-response-exception",
+  "status" : 500,
+  "title" : "Payment failed"
 }
 ```
 
-## 24. `org.springframework.validation.method.MethodValidationException`
+## 28. `org.springframework.validation.method.MethodValidationException`
 
 **Request**
 
@@ -725,10 +807,9 @@ status: 500
 Content-Type: application/problem+json
 
 {
-  "type": "about:blank",
-  "title": "Internal Server Error",
-  "status": 500,
-  "detail": "Validation failed",
-  "instance": "/flux-extended-problem-detail/method-validation-exception"
+  "detail" : "Validation failed",
+  "instance" : "/flux-extended-problem-detail/method-validation-exception",
+  "status" : 500,
+  "title" : "Internal Server Error"
 }
 ```

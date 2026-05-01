@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class MvcControllerRandomPortTests {
 
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
+    private static final String DEFAULT_LANGUAGE = "en";
     @LocalServerPort
     private int port;
 

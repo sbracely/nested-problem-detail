@@ -7,18 +7,18 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
-@MvcConfirmPassword(message = "{mvc.example.validation.confirm-password}", fields = {"password", "confirmPassword"})
+@MvcConfirmPassword(message = "{mvc.example.request.password.confirmation-mismatch}", fields = {"password", "confirmPassword"})
 @Schema(name = "MvcProblemDetailRequest", description = "Sample request payload used by the example endpoints.")
 public class MvcProblemDetailRequest {
 
-    @NotBlank(message = "{mvc.example.validation.name.not-blank}")
-    @NotNull(message = "{mvc.example.validation.name.not-null}")
-    @Length(min = 6, max = 10, message = "{mvc.example.validation.name.length}")
+    @NotBlank(message = "{mvc.example.request.name.blank}")
+    @NotNull(message = "{mvc.example.request.name.missing}")
+    @Length(min = 6, max = 10, message = "{mvc.example.request.name.length}")
     @Schema(description = "User name used by validation examples.", example = "springdoc")
     private String name;
 
-    @NotNull(message = "{mvc.example.validation.age.not-null}")
-    @Range(min = 0, max = 150, message = "{mvc.example.validation.age.range}")
+    @NotNull(message = "{mvc.example.request.age.missing}")
+    @Range(min = 0, max = 150, message = "{mvc.example.request.age.range}")
     @Schema(description = "User age used by validation examples.", example = "28", minimum = "0", maximum = "150")
     private Integer age;
 
