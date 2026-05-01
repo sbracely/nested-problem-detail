@@ -48,6 +48,7 @@ class MvcControllerRandomPortTests {
     private static final Logger logger = LoggerFactory.getLogger(MvcControllerRandomPortTests.class);
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
     private static final String DEFAULT_LANGUAGE = "en";
+    private static final String ZH_CN_LANGUAGE = "zh-CN";
     @LocalServerPort
     private int port;
 
@@ -124,6 +125,36 @@ class MvcControllerRandomPortTests {
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
+
+        @Test
+        void maxUploadSizeExceededExceptionLocalized() {
+            byte[] largeContent = new byte[2];
+
+            ByteArrayResource resource = new ByteArrayResource(largeContent) {
+                @Override
+                public String getFilename() {
+                    return "large-test-file.txt";
+                }
+            };
+
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", resource);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            headers.setAcceptLanguageAsLocales(java.util.List.of(java.util.Locale.SIMPLIFIED_CHINESE));
+
+            String uri = BASE_PATH + "/max-upload-size-exceeded-exception";
+            ResponseEntity<ExtendedProblemDetail> response = testRestTemplate.postForEntity(
+                    "http://localhost:" + port + uri,
+                    new HttpEntity<>(body, headers),
+                    ExtendedProblemDetail.class
+            );
+            ExtendedProblemDetail extendedProblemDetail = response.getBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("内容过大");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("超过最大上传大小");
+        }
     }
 
     /**
@@ -172,6 +203,26 @@ class MvcControllerRandomPortTests {
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
 
+        @Test
+        void invalidApiVersionExceptionLocalized() {
+            String uri = "http://localhost:" + port + BASE_PATH + "/invalid-api-version-exception";
+            EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+                    .uri(uri)
+                    .header("API-Version", "3")
+                    .header("Accept-Language", ZH_CN_LANGUAGE)
+                    .exchange()
+                    .expectStatus()
+                    .isEqualTo(BAD_REQUEST)
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult();
+            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("无效的 API 版本：'3.0.0'。");
+        }
+
         /**
          * @see NotAcceptableApiVersionException
          * @see MvcApiVersionController#notAcceptableApiVersion()
@@ -202,6 +253,26 @@ class MvcControllerRandomPortTests {
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
 
+        @Test
+        void notAcceptableApiVersionExceptionLocalized() {
+            String uri = "http://localhost:" + port + "/not-acceptable-api-version";
+            EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+                    .uri(uri)
+                    .header("API-Version", "2")
+                    .header("Accept-Language", ZH_CN_LANGUAGE)
+                    .exchange()
+                    .expectStatus()
+                    .isEqualTo(BAD_REQUEST)
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult();
+            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("无效的 API 版本：'2.0.0'。");
+        }
+
         /**
          * @see MissingApiVersionException
          * @see MvcProblemDetailController#missingApiVersionException()
@@ -229,6 +300,25 @@ class MvcControllerRandomPortTests {
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create("/mvc-extended-problem-detail/missing-api-version-exception"));
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
+        }
+
+        @Test
+        void missingApiVersionExceptionLocalized() {
+            String uri = "http://localhost:" + port + BASE_PATH + "/missing-api-version-exception";
+            EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+                    .uri(uri)
+                    .header("Accept-Language", ZH_CN_LANGUAGE)
+                    .exchange()
+                    .expectStatus()
+                    .isEqualTo(BAD_REQUEST)
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult();
+            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("必须提供 API 版本。");
         }
     }
 }

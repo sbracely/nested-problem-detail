@@ -72,6 +72,7 @@ class MvcControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(MvcControllerTests.class);
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
+    private static final String ZH_CN_LANGUAGE = "zh-CN";
     @Autowired
     private MockMvcTester mockMvcTester;
 
@@ -766,6 +767,50 @@ class MvcControllerTests {
         );
     }
 
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            nullValues = "NULL",
+            textBlock = """
+                    httpRequestMethodNotSupportedException|方法不被允许|不支持方法 'POST'。
+                    httpMediaTypeNotSupportedException|不支持的媒体类型|不支持 Content-Type 'null'。
+                    missingServletRequestParameterException|错误的请求|缺少必需参数 'id'。
+                    missingRequestCookieException|错误的请求|缺少必需 Cookie 'cookieValue'。
+                    missingRequestHeaderException|错误的请求|缺少必需请求头 'header'。
+                    methodArgumentNotValidException|Bad Request|Invalid request content.
+                    servletRequestBindingException|错误的请求|NULL
+                    unsatisfiedServletRequestParameterException|错误的请求|请求参数无效。
+                    orgSpringframeworkWebServerMissingRequestValueException|错误的请求|缺少必需的request param 'id'。
+                    webExchangeBindException|错误的请求|请求内容无效。
+                    methodNotAllowedException|方法不被允许|支持的方法：[GET, POST]
+                    notAcceptableStatusException|不可接受|可接受的表示形式：[application/json]。
+                    unsupportedMediaTypeStatusException|不支持的媒体类型|无法解析 Content-Type。
+                    serverErrorException|服务器内部错误|服务器错误
+                    payloadTooLargeException|内容过大|负载过大
+                    responseStatusException|错误的请求|异常
+                    serverWebInputException|错误的请求|服务器 Web 输入错误
+                    httpMessageNotReadableException|错误的请求|读取请求失败
+                    httpMessageNotWritableException|服务器内部错误|写入请求失败
+                    methodValidationException|服务器内部错误|验证失败
+                    errorResponseException|错误的请求|NULL
+                    extendedErrorResponseException|支付失败|支付请求无法处理。
+                    noResourceFoundException|未找到|没有静态资源 mvc-extended-problem-detail/no-resource-found-exception。
+                    asyncRequestTimeoutException|服务不可用|NULL
+                    contentTooLargeException|内容过大|NULL
+                    """
+    )
+    void titleAndDetailLocalized(String scenario, String expectedTitle, String expectedDetail) throws IOException {
+        ExtendedProblemDetail extendedProblemDetail = localizedScenarioResult(scenario, ZH_CN_LANGUAGE);
+
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(expectedTitle);
+        if (expectedDetail == null) {
+            assertThat(extendedProblemDetail.getDetail()).isNull();
+        } else {
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo(expectedDetail);
+        }
+    }
+
     /**
      * @see ResponseStatusException
      * @see MvcProblemDetailController#responseStatusException()
@@ -1228,6 +1273,18 @@ class MvcControllerTests {
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
+
+        @Test
+        void noHandlerFoundExceptionLocalized() {
+            String uri = BASE_PATH + "/no-handler-found-exception";
+            MvcTestResult result = mockMvcTester.get().uri(uri)
+                    .header(ACCEPT_LANGUAGE, ZH_CN_LANGUAGE)
+                    .exchange();
+            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
+                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("未找到");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("没有端点 GET /mvc-extended-problem-detail/no-handler-found-exception。");
+        }
     }
 
     /**
@@ -1256,5 +1313,155 @@ class MvcControllerTests {
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
+
+        @Test
+        void invalidEndpointBadRequestExceptionLocalized() {
+            String uri = BASE_PATH + "/demo/name";
+            MvcTestResult result = mockMvcTester.get().uri(uri)
+                    .header(ACCEPT_LANGUAGE, ZH_CN_LANGUAGE)
+                    .exchange();
+            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
+                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("缺少参数：param1,param2");
+        }
+    }
+
+    private ExtendedProblemDetail localizedScenarioResult(String scenario, String language) throws IOException {
+        MvcTestResult result = switch (scenario) {
+            case "httpRequestMethodNotSupportedException" ->
+                    mockMvcTester.post().uri(BASE_PATH + "/http-request-method-not-supported-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "httpMediaTypeNotSupportedException" ->
+                    mockMvcTester.put().uri(BASE_PATH + "/http-media-type-not-supported-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "missingServletRequestParameterException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/missing-servlet-request-parameter-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "missingRequestCookieException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/missing-request-cookie-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "missingRequestHeaderException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/missing-request-header-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "methodArgumentNotValidException" ->
+                    mockMvcTester.post().uri(BASE_PATH + "/method-argument-not-valid-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .contentType(APPLICATION_JSON)
+                            .content("""
+                                    {
+                                        "name": "abc",
+                                        "password": "123"
+                                    }
+                                    """)
+                            .exchange();
+            case "servletRequestBindingException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/servlet-request-binding-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "unsatisfiedServletRequestParameterException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/unsatisfied-servlet-request-parameter-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .param("type", "1")
+                            .exchange();
+            case "orgSpringframeworkWebServerMissingRequestValueException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/org-springframework-web-server-missing-request-value-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "webExchangeBindException" ->
+                    mockMvcTester.post().uri(BASE_PATH + "/web-exchange-bind-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .contentType(APPLICATION_JSON)
+                            .content("""
+                                    {
+                                        "name": "abc",
+                                        "password": "123"
+                                    }
+                                    """)
+                            .exchange();
+            case "methodNotAllowedException" ->
+                    mockMvcTester.delete().uri(BASE_PATH + "/method-not-allowed-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "notAcceptableStatusException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/not-acceptable-status-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "unsupportedMediaTypeStatusException" ->
+                    mockMvcTester.post().uri(BASE_PATH + "/unsupported-media-type-status-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "serverErrorException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/server-error-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "payloadTooLargeException" -> {
+                MockMultipartFile file = new MockMultipartFile(
+                        "file", "test-upload.txt", "text/plain", "test content".getBytes(StandardCharsets.UTF_8));
+                yield mockMvcTester.perform(multipart(BASE_PATH + "/payload-too-large-exception")
+                        .file(file)
+                        .header(ACCEPT_LANGUAGE, language));
+            }
+            case "responseStatusException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/response-status-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "serverWebInputException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/server-web-input-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "httpMessageNotReadableException" ->
+                    mockMvcTester.post().uri(BASE_PATH + "/http-message-not-readable-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .contentType(APPLICATION_JSON)
+                            .content("""
+                                    {
+                                    """)
+                            .exchange();
+            case "httpMessageNotWritableException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/http-message-not-writable-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "methodValidationException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/method-validation-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "errorResponseException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/error-response-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "extendedErrorResponseException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/extended-error-response-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "noResourceFoundException" ->
+                    mockMvcTester.get().uri(BASE_PATH + "/no-resource-found-exception")
+                            .header(ACCEPT_LANGUAGE, language)
+                            .exchange();
+            case "asyncRequestTimeoutException" -> {
+                MvcTestResult mvcTestResult = mockMvcTester.get().uri(BASE_PATH + "/async-request-timeout-exception")
+                        .header(ACCEPT_LANGUAGE, language)
+                        .asyncExchange();
+                AsyncListener listener = ((MockAsyncContext) mvcTestResult.getRequest().getAsyncContext()).getListeners().get(0);
+                listener.onTimeout(null);
+                yield mockMvcTester.perform(MockMvcRequestBuilders.asyncDispatch(mvcTestResult.getMvcResult()));
+            }
+            case "contentTooLargeException" -> {
+                MockMultipartFile file = new MockMultipartFile(
+                        "file", "test-upload.txt", "text/plain",
+                        "Hello, this is a test file content!".getBytes(StandardCharsets.UTF_8));
+                yield mockMvcTester.perform(multipart(BASE_PATH + "/content-too-large-exception")
+                        .file(file)
+                        .header(ACCEPT_LANGUAGE, language));
+            }
+            default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+        };
+
+        return assertThat(result).bodyJson().convertTo(ExtendedProblemDetail.class).isNotNull().actual();
     }
 }

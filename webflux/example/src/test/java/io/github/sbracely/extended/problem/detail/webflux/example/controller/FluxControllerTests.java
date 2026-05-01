@@ -51,6 +51,7 @@ class FluxControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(FluxControllerTests.class);
     private static final String BASE_PATH = "/flux-extended-problem-detail";
+    private static final String ZH_CN_LANGUAGE = "zh-CN";
 
     @BeforeAll
     static void useEnglishLocale() {
@@ -726,6 +727,39 @@ class FluxControllerTests {
         );
     }
 
+    @ParameterizedTest
+    @CsvSource(
+            delimiter = '|',
+            nullValues = "NULL",
+            textBlock = """
+                    methodNotAllowedException|方法不被允许|支持的方法：[GET]
+                    notAcceptableStatusException|不可接受|可接受的表示形式：[application/json]。
+                    missingRequestValueException|错误的请求|缺少必需的query parameter 'id'。
+                    webExchangeBindException|Bad Request|Invalid request content.
+                    handlerMethodValidationExceptionRequestParam|Bad Request|Validation failure
+                    serverWebInputException|错误的请求|服务器 Web 输入错误
+                    serverErrorException|服务器内部错误|服务器错误
+                    responseStatusException|错误的请求|异常
+                    contentTooLargeException|内容过大|NULL
+                    noResourceFoundException|未找到|没有静态资源 flux-extended-problem-detail/no-resource-found。
+                    payloadTooLargeException|内容过大|NULL
+                    errorResponseException|错误标题|错误详情
+                    extendedErrorResponseException|支付失败|支付请求无法处理。
+                    methodValidationException|服务器内部错误|验证失败
+                    """
+    )
+    void titleAndDetailLocalized(String scenario, String expectedTitle, String expectedDetail) {
+        ExtendedProblemDetail extendedProblemDetail = localizedScenarioResult(scenario, ZH_CN_LANGUAGE);
+
+        assertThat(extendedProblemDetail).isNotNull();
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo(expectedTitle);
+        if (expectedDetail == null) {
+            assertThat(extendedProblemDetail.getDetail()).isNull();
+        } else {
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo(expectedDetail);
+        }
+    }
+
     /**
      * @see MethodValidationException
      * @see FluxExtendedProblemDetailController#methodValidationException()
@@ -789,6 +823,22 @@ class FluxControllerTests {
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
 
+        @Test
+        void invalidApiVersionExceptionLocalized() {
+            String uri = BASE_PATH + "/invalid-api-version-exception";
+            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+                    .header("API-Version", "3")
+                    .header("Accept-Language", ZH_CN_LANGUAGE)
+                    .exchange()
+                    .expectStatus().isEqualTo(BAD_REQUEST)
+                    .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("无效的 API 版本：'3.0.0'。");
+        }
+
         /**
          * @see MissingApiVersionException
          * @see FluxExtendedProblemDetailController#missingApiVersionException()
@@ -812,6 +862,25 @@ class FluxControllerTests {
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        }
+
+        @Test
+        void missingApiVersionExceptionLocalized() {
+            String uri = BASE_PATH + "/missing-api-version-exception";
+            EntityExchangeResult<ExtendedProblemDetail> result = webTestClient.get()
+                    .uri(uri)
+                    .header("Accept-Language", ZH_CN_LANGUAGE)
+                    .exchange()
+                    .expectStatus()
+                    .isEqualTo(BAD_REQUEST)
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult();
+            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("必须提供 API 版本。");
         }
 
         /**
@@ -839,5 +908,125 @@ class FluxControllerTests {
             assertThat(extendedProblemDetail.getErrors()).isNull();
         }
 
+        @Test
+        void notAcceptableApiVersionExceptionLocalized() {
+            String uri = "/not-acceptable-api-version";
+            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+                    .header("API-Version", "2")
+                    .header("Accept-Language", ZH_CN_LANGUAGE)
+                    .exchange()
+                    .expectStatus().isEqualTo(BAD_REQUEST)
+                    .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            assertThat(extendedProblemDetail).isNotNull();
+            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("无效的 API 版本：'2.0.0'。");
+        }
+
+    }
+
+    private ExtendedProblemDetail localizedScenarioResult(String scenario, String language) {
+        return switch (scenario) {
+            case "methodNotAllowedException" -> webTestClient.delete()
+                    .uri(BASE_PATH + "/method-not-allowed-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "notAcceptableStatusException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/not-acceptable-status-exception")
+                    .header("Accept-Language", language)
+                    .header(ACCEPT, APPLICATION_XML_VALUE)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "missingRequestValueException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/missing-request-value-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "webExchangeBindException" -> webTestClient.post()
+                    .uri(BASE_PATH + "/web-exchange-bind-exception")
+                    .header("Accept-Language", language)
+                    .contentType(APPLICATION_JSON)
+                    .bodyValue("""
+                            {
+                                "name": "abc",
+                                "password": "123"
+                            }
+                            """)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "handlerMethodValidationExceptionRequestParam" -> webTestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path(BASE_PATH + "/handler-method-validation-exception-request-param")
+                            .queryParam("param", "")
+                            .queryParam("value", "ab")
+                            .build())
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "serverWebInputException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/server-web-input-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "serverErrorException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/server-error-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "responseStatusException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/response-status-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "contentTooLargeException" -> webTestClient.post()
+                    .uri(BASE_PATH + "/content-too-large-exception")
+                    .header("Accept-Language", language)
+                    .bodyValue("x".repeat(1024 * 1024))
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "noResourceFoundException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/no-resource-found")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "payloadTooLargeException" -> webTestClient.post()
+                    .uri(BASE_PATH + "/payload-too-large-exception")
+                    .header("Accept-Language", language)
+                    .bodyValue("text")
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "errorResponseException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/error-response-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "extendedErrorResponseException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/extended-error-response-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            case "methodValidationException" -> webTestClient.get()
+                    .uri(BASE_PATH + "/method-validation-exception")
+                    .header("Accept-Language", language)
+                    .exchange()
+                    .expectBody(ExtendedProblemDetail.class)
+                    .returnResult().getResponseBody();
+            default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+        };
     }
 }
