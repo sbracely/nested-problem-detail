@@ -2,7 +2,6 @@ package io.github.sbracely.extended.problem.detail.mvc.advice;
 
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,8 +85,8 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
                 ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
         assertThat(response).isNotNull();
-        assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-        assertThat(((ExtendedProblemDetail) response.getBody()).getErrors()).hasSize(1);
+        assertThat(response.getBody()).isInstanceOf(ProblemDetail.class);
+        assertThat(errorsOf((ProblemDetail) response.getBody())).hasSize(1);
     }
 
     // =====================================================================
@@ -109,14 +108,14 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-            ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(response.getBody()).isInstanceOf(ProblemDetail.class);
+            ProblemDetail body = (ProblemDetail) response.getBody();
             assertThat(body).isNotNull();
-            assertThat(body.getErrors()).hasSize(2);
-            assertThat(body.getErrors().get(0).target()).isEqualTo("field1");
-            assertThat(body.getErrors().get(0).message()).isEqualTo("Field1 is required");
-            assertThat(body.getErrors().get(1).target()).isEqualTo("field2");
-            assertThat(body.getErrors().get(1).message()).isEqualTo("Field2 must be positive");
+            assertThat(errorsOf(body)).hasSize(2);
+            assertThat(errorsOf(body).get(0).target()).isEqualTo("field1");
+            assertThat(errorsOf(body).get(0).message()).isEqualTo("Field1 is required");
+            assertThat(errorsOf(body).get(1).target()).isEqualTo("field2");
+            assertThat(errorsOf(body).get(1).message()).isEqualTo("Field2 must be positive");
         }
 
         @Test
@@ -129,11 +128,11 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
                     ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
             assertThat(response).isNotNull();
-            ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            ProblemDetail body = (ProblemDetail) response.getBody();
             assertThat(body).isNotNull();
-            assertThat(body.getErrors()).hasSize(1);
-            assertThat(body.getErrors().get(0).target()).isNull();
-            assertThat(body.getErrors().get(0).message()).isEqualTo("Object error");
+            assertThat(errorsOf(body)).hasSize(1);
+            assertThat(errorsOf(body).get(0).target()).isNull();
+            assertThat(errorsOf(body).get(0).message()).isEqualTo("Object error");
         }
 
         @Test
@@ -165,10 +164,10 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-            ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(response.getBody()).isInstanceOf(ProblemDetail.class);
+            ProblemDetail body = (ProblemDetail) response.getBody();
             assertThat(body).isNotNull();
-            assertThat(body.getErrors()).isNotEmpty();
+            assertThat(errorsOf(body)).isNotEmpty();
         }
 
         @Test
@@ -241,12 +240,12 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-            ExtendedProblemDetail body = (ExtendedProblemDetail) response.getBody();
+            assertThat(response.getBody()).isInstanceOf(ProblemDetail.class);
+            ProblemDetail body = (ProblemDetail) response.getBody();
             assertThat(body).isNotNull();
-            assertThat(body.getErrors()).hasSize(1);
-            assertThat(body.getErrors().get(0).target()).isEqualTo("email");
-            assertThat(body.getErrors().get(0).message()).isEqualTo("Invalid email");
+            assertThat(errorsOf(body)).hasSize(1);
+            assertThat(errorsOf(body).get(0).target()).isEqualTo("email");
+            assertThat(errorsOf(body).get(0).message()).isEqualTo("Invalid email");
         }
 
         @Test
@@ -259,8 +258,8 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
 
             assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            // non-WebExchangeBindException: body is standard ProblemDetail, not ExtendedProblemDetail
-            assertThat(response.getBody()).isNotInstanceOf(ExtendedProblemDetail.class);
+            assertThat(response.getBody()).isInstanceOf(ProblemDetail.class);
+            assertThat(((ProblemDetail) response.getBody()).getProperties()).isNull();
         }
 
         @Test
@@ -1035,6 +1034,11 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
                 new ExtendedProblemDetailLog(level, printStackTrace), mockLogger);
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<Error> errorsOf(ProblemDetail problemDetail) {
+        return (List<Error>) problemDetail.getProperties().get("errors");
+    }
+
     private MethodParameter createMethodParameter() {
         try {
             Method method = getClass().getMethod("testMethod", MvcTestBean.class);
@@ -1363,17 +1367,52 @@ class MvcExtendedProblemDetailExceptionHandlerTests {
         private String username;
         private String field;
 
-        public String getField1() { return field1; }
-        public void setField1(String field1) { this.field1 = field1; }
-        public String getField2() { return field2; }
-        public void setField2(String field2) { this.field2 = field2; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public String getField() { return field; }
-        public void setField(String field) { this.field = field; }
+        public String getField1() {
+            return field1;
+        }
+
+        public void setField1(String field1) {
+            this.field1 = field1;
+        }
+
+        public String getField2() {
+            return field2;
+        }
+
+        public void setField2(String field2) {
+            this.field2 = field2;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public void setField(String field) {
+            this.field = field;
+        }
     }
 }

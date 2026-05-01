@@ -3,7 +3,6 @@ package io.github.sbracely.extended.problem.detail.mvc.advice;
 import io.github.sbracely.extended.problem.detail.common.error.resolver.ExtendedProblemDetailErrorResolver;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
@@ -12,6 +11,7 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -142,21 +142,22 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * Handles method argument not valid exceptions.
      * <p>
      * Converts errors from BindingResult into a list of Error objects
-     * and wraps them in an ExtendedProblemDetail response.
+     * and adds them to the ProblemDetail response.
      * </p>
      *
      * @param ex      the MethodArgumentNotValidException that was thrown
      * @param headers the HTTP headers to be used in the response
      * @param status  the HTTP status code
      * @param request the current web request
-     * @return ResponseEntity containing the ExtendedProblemDetail with errors
+     * @return ResponseEntity containing the ProblemDetail with errors
      */
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log(ex, "handleMethodArgumentNotValid");
         List<Error> errors = resolveMethodArgumentNotValidException(ex);
-        ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
-        return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
+        ProblemDetail problemDetail = ex.getBody();
+        problemDetail.setProperty("errors", errors);
+        return handleExceptionInternal(ex, problemDetail, headers, status, request);
     }
 
     /**
@@ -184,15 +185,16 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * @param headers the HTTP headers to be used in the response
      * @param status  the HTTP status code
      * @param request the current web request
-     * @return ResponseEntity containing the ExtendedProblemDetail with errors
+     * @return ResponseEntity containing the ProblemDetail with errors
      */
     @Override
     public @Nullable ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log(ex, "[exception#" + Integer.toHexString(System.identityHashCode(ex))
                 + "] handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
-        ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
-        return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
+        ProblemDetail problemDetail = ex.getBody();
+        problemDetail.setProperty("errors", errorList);
+        return handleExceptionInternal(ex, problemDetail, headers, status, request);
     }
 
     @Override
@@ -233,8 +235,9 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
         if (ex instanceof WebExchangeBindException exchangeBindException) {
             List<Error> errors = resolveWebExchangeBindException(exchangeBindException);
             exchangeBindException.updateAndGetBody(getMessageSource(), request.getLocale());
-            ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
-            return handleExceptionInternal(ex, extendedProblemDetail, headers, status, request);
+            ProblemDetail problemDetail = ex.getBody();
+            problemDetail.setProperty("errors", errors);
+            return handleExceptionInternal(ex, problemDetail, headers, status, request);
         }
         return handleExceptionInternal(ex, null, headers, status, request);
     }
@@ -283,14 +286,14 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
      * Handles method validation exceptions.
      * <p>
      * Converts method-level errors into a list of Error objects,
-     * logs the failure, and wraps them in an ExtendedProblemDetail response.
+     * logs the failure.
      * </p>
      *
      * @param ex      the MethodValidationException that was thrown
      * @param headers the HTTP headers to be used in the response
      * @param status  the HTTP status code
      * @param request the current web request
-     * @return ResponseEntity containing the ExtendedProblemDetail with errors
+     * @return ResponseEntity containing the ProblemDetail with errors
      */
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodValidationException(MethodValidationException ex,

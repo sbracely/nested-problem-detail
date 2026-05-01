@@ -2,7 +2,6 @@ package io.github.sbracely.extended.problem.detail.flux.advice;
 
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,8 +70,8 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
         StepVerifier.create(handlerWithoutLog.handleHandlerMethodValidationException(
                         ex, new HttpHeaders(), HttpStatus.BAD_REQUEST, exchange))
                 .assertNext(response -> {
-                    assertThat(response.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-                    assertThat(((ExtendedProblemDetail) response.getBody()).getErrors()).hasSize(1);
+                    assertThat(response.getBody()).isInstanceOf(ProblemDetail.class);
+                    assertThat(errorsOf((ProblemDetail) response.getBody())).hasSize(1);
                 })
                 .verifyComplete();
     }
@@ -97,14 +96,14 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             StepVerifier.create(result)
                     .assertNext(responseEntity -> {
                         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                        assertThat(responseEntity.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-                        ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        assertThat(responseEntity.getBody()).isInstanceOf(ProblemDetail.class);
+                        ProblemDetail body = (ProblemDetail) responseEntity.getBody();
                         assertThat(body).isNotNull();
-                        assertThat(body.getErrors()).hasSize(2);
-                        assertThat(body.getErrors().get(0).target()).isEqualTo("field1");
-                        assertThat(body.getErrors().get(0).message()).isEqualTo("Field1 is required");
-                        assertThat(body.getErrors().get(1).target()).isEqualTo("field2");
-                        assertThat(body.getErrors().get(1).message()).isEqualTo("Field2 must be positive");
+                        assertThat(errorsOf(body)).hasSize(2);
+                        assertThat(errorsOf(body).get(0).target()).isEqualTo("field1");
+                        assertThat(errorsOf(body).get(0).message()).isEqualTo("Field1 is required");
+                        assertThat(errorsOf(body).get(1).target()).isEqualTo("field2");
+                        assertThat(errorsOf(body).get(1).message()).isEqualTo("Field2 must be positive");
                     })
                     .verifyComplete();
         }
@@ -120,11 +119,11 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
             StepVerifier.create(result)
                     .assertNext(responseEntity -> {
-                        ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        ProblemDetail body = (ProblemDetail) responseEntity.getBody();
                         assertThat(body).isNotNull();
-                        assertThat(body.getErrors()).hasSize(1);
-                        assertThat(body.getErrors().get(0).target()).isNull();
-                        assertThat(body.getErrors().get(0).message()).isEqualTo("Object error message");
+                        assertThat(errorsOf(body)).hasSize(1);
+                        assertThat(errorsOf(body).get(0).target()).isNull();
+                        assertThat(errorsOf(body).get(0).message()).isEqualTo("Object error message");
                     })
                     .verifyComplete();
         }
@@ -160,10 +159,10 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
             StepVerifier.create(result)
                     .assertNext(responseEntity -> {
                         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-                        assertThat(responseEntity.getBody()).isInstanceOf(ExtendedProblemDetail.class);
-                        ExtendedProblemDetail body = (ExtendedProblemDetail) responseEntity.getBody();
+                        assertThat(responseEntity.getBody()).isInstanceOf(ProblemDetail.class);
+                        ProblemDetail body = (ProblemDetail) responseEntity.getBody();
                         assertThat(body).isNotNull();
-                        assertThat(body.getErrors()).isNotEmpty();
+                        assertThat(errorsOf(body)).isNotEmpty();
                     })
                     .verifyComplete();
         }
@@ -984,6 +983,11 @@ class FluxExtendedProblemDetailExceptionHandlerTests {
 
     private MessageSourceResolvable messageSourceResolvable(String message) {
         return new DefaultMessageSourceResolvable(new String[0], message);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<Error> errorsOf(ProblemDetail problemDetail) {
+        return (List<Error>) problemDetail.getProperties().get("errors");
     }
 
     @SuppressWarnings("unchecked")

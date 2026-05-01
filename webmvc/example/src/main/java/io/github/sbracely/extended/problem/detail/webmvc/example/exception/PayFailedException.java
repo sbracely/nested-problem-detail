@@ -1,7 +1,6 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.exception;
 
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -34,7 +33,6 @@ public class PayFailedException extends ErrorResponseException {
     public ProblemDetail updateAndGetBody(@Nullable MessageSource messageSource, Locale locale) {
         ProblemDetail body = super.updateAndGetBody(messageSource, locale);
 
-        ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail(body);
         List<Error> localizedErrors = errorMessageCodes.stream()
                 .map(code -> new Error(
                         Error.Type.BUSINESS,
@@ -42,7 +40,7 @@ public class PayFailedException extends ErrorResponseException {
                         message(code, messageSource, locale)))
                 .toList();
 
-        extendedProblemDetail.setErrors(localizedErrors);
-        return extendedProblemDetail;
+        body.setProperty("errors", localizedErrors);
+        return body;
     }
 }

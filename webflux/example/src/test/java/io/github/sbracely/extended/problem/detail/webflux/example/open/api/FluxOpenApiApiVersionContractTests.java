@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +48,13 @@ class FluxOpenApiApiVersionContractTests {
         assertThat(docExample)
                 .as("documented example for invalidApiVersionException should be present").isNotNull();
 
-        ExtendedProblemDetail actual = webTestClient.get()
+        ProblemDetail actual = webTestClient.get()
                 .uri(BASE + "/invalid-api-version-exception")
                 .header("API-Version", "3")
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult()
                 .getResponseBody();
 
@@ -69,12 +69,12 @@ class FluxOpenApiApiVersionContractTests {
         assertThat(docExample)
                 .as("documented example for missingApiVersionException should be present").isNotNull();
 
-        ExtendedProblemDetail actual = webTestClient.get()
+        ProblemDetail actual = webTestClient.get()
                 .uri(BASE + "/missing-api-version-exception")
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult()
                 .getResponseBody();
 
@@ -89,13 +89,13 @@ class FluxOpenApiApiVersionContractTests {
         assertThat(docExample)
                 .as("documented example for notAcceptableApiVersionException should be present").isNotNull();
 
-        ExtendedProblemDetail actual = webTestClient.get()
+        ProblemDetail actual = webTestClient.get()
                 .uri("/not-acceptable-api-version")
                 .header("API-Version", "2")
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult()
                 .getResponseBody();
 

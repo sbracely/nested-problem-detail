@@ -1,6 +1,5 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.config;
 
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -20,6 +19,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ProblemDetail;
 
 import java.net.URI;
 import java.util.List;
@@ -64,9 +64,8 @@ public class FluxOpenApiConfiguration {
     }
 
     private static void registerNoResourceFoundOperation(OpenAPI openApi) {
-        ExtendedProblemDetail noResourceFoundExample = new ExtendedProblemDetail();
+        ProblemDetail noResourceFoundExample = ProblemDetail.forStatus(404);
         noResourceFoundExample.setTitle("Not Found");
-        noResourceFoundExample.setStatus(404);
         noResourceFoundExample.setDetail("No static resource flux-extended-problem-detail/no-resource-found.");
         noResourceFoundExample.setInstance(URI.create("/flux-extended-problem-detail/no-resource-found"));
         addSupplementalGetOperation(openApi,
@@ -81,9 +80,8 @@ public class FluxOpenApiConfiguration {
     }
 
     private static void registerNotAcceptableApiVersionOperation(OpenAPI openApi) {
-        ExtendedProblemDetail notAcceptableApiVersionExample = new ExtendedProblemDetail();
+        ProblemDetail notAcceptableApiVersionExample = ProblemDetail.forStatus(400);
         notAcceptableApiVersionExample.setTitle("Bad Request");
-        notAcceptableApiVersionExample.setStatus(400);
         notAcceptableApiVersionExample.setDetail("Invalid API version: '2.0.0'.");
         notAcceptableApiVersionExample.setInstance(URI.create("/not-acceptable-api-version"));
         addSupplementalGetOperation(openApi,

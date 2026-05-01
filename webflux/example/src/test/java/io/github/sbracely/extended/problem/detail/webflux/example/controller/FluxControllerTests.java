@@ -1,7 +1,8 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webflux.example.config.FluxMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webflux.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webflux.example.request.FluxProblemDetailRequest;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -50,6 +52,9 @@ import static org.springframework.http.MediaType.*;
 class FluxControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(FluxControllerTests.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final TypeReference<List<Error>> ERRORS_TYPE = new TypeReference<>() {
+    };
     private static final String BASE_PATH = "/flux-extended-problem-detail";
     private static final String ZH_CN_LANGUAGE = "zh-CN";
 
@@ -68,21 +73,20 @@ class FluxControllerTests {
     @Test
     void methodNotAllowedException() {
         String uri = BASE_PATH + "/method-not-allowed-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.delete().uri(uri).exchange()
+        ProblemDetail problemDetail = webTestClient.delete().uri(uri).exchange()
                 .expectStatus().isEqualTo(METHOD_NOT_ALLOWED)
                 .expectHeader().valueEquals(ALLOW, GET.name())
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Supported methods: [GET]");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Supported methods: [GET]");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -92,23 +96,22 @@ class FluxControllerTests {
     @Test
     void notAcceptableStatusException() {
         String uri = BASE_PATH + "/not-acceptable-status-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .header(ACCEPT, APPLICATION_XML_VALUE)
                 .exchange()
                 .expectStatus().isEqualTo(NOT_ACCEPTABLE)
                 .expectHeader().valueEquals(ACCEPT, APPLICATION_JSON_VALUE)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -118,21 +121,20 @@ class FluxControllerTests {
     @Test
     void unsupportedMediaTypeStatusException() {
         String uri = BASE_PATH + "/unsupported-media-type-status-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri).exchange()
+        ProblemDetail problemDetail = webTestClient.post().uri(uri).exchange()
                 .expectStatus().isEqualTo(UNSUPPORTED_MEDIA_TYPE)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
                 .expectHeader().valueEquals(ACCEPT, APPLICATION_XML_VALUE)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -142,20 +144,19 @@ class FluxControllerTests {
     @Test
     void missingRequestValueException() {
         String uri = BASE_PATH + "/missing-request-value-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri).exchange()
+        ProblemDetail problemDetail = webTestClient.get().uri(uri).exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required query parameter 'id' is not present.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Required query parameter 'id' is not present.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -165,21 +166,20 @@ class FluxControllerTests {
     @Test
     void unsatisfiedRequestParameterException() {
         String uri = BASE_PATH + "/unsatisfied-request-parameter-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isNotNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isNotNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -189,7 +189,7 @@ class FluxControllerTests {
     @Test
     void webExchangeBindException() {
         String uri = BASE_PATH + "/web-exchange-bind-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("""
                         {
@@ -200,16 +200,16 @@ class FluxControllerTests {
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid request content.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Invalid request content.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.PARAMETER, "name", "Name length must be between 6-10"),
                 new Error(Error.Type.PARAMETER, "age", "Age cannot be null"),
                 new Error(Error.Type.PARAMETER, "password", "Password and confirm password do not match"),
@@ -225,22 +225,21 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionCookieValue() {
         String uri = BASE_PATH + "/handler-method-validation-exception-cookie-value";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .cookie("cookieValue", "")
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.COOKIE, "cookieValue", "cookie cannot be empty"));
     }
 
@@ -252,21 +251,20 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionMatrixVariable() {
         String uri = BASE_PATH + "/handler-method-validation-exception-matrix/abc;list=a,b,c";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "list", "list maximum size is 2"));
     }
 
@@ -278,21 +276,20 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionModelAttribute() {
         String uri = BASE_PATH + "/handler-method-validation-exception-model-attribute";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "password", "Password cannot be empty"));
     }
 
@@ -304,21 +301,20 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionPathVariable() {
         String uri = BASE_PATH + "/handler-method-validation-exception-path-variable/abc";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "id", "id length must be at least 5"));
     }
 
@@ -330,7 +326,7 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionRequestBody() {
         String uri = BASE_PATH + "/handler-method-validation-exception-request-body";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("""
                         {
@@ -340,17 +336,16 @@ class FluxControllerTests {
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "password", "Password cannot be empty"));
     }
 
@@ -362,7 +357,7 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionRequestBodyValidationResult() {
         String uri = BASE_PATH + "/handler-method-validation-exception-request-body-validation-result";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
                 .contentType(APPLICATION_JSON)
                 .bodyValue("""
                         ["", "a"]
@@ -370,17 +365,16 @@ class FluxControllerTests {
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, null, "Element cannot contain empty values"));
     }
 
@@ -392,22 +386,21 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionRequestHeader() {
         String uri = BASE_PATH + "/handler-method-validation-exception-request-header";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .header("headerValue", "")
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.HEADER, "headerValue", "Header cannot be empty"));
     }
 
@@ -419,7 +412,7 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionRequestParam() {
         String uri = BASE_PATH + "/handler-method-validation-exception-request-param";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get()
+        ProblemDetail problemDetail = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(uri)
                         .queryParam("param", "")
@@ -428,17 +421,16 @@ class FluxControllerTests {
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.PARAMETER, "param", "Parameter cannot be empty"),
                 new Error(Error.Type.PARAMETER, "value", "Length must be at least 5")
         );
@@ -452,22 +444,21 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionRequestPart() {
         String uri = BASE_PATH + "/handler-method-validation-exception-request-part";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
                 .bodyValue(Collections.emptyMap())
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "file", "File cannot be empty"));
     }
 
@@ -479,21 +470,20 @@ class FluxControllerTests {
     @Test
     void handlerMethodValidationExceptionOther() {
         String uri = BASE_PATH + "/handler-method-validation-exception-other";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isEmpty();
 //                "sessionAttribute cannot be empty",
 //                "requestAttribute cannot be empty",
 //                "value cannot be empty"
@@ -507,21 +497,20 @@ class FluxControllerTests {
     @Test
     void serverWebInputException() {
         String uri = BASE_PATH + "/server-web-input-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("server web input error");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("server web input error");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -531,21 +520,20 @@ class FluxControllerTests {
     @Test
     void serverErrorException() {
         String uri = BASE_PATH + "/server-error-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("server error");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("server error");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -555,21 +543,20 @@ class FluxControllerTests {
     @Test
     void responseStatusException() {
         String uri = BASE_PATH + "/response-status-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("exception");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("exception");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -579,22 +566,21 @@ class FluxControllerTests {
     @Test
     void contentTooLargeException() {
         String uri = BASE_PATH + "/content-too-large-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
                 .bodyValue("x".repeat(1024 * 1024)) // 1MB
                 .exchange()
                 .expectStatus().isEqualTo(CONTENT_TOO_LARGE)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -603,21 +589,20 @@ class FluxControllerTests {
     @Test
     void noResourceFoundException() {
         String uri = BASE_PATH + "/no-resource-found";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(NOT_FOUND)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("No static resource");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
+        assertThat(problemDetail.getDetail()).contains("No static resource");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -627,22 +612,21 @@ class FluxControllerTests {
     @Test
     void payloadTooLargeException() {
         String uri = BASE_PATH + "/payload-too-large-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.post().uri(uri)
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
                 .bodyValue("text")
                 .exchange()
                 .expectStatus().isEqualTo(PAYLOAD_TOO_LARGE)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(PAYLOAD_TOO_LARGE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(PAYLOAD_TOO_LARGE.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -652,21 +636,20 @@ class FluxControllerTests {
     @Test
     void errorResponseException() {
         String uri = BASE_PATH + "/error-response-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(BAD_REQUEST)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Error title");
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Error details");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo("Error title");
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Error details");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, "Error message 1"),
                 new Error(Error.Type.BUSINESS, null, "Error message 2")
         );
@@ -679,21 +662,20 @@ class FluxControllerTests {
     @Test
     void extendedErrorResponseException() {
         String uri = BASE_PATH + "/extended-error-response-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo("Payment failed");
+        assertThat(problemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, "Insufficient balance"),
                 new Error(Error.Type.BUSINESS, null, "Payment is too frequent")
         );
@@ -707,15 +689,15 @@ class FluxControllerTests {
             """)
     void extendedErrorResponseExceptionLocalized(String language, String firstError, String secondError) {
         String uri = BASE_PATH + "/extended-error-response-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .header("Accept-Language", language)
                 .exchange()
                 .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        assertThat(problemDetail).isNotNull();
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, firstError),
                 new Error(Error.Type.BUSINESS, null, secondError)
         );
@@ -743,14 +725,14 @@ class FluxControllerTests {
                     """
     )
     void titleAndDetailLocalized(String scenario, String expectedTitle, String expectedDetail) {
-        ExtendedProblemDetail extendedProblemDetail = localizedScenarioResult(scenario, ZH_CN_LANGUAGE);
+        ProblemDetail problemDetail = localizedScenarioResult(scenario, ZH_CN_LANGUAGE);
 
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(expectedTitle);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(expectedTitle);
         if (expectedDetail == null) {
-            assertThat(extendedProblemDetail.getDetail()).isNull();
+            assertThat(problemDetail.getDetail()).isNull();
         } else {
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo(expectedDetail);
+            assertThat(problemDetail.getDetail()).isEqualTo(expectedDetail);
         }
     }
 
@@ -762,21 +744,20 @@ class FluxControllerTests {
     @Test
     void methodValidationException() {
         String uri = BASE_PATH + "/method-validation-exception";
-        ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+        ProblemDetail problemDetail = webTestClient.get().uri(uri)
                 .exchange()
                 .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
                 .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult().getResponseBody();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failed");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failed");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -799,38 +780,37 @@ class FluxControllerTests {
         @Test
         void invalidApiVersionException() {
             String uri = BASE_PATH + "/invalid-api-version-exception";
-            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+            ProblemDetail problemDetail = webTestClient.get().uri(uri)
                     .header("API-Version", "3")
                     .exchange()
                     .expectStatus().isEqualTo(BAD_REQUEST)
                     .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
-            logger.info("extendedProblemDetail: " + extendedProblemDetail);
-            assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getType()).isNull();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '3.0.0'.");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getProperties()).isNull();
-            assertThat(extendedProblemDetail.getErrors()).isNull();
+            logger.info("problemDetail: " + problemDetail);
+            assertThat(problemDetail).isNotNull();
+            assertThat(problemDetail.getType()).isNull();
+            assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(problemDetail.getDetail()).isEqualTo("Invalid API version: '3.0.0'.");
+            assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(errorsOf(problemDetail)).isNull();
         }
 
         @Test
         void invalidApiVersionExceptionLocalized() {
             String uri = BASE_PATH + "/invalid-api-version-exception";
-            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+            ProblemDetail problemDetail = webTestClient.get().uri(uri)
                     .header("API-Version", "3")
                     .header("Accept-Language", ZH_CN_LANGUAGE)
                     .exchange()
                     .expectStatus().isEqualTo(BAD_REQUEST)
                     .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
-            assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("无效的 API 版本：'3.0.0'。");
+            assertThat(problemDetail).isNotNull();
+            assertThat(problemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(problemDetail.getDetail()).isEqualTo("无效的 API 版本：'3.0.0'。");
         }
 
         /**
@@ -840,28 +820,28 @@ class FluxControllerTests {
         @Test
         void missingApiVersionException() {
             String uri = BASE_PATH + "/missing-api-version-exception";
-            EntityExchangeResult<ExtendedProblemDetail> result = webTestClient.get()
+            EntityExchangeResult<ProblemDetail> result = webTestClient.get()
                     .uri(uri)
                     .exchange()
                     .expectStatus()
                     .isEqualTo(BAD_REQUEST)
                     .expectHeader()
                     .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult();
-            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
-            logger.info("extendedProblemDetail: " + extendedProblemDetail);
-            assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("API version is required.");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            ProblemDetail problemDetail = result.getResponseBody();
+            logger.info("problemDetail: " + problemDetail);
+            assertThat(problemDetail).isNotNull();
+            assertThat(problemDetail.getDetail()).isEqualTo("API version is required.");
+            assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
         }
 
         @Test
         void missingApiVersionExceptionLocalized() {
             String uri = BASE_PATH + "/missing-api-version-exception";
-            EntityExchangeResult<ExtendedProblemDetail> result = webTestClient.get()
+            EntityExchangeResult<ProblemDetail> result = webTestClient.get()
                     .uri(uri)
                     .header("Accept-Language", ZH_CN_LANGUAGE)
                     .exchange()
@@ -869,12 +849,12 @@ class FluxControllerTests {
                     .isEqualTo(BAD_REQUEST)
                     .expectHeader()
                     .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult();
-            ExtendedProblemDetail extendedProblemDetail = result.getResponseBody();
-            assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("必须提供 API 版本。");
+            ProblemDetail problemDetail = result.getResponseBody();
+            assertThat(problemDetail).isNotNull();
+            assertThat(problemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(problemDetail.getDetail()).isEqualTo("必须提供 API 版本。");
         }
 
         /**
@@ -884,62 +864,61 @@ class FluxControllerTests {
         @Test
         void notAcceptableApiVersionException() {
             String uri = "/not-acceptable-api-version";
-            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+            ProblemDetail problemDetail = webTestClient.get().uri(uri)
                     .header("API-Version", "2")
                     .exchange()
                     .expectStatus().isEqualTo(BAD_REQUEST)
                     .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
-            logger.info("extendedProblemDetail: " + extendedProblemDetail);
-            assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getType()).isNull();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid API version: '2.0.0'.");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getProperties()).isNull();
-            assertThat(extendedProblemDetail.getErrors()).isNull();
+            logger.info("problemDetail: " + problemDetail);
+            assertThat(problemDetail).isNotNull();
+            assertThat(problemDetail.getType()).isNull();
+            assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(problemDetail.getDetail()).isEqualTo("Invalid API version: '2.0.0'.");
+            assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(errorsOf(problemDetail)).isNull();
         }
 
         @Test
         void notAcceptableApiVersionExceptionLocalized() {
             String uri = "/not-acceptable-api-version";
-            ExtendedProblemDetail extendedProblemDetail = webTestClient.get().uri(uri)
+            ProblemDetail problemDetail = webTestClient.get().uri(uri)
                     .header("API-Version", "2")
                     .header("Accept-Language", ZH_CN_LANGUAGE)
                     .exchange()
                     .expectStatus().isEqualTo(BAD_REQUEST)
                     .expectHeader().contentType(APPLICATION_PROBLEM_JSON)
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
-            assertThat(extendedProblemDetail).isNotNull();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("无效的 API 版本：'2.0.0'。");
+            assertThat(problemDetail).isNotNull();
+            assertThat(problemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(problemDetail.getDetail()).isEqualTo("无效的 API 版本：'2.0.0'。");
         }
 
     }
 
-    private ExtendedProblemDetail localizedScenarioResult(String scenario, String language) {
+    private ProblemDetail localizedScenarioResult(String scenario, String language) {
         return switch (scenario) {
             case "methodNotAllowedException" -> webTestClient.delete()
                     .uri(BASE_PATH + "/method-not-allowed-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "notAcceptableStatusException" -> webTestClient.get()
                     .uri(BASE_PATH + "/not-acceptable-status-exception")
                     .header("Accept-Language", language)
                     .header(ACCEPT, APPLICATION_XML_VALUE)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "missingRequestValueException" -> webTestClient.get()
                     .uri(BASE_PATH + "/missing-request-value-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "webExchangeBindException" -> webTestClient.post()
                     .uri(BASE_PATH + "/web-exchange-bind-exception")
@@ -952,7 +931,7 @@ class FluxControllerTests {
                             }
                             """)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "handlerMethodValidationExceptionRequestParam" -> webTestClient.get()
                     .uri(uriBuilder -> uriBuilder
@@ -962,65 +941,72 @@ class FluxControllerTests {
                             .build())
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "serverWebInputException" -> webTestClient.get()
                     .uri(BASE_PATH + "/server-web-input-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "serverErrorException" -> webTestClient.get()
                     .uri(BASE_PATH + "/server-error-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "responseStatusException" -> webTestClient.get()
                     .uri(BASE_PATH + "/response-status-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "contentTooLargeException" -> webTestClient.post()
                     .uri(BASE_PATH + "/content-too-large-exception")
                     .header("Accept-Language", language)
                     .bodyValue("x".repeat(1024 * 1024))
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "noResourceFoundException" -> webTestClient.get()
                     .uri(BASE_PATH + "/no-resource-found")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "payloadTooLargeException" -> webTestClient.post()
                     .uri(BASE_PATH + "/payload-too-large-exception")
                     .header("Accept-Language", language)
                     .bodyValue("text")
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "errorResponseException" -> webTestClient.get()
                     .uri(BASE_PATH + "/error-response-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "extendedErrorResponseException" -> webTestClient.get()
                     .uri(BASE_PATH + "/extended-error-response-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             case "methodValidationException" -> webTestClient.get()
                     .uri(BASE_PATH + "/method-validation-exception")
                     .header("Accept-Language", language)
                     .exchange()
-                    .expectBody(ExtendedProblemDetail.class)
+                    .expectBody(ProblemDetail.class)
                     .returnResult().getResponseBody();
             default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
         };
+    }
+
+    private static List<Error> errorsOf(ProblemDetail problemDetail) {
+        if (problemDetail.getProperties() == null || problemDetail.getProperties().get("errors") == null) {
+            return null;
+        }
+        return MAPPER.convertValue(problemDetail.getProperties().get("errors"), ERRORS_TYPE);
     }
 }

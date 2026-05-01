@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import io.github.sbracely.extended.problem.detail.webflux.example.open.api.FluxOperationFixtures.FluxOperationFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *     <li>Reads {@code /v3/api-docs} and looks up the documented response example for the
  *         matching path + method.</li>
  *     <li>Asserts that the runtime HTTP status, media type, and normalized
- *         {@link ExtendedProblemDetail} body match the documented example.</li>
+ *         {@link ProblemDetail} body match the documented example.</li>
  * </ol>
  * <p>
  * Operations that require non-default Spring properties are covered by
@@ -69,11 +69,11 @@ class FluxOpenApiDefaultContractTests {
 
         // execute trigger
         WebTestClient.ResponseSpec responseSpec = fixture.requestBuilder().apply(webTestClient);
-        ExtendedProblemDetail actual = responseSpec
+        ProblemDetail actual = responseSpec
                 .expectStatus().value(code ->
                         assertThat(code).as("HTTP status for %s", operationId).isEqualTo(fixture.expectedStatus()))
                 .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult()
                 .getResponseBody();
 

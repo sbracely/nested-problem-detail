@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import io.github.sbracely.extended.problem.detail.webmvc.example.open.api.MvcOperationFixtures.MvcOperationFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *     <li>Reads {@code /v3/api-docs} and looks up the documented response example for the
  *         matching path + method.</li>
  *     <li>Asserts that the runtime HTTP status, media type, and normalized
- *         {@link ExtendedProblemDetail} body match the documented example.</li>
+ *         {@link ProblemDetail} body match the documented example.</li>
  * </ol>
  * <p>
  * Operations that require non-default Spring properties are covered by their own scenario
@@ -80,8 +80,8 @@ class MvcOpenApiDefaultContractTests {
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
         // deserialize runtime body
-        ExtendedProblemDetail actual = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+        ProblemDetail actual = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
 
         // look up documented example from the API docs
         String docPath = fixture.docPath();
@@ -123,8 +123,8 @@ class MvcOpenApiDefaultContractTests {
                 .hasStatus(503)
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
-        ExtendedProblemDetail actual = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+        ProblemDetail actual = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
 
         // Fetch documented example
         MvcOperationFixture fixture = MvcOperationFixtures.all().get("asyncRequestTimeoutException");

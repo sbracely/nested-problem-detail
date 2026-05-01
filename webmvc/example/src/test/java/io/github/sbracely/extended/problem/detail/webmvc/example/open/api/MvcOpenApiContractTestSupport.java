@@ -1,10 +1,11 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.jspecify.annotations.Nullable;
+import org.springframework.http.ProblemDetail;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
@@ -23,12 +24,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  * <ul>
  *     <li>Fetch and parse {@code /v3/api-docs} from a running MockMvc context.</li>
  *     <li>Extract the documented response example for a specific operation.</li>
- *     <li>Assert that a runtime {@link ExtendedProblemDetail} matches the documented example.</li>
+ *     <li>Assert that a runtime {@link ProblemDetail} matches the documented example.</li>
  * </ul>
  */
 public final class MvcOpenApiContractTestSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final TypeReference<List<Error>> ERRORS_TYPE = new TypeReference<>() {
+    };
     private static final String MISSING_PARAMETERS_PREFIX = "Missing parameters: ";
 
     private MvcOpenApiContractTestSupport() {
@@ -113,7 +116,7 @@ public final class MvcOpenApiContractTestSupport {
     }
 
     /**
-     * Asserts that the runtime {@link ExtendedProblemDetail} matches the documented example.
+     * Asserts that the runtime {@link ProblemDetail} matches the documented example.
      * <p>
      * Stable fields compared:
      * <ul>
@@ -127,11 +130,11 @@ public final class MvcOpenApiContractTestSupport {
      * The {@code instance} field is intentionally not compared because example values use
      * concrete paths while path-template operations may produce a different literal value.
      *
-     * @param actual      runtime response deserialized from the HTTP response body
-     * @param docExample  the {@link JsonNode} obtained from
-     *                    {@link #extractDocumentedExample(JsonNode, String, String)}
+     * @param actual     runtime response deserialized from the HTTP response body
+     * @param docExample the {@link JsonNode} obtained from
+     *                   {@link #extractDocumentedExample(JsonNode, String, String)}
      */
-    public static void assertContractMatches(ExtendedProblemDetail actual, JsonNode docExample) {
+    public static void assertContractMatches(ProblemDetail actual, JsonNode docExample) {
         assertThat(actual).isNotNull();
         assertThat(docExample).isNotNull();
 
@@ -166,7 +169,7 @@ public final class MvcOpenApiContractTestSupport {
                 String message = errorNode.path("message").asText(null);
                 docErrors.add(new Error(Error.Type.valueOf(type), target, message));
             }
-            assertThat(actual.getErrors())
+            assertThat(errorsOf(actual))
                     .as("errors should match documented example (order-insensitive)")
                     .containsExactlyInAnyOrderElementsOf(docErrors);
         }
@@ -185,6 +188,13 @@ public final class MvcOpenApiContractTestSupport {
                 .sorted()
                 .collect(Collectors.joining(","));
         return MISSING_PARAMETERS_PREFIX + normalizedParameters;
+    }
+
+    private static @Nullable List<Error> errorsOf(ProblemDetail problemDetail) {
+        if (problemDetail.getProperties() == null || problemDetail.getProperties().get("errors") == null) {
+            return null;
+        }
+        return MAPPER.convertValue(problemDetail.getProperties().get("errors"), ERRORS_TYPE);
     }
 
 }

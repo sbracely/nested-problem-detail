@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import io.github.sbracely.extended.problem.detail.webmvc.example.controller.MvcApiVersionController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +55,14 @@ class MvcOpenApiApiVersionContractTests {
                 .as("documented example for invalidApiVersionException should be present").isNotNull();
 
         String uri = "http://localhost:" + port + BASE + "/invalid-api-version-exception";
-        EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+        EntityExchangeResult<ProblemDetail> result = restTestClient.get()
                 .uri(uri)
                 .header("API-Version", "3")
                 .header("Accept-Language", DEFAULT_LANGUAGE)
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult();
 
         MvcOpenApiContractTestSupport.assertContractMatches(result.getResponseBody(), docExample);
@@ -78,13 +78,13 @@ class MvcOpenApiApiVersionContractTests {
                 .as("documented example for missingApiVersionException should be present").isNotNull();
 
         String uri = "http://localhost:" + port + BASE + "/missing-api-version-exception";
-        EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+        EntityExchangeResult<ProblemDetail> result = restTestClient.get()
                 .uri(uri)
                 .header("Accept-Language", DEFAULT_LANGUAGE)
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult();
 
         MvcOpenApiContractTestSupport.assertContractMatches(result.getResponseBody(), docExample);
@@ -100,14 +100,14 @@ class MvcOpenApiApiVersionContractTests {
                 .as("documented example for notAcceptableApiVersionException should be present").isNotNull();
 
         String uri = "http://localhost:" + port + "/not-acceptable-api-version";
-        EntityExchangeResult<ExtendedProblemDetail> result = restTestClient.get()
+        EntityExchangeResult<ProblemDetail> result = restTestClient.get()
                 .uri(uri)
                 .header("API-Version", "2")
                 .header("Accept-Language", DEFAULT_LANGUAGE)
                 .exchange()
                 .expectStatus().isEqualTo(400)
                 .expectHeader().contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .expectBody(ExtendedProblemDetail.class)
+                .expectBody(ProblemDetail.class)
                 .returnResult();
 
         MvcOpenApiContractTestSupport.assertContractMatches(result.getResponseBody(), docExample);

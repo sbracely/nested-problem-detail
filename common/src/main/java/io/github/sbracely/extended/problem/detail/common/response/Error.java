@@ -1,6 +1,7 @@
 package io.github.sbracely.extended.problem.detail.common.response;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.http.ProblemDetail;
 
 /**
  * Represents a detailed error information in the extended problem detail response.
@@ -13,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  * @param type    the type of error (PARAMETER, COOKIE, HEADER, or BUSINESS)
  * @param target  the target of the error, such as field name, resource name, or business entity
  * @param message the error message describing what went wrong
- * @see ExtendedProblemDetail
+ * @see ProblemDetail
  * @since 1.0.0
  */
 public record Error(@Nullable Type type, @Nullable String target, @Nullable String message) {

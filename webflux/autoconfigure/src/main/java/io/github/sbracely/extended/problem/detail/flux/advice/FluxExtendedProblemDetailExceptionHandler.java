@@ -3,13 +3,13 @@ package io.github.sbracely.extended.problem.detail.flux.advice;
 import io.github.sbracely.extended.problem.detail.common.error.resolver.ExtendedProblemDetailErrorResolver;
 import io.github.sbracely.extended.problem.detail.common.logging.ExtendedProblemDetailLog;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.method.MethodValidationException;
 import org.springframework.web.ErrorResponseException;
@@ -113,21 +113,22 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * Handles web exchange bind exceptions.
      * <p>
      * Converts errors from BindingResult into a list of Error objects
-     * and wraps them in an ExtendedProblemDetail response.
+     * and adds them to the ProblemDetail response.
      * </p>
      *
      * @param ex       the WebExchangeBindException that was thrown
      * @param headers  the HTTP headers to be used in the response
      * @param status   the HTTP status code
      * @param exchange the current server web exchange
-     * @return Mono containing ResponseEntity with the ExtendedProblemDetail with errors
+     * @return Mono containing ResponseEntity with the ProblemDetail with errors
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleWebExchangeBindException(WebExchangeBindException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
         log(ex, "handleWebExchangeBindException");
         List<Error> errors = resolveWebExchangeBindException(ex);
-        ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errors);
-        return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
+        ProblemDetail problemDetail = ex.getBody();
+        problemDetail.setProperty("errors", errors);
+        return handleExceptionInternal(ex, problemDetail, headers, status, exchange);
     }
 
     /**
@@ -151,15 +152,16 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * @param headers  the HTTP headers to be used in the response
      * @param status   the HTTP status code
      * @param exchange the current server web exchange
-     * @return Mono containing ResponseEntity with the ExtendedProblemDetail with errors
+     * @return Mono containing ResponseEntity with the ProblemDetail with errors
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, ServerWebExchange exchange) {
         log(ex, "[exception#" + Integer.toHexString(System.identityHashCode(ex))
                 + "] handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
-        ExtendedProblemDetail extendedProblemDetail = ExtendedProblemDetail.from(ex.getBody(), errorList);
-        return handleExceptionInternal(ex, extendedProblemDetail, headers, status, exchange);
+        ProblemDetail problemDetail = ex.getBody();
+        problemDetail.setProperty("errors", errorList);
+        return handleExceptionInternal(ex, problemDetail, headers, status, exchange);
     }
 
     @Override
@@ -190,13 +192,13 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      * Handles method validation exceptions.
      * <p>
      * Converts method-level errors into a list of Error objects,
-     * logs the failure, and wraps them in an ExtendedProblemDetail response.
+     * logs the failure.
      * </p>
      *
      * @param ex       the MethodValidationException that was thrown
      * @param status   the HTTP status code
      * @param exchange the current server web exchange
-     * @return Mono containing ResponseEntity with the ExtendedProblemDetail with errors
+     * @return Mono containing ResponseEntity with the ProblemDetail with errors
      */
     @Override
     protected Mono<ResponseEntity<Object>> handleMethodValidationException(MethodValidationException ex, HttpStatus status, ServerWebExchange exchange) {

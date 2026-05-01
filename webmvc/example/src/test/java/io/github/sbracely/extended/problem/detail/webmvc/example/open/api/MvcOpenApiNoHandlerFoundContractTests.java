@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,8 +41,8 @@ class MvcOpenApiNoHandlerFoundContractTests {
                 .hasStatus(404)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
 
-        ExtendedProblemDetail actual = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+        ProblemDetail actual = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
         MvcOpenApiContractTestSupport.assertContractMatches(actual, docExample);
     }
 

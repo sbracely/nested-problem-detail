@@ -1,14 +1,14 @@
 package io.github.sbracely.extended.problem.detail.common.error.resolver;
 
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.http.ProblemDetail;
 
 import java.util.Locale;
 
 /**
- * Resolves message codes into {@link ExtendedProblemDetail} extension fields.
+ * Resolves message codes into {@link ProblemDetail} extension fields.
  */
 public final class ExtendedProblemDetailMessageResolver {
 
@@ -23,9 +23,9 @@ public final class ExtendedProblemDetailMessageResolver {
      * {@link MessageSource} is available or the code cannot be resolved, the original input is
      * returned unchanged.
      *
-     * @param code the message code to resolve, optionally wrapped in braces
+     * @param code          the message code to resolve, optionally wrapped in braces
      * @param messageSource the message source used for lookup
-     * @param locale the locale to resolve the message for
+     * @param locale        the locale to resolve the message for
      * @return the resolved message, or the original code when resolution is not possible
      */
     public static @Nullable String message(@Nullable String code, @Nullable MessageSource messageSource, Locale locale) {

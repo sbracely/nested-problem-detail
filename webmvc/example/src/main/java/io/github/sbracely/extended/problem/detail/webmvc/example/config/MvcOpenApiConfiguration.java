@@ -1,6 +1,5 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.config;
 
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ProblemDetail;
 
 import java.net.URI;
 import java.util.List;
@@ -149,9 +149,8 @@ public class MvcOpenApiConfiguration {
     }
 
     private static void registerNoResourceFoundOperation(OpenAPI openApi) {
-        ExtendedProblemDetail noResourceFoundExample = new ExtendedProblemDetail();
+        ProblemDetail noResourceFoundExample = ProblemDetail.forStatus(404);
         noResourceFoundExample.setTitle("Not Found");
-        noResourceFoundExample.setStatus(404);
         noResourceFoundExample.setDetail("No static resource mvc-extended-problem-detail/no-resource-found-exception.");
         noResourceFoundExample.setInstance(URI.create("/mvc-extended-problem-detail/no-resource-found-exception"));
         addSupplementalGetOperation(openApi,
@@ -167,9 +166,8 @@ public class MvcOpenApiConfiguration {
     }
 
     private static void registerNoHandlerFoundOperation(OpenAPI openApi) {
-        ExtendedProblemDetail noHandlerFoundExample = new ExtendedProblemDetail();
+        ProblemDetail noHandlerFoundExample = ProblemDetail.forStatus(404);
         noHandlerFoundExample.setTitle("Not Found");
-        noHandlerFoundExample.setStatus(404);
         noHandlerFoundExample.setDetail("No endpoint GET /mvc-extended-problem-detail/no-handler-found-exception.");
         noHandlerFoundExample.setInstance(URI.create("/mvc-extended-problem-detail/no-handler-found-exception"));
         addSupplementalGetOperation(openApi,
@@ -185,9 +183,8 @@ public class MvcOpenApiConfiguration {
     }
 
     private static void registerInvalidEndpointBadRequestOperation(OpenAPI openApi) {
-        ExtendedProblemDetail invalidEndpointExample = new ExtendedProblemDetail();
+        ProblemDetail invalidEndpointExample = ProblemDetail.forStatus(400);
         invalidEndpointExample.setTitle("Bad Request");
-        invalidEndpointExample.setStatus(400);
         invalidEndpointExample.setDetail("Missing parameters: param1,param2");
         invalidEndpointExample.setInstance(URI.create("/actuator/demo/name"));
         addSupplementalGetOperation(openApi,
@@ -202,9 +199,8 @@ public class MvcOpenApiConfiguration {
     }
 
     private static void registerNotAcceptableApiVersionOperation(OpenAPI openApi) {
-        ExtendedProblemDetail notAcceptableApiVersionExample = new ExtendedProblemDetail();
+        ProblemDetail notAcceptableApiVersionExample = ProblemDetail.forStatus(400);
         notAcceptableApiVersionExample.setTitle("Bad Request");
-        notAcceptableApiVersionExample.setStatus(400);
         notAcceptableApiVersionExample.setDetail("Invalid API version: '2.0.0'.");
         notAcceptableApiVersionExample.setInstance(URI.create("/not-acceptable-api-version"));
         addSupplementalGetOperation(openApi,

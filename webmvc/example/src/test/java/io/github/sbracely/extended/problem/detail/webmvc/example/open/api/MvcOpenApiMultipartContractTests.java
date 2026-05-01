@@ -1,7 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.open.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -67,15 +67,15 @@ class MvcOpenApiMultipartContractTests {
         headers.setAcceptLanguageAsLocales(java.util.List.of(java.util.Locale.ENGLISH));
 
         String uri = BASE + "/max-upload-size-exceeded-exception";
-        ResponseEntity<ExtendedProblemDetail> response = testRestTemplate.postForEntity(
+        ResponseEntity<ProblemDetail> response = testRestTemplate.postForEntity(
                 "http://localhost:" + port + uri,
                 new HttpEntity<>(body, headers),
-                ExtendedProblemDetail.class);
+                ProblemDetail.class);
 
         assertThat(response.getStatusCode().value()).isEqualTo(413);
         assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
 
-        ExtendedProblemDetail actual = response.getBody();
+        ProblemDetail actual = response.getBody();
         MvcOpenApiContractTestSupport.assertContractMatches(actual, docExample);
     }
 }

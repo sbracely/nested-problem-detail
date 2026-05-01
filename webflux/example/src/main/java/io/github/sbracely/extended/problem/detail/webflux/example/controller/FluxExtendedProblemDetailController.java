@@ -1,7 +1,6 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.controller;
 
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webflux.example.config.FluxMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webflux.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webflux.example.request.FluxProblemDetailRequest;
@@ -24,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.validation.method.MethodValidationException;
@@ -274,7 +274,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-matrix/{id}")
     public Mono<Void> handlerMethodValidationExceptionMatrixVariable(@Parameter(example = "abc") @PathVariable String id,
-                                                                      @MatrixVariable @Size(max = 2, message = "{flux.example.request.matrix.list.size}") List<String> list) {
+                                                                     @MatrixVariable @Size(max = 2, message = "{flux.example.request.matrix.list.size}") List<String> list) {
         logger.info("handlerMethodValidationExceptionMatrixVariable, id: " + id + ", list: " + list);
         return Mono.empty();
     }
@@ -465,7 +465,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @GetMapping("/handler-method-validation-exception-request-param")
     public Mono<Void> handlerMethodValidationExceptionRequestParam(@RequestParam @NotBlank(message = "{flux.example.request.parameter.blank}") String param,
-                                                                    @RequestParam @Size(min = 5, message = "{flux.example.request.value.length}") String value) {
+                                                                   @RequestParam @Size(min = 5, message = "{flux.example.request.value.length}") String value) {
         logger.info("handlerMethodValidationExceptionRequestParam, param: " + param + ", value: " + value);
         return Mono.empty();
     }
@@ -497,7 +497,7 @@ public class FluxExtendedProblemDetailController {
                             """)))
     @PostMapping("/handler-method-validation-exception-request-part")
     public Mono<Void> handlerMethodValidationExceptionRequestPart(@RequestPart(required = false)
-                                                                   @FluxCheckFilePart(requiredMessage = "{flux.example.upload.file.not-empty}") FilePart filePart) {
+                                                                  @FluxCheckFilePart(requiredMessage = "{flux.example.upload.file.not-empty}") FilePart filePart) {
         logger.info("handlerMethodValidationExceptionRequestPart, filePart: " + filePart);
         return Mono.empty();
     }
@@ -719,14 +719,13 @@ public class FluxExtendedProblemDetailController {
     @GetMapping("/error-response-exception")
     public Mono<Void> errorResponseException() {
         logger.info("errorResponseException");
-        ExtendedProblemDetail extendedProblemDetail = new ExtendedProblemDetail();
-        extendedProblemDetail.setDetail("Error details");
-        extendedProblemDetail.setTitle("Error title");
-        extendedProblemDetail.setStatus(HttpStatus.BAD_REQUEST.value());
-        extendedProblemDetail.setErrors(Arrays.asList(
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setDetail("Error details");
+        problemDetail.setTitle("Error title");
+        problemDetail.setProperty("errors", Arrays.asList(
                 new Error(Error.Type.BUSINESS, null, "Error message 1"),
                 new Error(Error.Type.BUSINESS, null, "Error message 2")));
-        throw new ErrorResponseException(HttpStatus.BAD_REQUEST, extendedProblemDetail, new RuntimeException("business exception"));
+        throw new ErrorResponseException(HttpStatus.BAD_REQUEST, problemDetail, new RuntimeException("business exception"));
     }
 
     /**
@@ -739,23 +738,23 @@ public class FluxExtendedProblemDetailController {
                     mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
                     schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
                     examples = @ExampleObject(name = "example", value = """
-                            {
-                              "title": "Payment failed",
-                              "status": 500,
-                              "detail": "The payment request could not be processed.",
-                              "instance": "/flux-extended-problem-detail/extended-error-response-exception",
-                              "errors": [
-                                {
-                                  "type": "BUSINESS",
-                                  "message": "Insufficient balance"
-                                },
-                                {
-                                  "type": "BUSINESS",
-                                  "message": "Payment is too frequent"
-                                }
-                              ]
-                            }
-        """)))
+                                                {
+                                                  "title": "Payment failed",
+                                                  "status": 500,
+                                                  "detail": "The payment request could not be processed.",
+                                                  "instance": "/flux-extended-problem-detail/extended-error-response-exception",
+                                                  "errors": [
+                                                    {
+                                                      "type": "BUSINESS",
+                                                      "message": "Insufficient balance"
+                                                    },
+                                                    {
+                                                      "type": "BUSINESS",
+                                                      "message": "Payment is too frequent"
+                                                    }
+                                                  ]
+                                                }
+                            """)))
     @GetMapping("/extended-error-response-exception")
     public Mono<Void> extendedErrorResponseException() {
         logger.info("extendedErrorResponseException");

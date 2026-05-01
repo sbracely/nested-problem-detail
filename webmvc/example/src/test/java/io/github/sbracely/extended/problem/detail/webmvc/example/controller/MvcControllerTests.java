@@ -1,7 +1,8 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
 import io.github.sbracely.extended.problem.detail.webmvc.example.config.MvcMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webmvc.example.endpoint.MvcDemoEndpoint;
 import io.github.sbracely.extended.problem.detail.webmvc.example.exception.PayFailedException;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.actuate.endpoint.web.AbstractWebMvcEndpointHandlerMapping;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.web.MockAsyncContext;
@@ -71,6 +73,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class MvcControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(MvcControllerTests.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final TypeReference<List<Error>> ERRORS_TYPE = new TypeReference<>() {
+    };
     private static final String BASE_PATH = "/mvc-extended-problem-detail";
     private static final String ZH_CN_LANGUAGE = "zh-CN";
     @Autowired
@@ -88,16 +93,15 @@ class MvcControllerTests {
                 .hasStatus(METHOD_NOT_ALLOWED)
                 .hasContentType(APPLICATION_PROBLEM_JSON)
                 .hasHeader(ALLOW, GET.name());
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Method 'POST' is not supported.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Method 'POST' is not supported.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -112,16 +116,15 @@ class MvcControllerTests {
                 .hasStatus(UNSUPPORTED_MEDIA_TYPE)
                 .hasContentType(APPLICATION_PROBLEM_JSON)
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Content-Type 'null' is not supported.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Content-Type 'null' is not supported.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -137,16 +140,15 @@ class MvcControllerTests {
                 .hasStatus(NOT_ACCEPTABLE)
                 .hasContentType(APPLICATION_PROBLEM_JSON)
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -160,16 +162,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Required path variable");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).contains("Required path variable");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -183,16 +184,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required parameter 'id' is not present.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Required parameter 'id' is not present.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -206,16 +206,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required part 'file' is not present.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Required part 'file' is not present.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -229,16 +228,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -252,12 +250,12 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid request parameters.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(problemDetail.getDetail()).isEqualTo("Invalid request parameters.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
     }
 
     /**
@@ -271,16 +269,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -294,16 +291,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Required path parameter 'list' is not present.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).contains("Required path parameter 'list' is not present.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -317,16 +313,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required cookie 'cookieValue' is not present.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Required cookie 'cookieValue' is not present.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -340,16 +335,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required header 'header' is not present.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Required header 'header' is not present.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -368,16 +362,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid request content.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Invalid request content.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.PARAMETER, "name", "Name length must be between 6-10"),
                 new Error(Error.Type.PARAMETER, "age", "Age cannot be null"),
                 new Error(Error.Type.PARAMETER, "password", "Password and confirm password do not match"),
@@ -397,16 +390,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.COOKIE, "name", "Name length must be at least 2"));
     }
 
@@ -422,16 +414,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "list", "Maximum size is 2"));
     }
 
@@ -447,16 +438,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "password", "Password cannot be empty"));
     }
 
@@ -472,16 +462,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "id", "ID minimum length is 2"));
     }
 
@@ -501,16 +490,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "password", "Password cannot be empty"));
     }
 
@@ -528,16 +516,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, null, "Element cannot contain empty values"));
 
     }
@@ -554,16 +541,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.HEADER, "headerValue", "Minimum length is 2"));
     }
 
@@ -579,16 +565,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.PARAMETER, "param", "Parameter cannot be empty"),
                 new Error(Error.Type.PARAMETER, "param2", "Parameter 2 cannot be null"),
                 new Error(Error.Type.PARAMETER, "param2", "Parameter 2 cannot be blank")
@@ -608,16 +593,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).singleElement()
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).singleElement()
                 .isEqualTo(new Error(Error.Type.PARAMETER, "file", "File cannot be empty"));
     }
 
@@ -633,16 +617,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failure");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failure");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isEmpty();
     }
 
     /**
@@ -655,16 +638,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(NOT_FOUND)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("No static resource %s.".formatted(uri.replaceFirst("/", "")));
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("No static resource %s.".formatted(uri.replaceFirst("/", "")));
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -684,16 +666,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(SERVICE_UNAVAILABLE)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(SERVICE_UNAVAILABLE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(SERVICE_UNAVAILABLE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(SERVICE_UNAVAILABLE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(SERVICE_UNAVAILABLE.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -707,16 +688,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getErrors()).isNull();
-        assertThat(extendedProblemDetail.getProperties()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -730,16 +710,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo("Payment failed");
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, "Insufficient balance"),
                 new Error(Error.Type.BUSINESS, null, "Payment is too frequent")
         );
@@ -759,9 +738,9 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.BUSINESS, null, firstError),
                 new Error(Error.Type.BUSINESS, null, secondError)
         );
@@ -800,14 +779,14 @@ class MvcControllerTests {
                     """
     )
     void titleAndDetailLocalized(String scenario, String expectedTitle, String expectedDetail) throws IOException {
-        ExtendedProblemDetail extendedProblemDetail = localizedScenarioResult(scenario, ZH_CN_LANGUAGE);
+        ProblemDetail problemDetail = localizedScenarioResult(scenario, ZH_CN_LANGUAGE);
 
-        assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(expectedTitle);
+        assertThat(problemDetail).isNotNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(expectedTitle);
         if (expectedDetail == null) {
-            assertThat(extendedProblemDetail.getDetail()).isNull();
+            assertThat(problemDetail.getDetail()).isNull();
         } else {
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo(expectedDetail);
+            assertThat(problemDetail.getDetail()).isEqualTo(expectedDetail);
         }
     }
 
@@ -822,16 +801,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("exception");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("exception");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -845,16 +823,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("server web input error");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("server web input error");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -868,16 +845,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isNotNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isNotNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -891,13 +867,13 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Required request param 'id' is not present.");
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(problemDetail.getDetail()).isEqualTo("Required request param 'id' is not present.");
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
     }
 
     /**
@@ -916,16 +892,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Invalid request content.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).containsExactlyInAnyOrder(
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Invalid request content.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).containsExactlyInAnyOrder(
                 new Error(Error.Type.PARAMETER, "name", "Name length must be between 6-10"),
                 new Error(Error.Type.PARAMETER, "age", "Age cannot be null"),
                 new Error(Error.Type.PARAMETER, "password", "Password and confirm password do not match"),
@@ -950,17 +925,16 @@ class MvcControllerTests {
                         assertThat(header)
                                 .singleElement()
                                 .matches(h -> h.contains(GET.name()) && h.contains(POST.name())));
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
-        assertThat(extendedProblemDetail.getDetail()).startsWith("Supported methods: [")
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(METHOD_NOT_ALLOWED.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
+        assertThat(problemDetail.getDetail()).startsWith("Supported methods: [")
                 .contains("GET", "POST").endsWith("]");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -975,16 +949,15 @@ class MvcControllerTests {
                 .hasStatus(NOT_ACCEPTABLE)
                 .hasContentType(APPLICATION_PROBLEM_JSON)
                 .hasHeader(ACCEPT, APPLICATION_JSON_VALUE);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(NOT_ACCEPTABLE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(NOT_ACCEPTABLE.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Acceptable representations: [application/json].");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1000,16 +973,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(CONTENT_TOO_LARGE)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
-        assertThat(extendedProblemDetail.getDetail()).isNull();
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
+        assertThat(problemDetail.getDetail()).isNull();
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1023,16 +995,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(UNSUPPORTED_MEDIA_TYPE)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Could not parse Content-Type.");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Could not parse Content-Type.");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1046,16 +1017,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("server error");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("server error");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1071,16 +1041,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(CONTENT_TOO_LARGE)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("payload too large");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(CONTENT_TOO_LARGE.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(CONTENT_TOO_LARGE.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("payload too large");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1094,16 +1063,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Failed to convert");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).contains("Failed to convert");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1117,16 +1085,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Failed to convert");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).contains("Failed to convert");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1140,16 +1107,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Failed to convert");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).contains("Failed to convert");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1163,16 +1129,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).contains("Failed to convert").contains("'a'");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).contains("Failed to convert").contains("'a'");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1188,16 +1153,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(BAD_REQUEST)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Failed to read request");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Failed to read request");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1212,16 +1176,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Failed to write request");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Failed to write request");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1237,16 +1200,15 @@ class MvcControllerTests {
         assertThat(result)
                 .hasStatus(INTERNAL_SERVER_ERROR)
                 .hasContentType(APPLICATION_PROBLEM_JSON);
-        ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-        logger.info("extendedProblemDetail: " + extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("Validation failed");
-        assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-        assertThat(extendedProblemDetail.getProperties()).isNull();
-        assertThat(extendedProblemDetail.getErrors()).isNull();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        logger.info("problemDetail: " + problemDetail);
+        assertThat(problemDetail.getType()).isNull();
+        assertThat(problemDetail.getTitle()).isEqualTo(INTERNAL_SERVER_ERROR.getReasonPhrase());
+        assertThat(problemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        assertThat(problemDetail.getDetail()).isEqualTo("Validation failed");
+        assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+        assertThat(errorsOf(problemDetail)).isNull();
     }
 
     /**
@@ -1262,16 +1224,15 @@ class MvcControllerTests {
             assertThat(result)
                     .hasStatus(NOT_FOUND)
                     .hasContentType(APPLICATION_PROBLEM_JSON);
-            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            logger.info("extendedProblemDetail: " + extendedProblemDetail);
-            assertThat(extendedProblemDetail.getType()).isNull();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("No endpoint %s %s.".formatted(GET.name(), uri));
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getProperties()).isNull();
-            assertThat(extendedProblemDetail.getErrors()).isNull();
+            ProblemDetail problemDetail = assertThat(result).bodyJson()
+                    .convertTo(ProblemDetail.class).isNotNull().actual();
+            logger.info("problemDetail: " + problemDetail);
+            assertThat(problemDetail.getType()).isNull();
+            assertThat(problemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
+            assertThat(problemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
+            assertThat(problemDetail.getDetail()).isEqualTo("No endpoint %s %s.".formatted(GET.name(), uri));
+            assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(errorsOf(problemDetail)).isNull();
         }
 
         @Test
@@ -1280,10 +1241,10 @@ class MvcControllerTests {
             MvcTestResult result = mockMvcTester.get().uri(uri)
                     .header(ACCEPT_LANGUAGE, ZH_CN_LANGUAGE)
                     .exchange();
-            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo("未找到");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("没有端点 GET /mvc-extended-problem-detail/no-handler-found-exception。");
+            ProblemDetail problemDetail = assertThat(result).bodyJson()
+                    .convertTo(ProblemDetail.class).isNotNull().actual();
+            assertThat(problemDetail.getTitle()).isEqualTo("未找到");
+            assertThat(problemDetail.getDetail()).isEqualTo("没有端点 GET /mvc-extended-problem-detail/no-handler-found-exception。");
         }
     }
 
@@ -1303,15 +1264,15 @@ class MvcControllerTests {
             assertThat(result)
                     .hasStatus(BAD_REQUEST)
                     .hasContentType(APPLICATION_PROBLEM_JSON);
-            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            logger.info("extendedProblemDetail: " + extendedProblemDetail);
-            assertThat(extendedProblemDetail.getDetail()).containsOnlyOnce("Missing parameters: ")
+            ProblemDetail problemDetail = assertThat(result).bodyJson()
+                    .convertTo(ProblemDetail.class).isNotNull().actual();
+            logger.info("problemDetail: " + problemDetail);
+            assertThat(problemDetail.getDetail()).containsOnlyOnce("Missing parameters: ")
                     .contains("param1", "param2");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-            assertThat(extendedProblemDetail.getErrors()).isNull();
+            assertThat(problemDetail.getInstance()).isEqualTo(URI.create(uri));
+            assertThat(problemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
+            assertThat(problemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
+            assertThat(errorsOf(problemDetail)).isNull();
         }
 
         @Test
@@ -1320,14 +1281,14 @@ class MvcControllerTests {
             MvcTestResult result = mockMvcTester.get().uri(uri)
                     .header(ACCEPT_LANGUAGE, ZH_CN_LANGUAGE)
                     .exchange();
-            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("缺少参数：param1,param2");
+            ProblemDetail problemDetail = assertThat(result).bodyJson()
+                    .convertTo(ProblemDetail.class).isNotNull().actual();
+            assertThat(problemDetail.getTitle()).isEqualTo("错误的请求");
+            assertThat(problemDetail.getDetail()).isEqualTo("缺少参数：param1,param2");
         }
     }
 
-    private ExtendedProblemDetail localizedScenarioResult(String scenario, String language) throws IOException {
+    private ProblemDetail localizedScenarioResult(String scenario, String language) throws IOException {
         MvcTestResult result = switch (scenario) {
             case "httpRequestMethodNotSupportedException" ->
                     mockMvcTester.post().uri(BASE_PATH + "/http-request-method-not-supported-exception")
@@ -1373,21 +1334,19 @@ class MvcControllerTests {
                     mockMvcTester.get().uri(BASE_PATH + "/org-springframework-web-server-missing-request-value-exception")
                             .header(ACCEPT_LANGUAGE, language)
                             .exchange();
-            case "webExchangeBindException" ->
-                    mockMvcTester.post().uri(BASE_PATH + "/web-exchange-bind-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .contentType(APPLICATION_JSON)
-                            .content("""
-                                    {
-                                        "name": "abc",
-                                        "password": "123"
-                                    }
-                                    """)
-                            .exchange();
-            case "methodNotAllowedException" ->
-                    mockMvcTester.delete().uri(BASE_PATH + "/method-not-allowed-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
+            case "webExchangeBindException" -> mockMvcTester.post().uri(BASE_PATH + "/web-exchange-bind-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .contentType(APPLICATION_JSON)
+                    .content("""
+                            {
+                                "name": "abc",
+                                "password": "123"
+                            }
+                            """)
+                    .exchange();
+            case "methodNotAllowedException" -> mockMvcTester.delete().uri(BASE_PATH + "/method-not-allowed-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
             case "notAcceptableStatusException" ->
                     mockMvcTester.get().uri(BASE_PATH + "/not-acceptable-status-exception")
                             .header(ACCEPT_LANGUAGE, language)
@@ -1396,10 +1355,9 @@ class MvcControllerTests {
                     mockMvcTester.post().uri(BASE_PATH + "/unsupported-media-type-status-exception")
                             .header(ACCEPT_LANGUAGE, language)
                             .exchange();
-            case "serverErrorException" ->
-                    mockMvcTester.get().uri(BASE_PATH + "/server-error-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
+            case "serverErrorException" -> mockMvcTester.get().uri(BASE_PATH + "/server-error-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
             case "payloadTooLargeException" -> {
                 MockMultipartFile file = new MockMultipartFile(
                         "file", "test-upload.txt", "text/plain", "test content".getBytes(StandardCharsets.UTF_8));
@@ -1407,14 +1365,12 @@ class MvcControllerTests {
                         .file(file)
                         .header(ACCEPT_LANGUAGE, language));
             }
-            case "responseStatusException" ->
-                    mockMvcTester.get().uri(BASE_PATH + "/response-status-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
-            case "serverWebInputException" ->
-                    mockMvcTester.get().uri(BASE_PATH + "/server-web-input-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
+            case "responseStatusException" -> mockMvcTester.get().uri(BASE_PATH + "/response-status-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
+            case "serverWebInputException" -> mockMvcTester.get().uri(BASE_PATH + "/server-web-input-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
             case "httpMessageNotReadableException" ->
                     mockMvcTester.post().uri(BASE_PATH + "/http-message-not-readable-exception")
                             .header(ACCEPT_LANGUAGE, language)
@@ -1427,22 +1383,19 @@ class MvcControllerTests {
                     mockMvcTester.get().uri(BASE_PATH + "/http-message-not-writable-exception")
                             .header(ACCEPT_LANGUAGE, language)
                             .exchange();
-            case "methodValidationException" ->
-                    mockMvcTester.get().uri(BASE_PATH + "/method-validation-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
-            case "errorResponseException" ->
-                    mockMvcTester.get().uri(BASE_PATH + "/error-response-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
+            case "methodValidationException" -> mockMvcTester.get().uri(BASE_PATH + "/method-validation-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
+            case "errorResponseException" -> mockMvcTester.get().uri(BASE_PATH + "/error-response-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
             case "extendedErrorResponseException" ->
                     mockMvcTester.get().uri(BASE_PATH + "/extended-error-response-exception")
                             .header(ACCEPT_LANGUAGE, language)
                             .exchange();
-            case "noResourceFoundException" ->
-                    mockMvcTester.get().uri(BASE_PATH + "/no-resource-found-exception")
-                            .header(ACCEPT_LANGUAGE, language)
-                            .exchange();
+            case "noResourceFoundException" -> mockMvcTester.get().uri(BASE_PATH + "/no-resource-found-exception")
+                    .header(ACCEPT_LANGUAGE, language)
+                    .exchange();
             case "asyncRequestTimeoutException" -> {
                 MvcTestResult mvcTestResult = mockMvcTester.get().uri(BASE_PATH + "/async-request-timeout-exception")
                         .header(ACCEPT_LANGUAGE, language)
@@ -1462,6 +1415,13 @@ class MvcControllerTests {
             default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
         };
 
-        return assertThat(result).bodyJson().convertTo(ExtendedProblemDetail.class).isNotNull().actual();
+        return assertThat(result).bodyJson().convertTo(ProblemDetail.class).isNotNull().actual();
+    }
+
+    private static List<Error> errorsOf(ProblemDetail problemDetail) {
+        if (problemDetail.getProperties() == null || problemDetail.getProperties().get("errors") == null) {
+            return null;
+        }
+        return MAPPER.convertValue(problemDetail.getProperties().get("errors"), ERRORS_TYPE);
     }
 }

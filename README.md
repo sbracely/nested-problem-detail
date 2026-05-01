@@ -55,8 +55,8 @@ Both example applications expose OpenAPI documents at runtime:
 - WebMVC example: `/v3/api-docs`, `/v3/api-docs.yaml`, and `/swagger-ui/index.html`
 - WebFlux example: `/v3/api-docs`, `/v3/api-docs.yaml`, and `/swagger-ui/index.html`
 
-The runtime OpenAPI documents focus on the `application/problem+json` exception payload and the
-`ExtendedProblemDetail` / `Error` structure. For concrete request parameters and ways to trigger each
+The runtime OpenAPI documents focus on the `application/problem+json` exception payload and its
+`errors` / `Error` structure. For concrete request parameters and ways to trigger each
 error response, refer to the example controller tests in each module.
 
 When the example applications are running, `/swagger-ui/index.html` provides interactive "Try it out"
@@ -183,7 +183,7 @@ public class OrderNotFoundException extends ErrorResponseException {
 }
 ```
 
-To include structured `errors` in the response, use `ExtendedProblemDetail`:
+To include structured `errors` in the response, add them to the `ProblemDetail` properties:
 
 ```java
 public class OrderNotFoundException extends ErrorResponseException {
@@ -192,10 +192,11 @@ public class OrderNotFoundException extends ErrorResponseException {
         super(HttpStatus.NOT_FOUND, createBody(orderId), null);
     }
 
-    private static ExtendedProblemDetail createBody(String orderId) {
-        ExtendedProblemDetail body = new ExtendedProblemDetail(
-                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Order not found: " + orderId));
-        body.setErrors(List.of(new Error(Error.Type.BUSINESS, "orderId", "Order not found: " + orderId)));
+    private static ProblemDetail createBody(String orderId) {
+        ProblemDetail body =
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Order not found: " + orderId);
+        body.setProperty("errors", List.of(
+                new Error(Error.Type.BUSINESS, "orderId", "Order not found: " + orderId)));
         return body;
     }
 }

@@ -1,9 +1,10 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.open.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.sbracely.extended.problem.detail.common.response.Error;
-import io.github.sbracely.extended.problem.detail.common.response.ExtendedProblemDetail;
+import org.springframework.http.ProblemDetail;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.ArrayList;
@@ -18,12 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <ul>
  *     <li>Fetch and parse {@code /v3/api-docs} from a running WebFlux context.</li>
  *     <li>Extract the documented response example for a specific operation.</li>
- *     <li>Assert that a runtime {@link ExtendedProblemDetail} matches the documented example.</li>
+ *     <li>Assert that a runtime {@link ProblemDetail} matches the documented example.</li>
  * </ul>
  */
 public final class FluxOpenApiContractTestSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final TypeReference<List<Error>> ERRORS_TYPE = new TypeReference<>() {
+    };
 
     private FluxOpenApiContractTestSupport() {
     }
@@ -109,13 +112,13 @@ public final class FluxOpenApiContractTestSupport {
     }
 
     /**
-     * Asserts that the runtime {@link ExtendedProblemDetail} matches the documented example.
+     * Asserts that the runtime {@link ProblemDetail} matches the documented example.
      * <p>
      * Stable fields compared: {@code title}, {@code status}, {@code detail} (when present),
      * and {@code errors} (order-insensitive, when present). The {@code instance} field is
      * intentionally skipped.
      */
-    public static void assertContractMatches(ExtendedProblemDetail actual, JsonNode docExample) {
+    public static void assertContractMatches(ProblemDetail actual, JsonNode docExample) {
         assertThat(actual).isNotNull();
         assertThat(docExample).isNotNull();
 
@@ -146,10 +149,17 @@ public final class FluxOpenApiContractTestSupport {
                 String message = errorNode.path("message").asText(null);
                 docErrors.add(new Error(Error.Type.valueOf(type), target, message));
             }
-            assertThat(actual.getErrors())
+            assertThat(errorsOf(actual))
                     .as("errors should match documented example (order-insensitive)")
                     .containsExactlyInAnyOrderElementsOf(docErrors);
         }
+    }
+
+    private static List<Error> errorsOf(ProblemDetail problemDetail) {
+        if (problemDetail.getProperties() == null || problemDetail.getProperties().get("errors") == null) {
+            return null;
+        }
+        return MAPPER.convertValue(problemDetail.getProperties().get("errors"), ERRORS_TYPE);
     }
 
 }

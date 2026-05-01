@@ -5,7 +5,7 @@
 - CI build: `.\mvnw.cmd -B verify` on Windows, or `./mvnw -B verify` in GitHub Actions.
 - Full clean build: `.\mvnw.cmd clean verify`
 - Full test suite: `.\mvnw.cmd test`
-- Single common test class: `.\mvnw.cmd -pl common -Dtest=ExtendedProblemDetailTest test`
+- Single common response test class: `.\mvnw.cmd -pl common -Dtest=ErrorTest test`
 - Single MVC auto-config test class: `.\mvnw.cmd -pl webmvc\autoconfigure -Dtest=MvcExtendedProblemDetailAutoConfigurationTests test`
 - Single WebFlux auto-config test class: `.\mvnw.cmd -pl webflux\autoconfigure -Dtest=FluxExtendedProblemDetailAutoConfigurationTests test`
 - Single MVC example controller test class: `.\mvnw.cmd -pl webmvc\example -Dtest=MvcControllerTests test`
@@ -15,7 +15,7 @@
 ## High-level architecture
 
 - This is a Maven reactor with three top-level modules: `common`, `webmvc`, and `webflux`.
-- `common` is the shared support layer for both web stacks. It contains the extended response model (`ExtendedProblemDetail`, `Error`), shared validation-to-error mapping (`ExtendedProblemDetailErrorResolver`), message-code resolution (`ExtendedProblemDetailMessageResolver`), shared property model (`ExtendedProblemDetailProperties`), and logging/startup-notice support (`ExtendedProblemDetailLog`, `ExtendedProblemDetailStartupLogger`).
+- `common` is the shared support layer for both web stacks. It contains the shared error entry model (`Error`), shared validation-to-error mapping (`ExtendedProblemDetailErrorResolver`), message-code resolution (`ExtendedProblemDetailMessageResolver`), shared property model (`ExtendedProblemDetailProperties`), and logging/startup-notice support (`ExtendedProblemDetailLog`, `ExtendedProblemDetailStartupLogger`).
 - `webmvc` and `webflux` each split into three submodules:
   - `autoconfigure`: the real runtime integration layer
   - `starter`: a thin published starter that depends on the corresponding autoconfigure module
@@ -26,7 +26,7 @@
   - `webflux\autoconfigure\...\FluxExtendedProblemDetailAutoConfiguration`
   - `webflux\autoconfigure\...\FluxExtendedProblemDetailExceptionHandler`
 - Both auto-configuration modules register the same kinds of infrastructure: the stack-specific exception handler, shared logging support, and a startup logger that emits a one-time reminder when `extended.problem-detail.enabled` is left unset.
-- Both framework-specific handlers start from Spring's own `ProblemDetail` body, resolve structured `errors`, and wrap the result with `ExtendedProblemDetail.from(...)`. Business exceptions in the example apps also use the shared message resolver so localized message codes can flow into the final payload.
+- Both framework-specific handlers start from Spring's own `ProblemDetail` body, resolve structured `errors`, and add them as a `ProblemDetail` properties entry with key `errors`. Business exceptions in the example apps also use the shared message resolver so localized message codes can flow into the final payload.
 - Example modules are part of the reactor on purpose: they are the executable demos, the source of full-stack HTTP assertions, and the source of the generated offline OpenAPI documents under each module's `docs` directory. Some MVC OpenAPI operations are synthetic so documented framework fallback exceptions can still be contract-tested.
 - Boot auto-configuration registration is resource-based. If an auto-configuration class is renamed or moved, update:
   - `webmvc\autoconfigure\src\main\resources\META-INF\spring\org.springframework.boot.autoconfigure.AutoConfiguration.imports`
