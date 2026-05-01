@@ -7,15 +7,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.6</version>
+        <version>3.5.14</version>
         <relativePath/>
     </parent>
 
     <groupId>io.github.sbracely</groupId>
-    <artifactId>extended-problem-detail-boot4-common</artifactId>
-    <version>4.0.0</version>
-    <name>Extended Problem Detail Boot 4 Common</name>
-    <description>Shared response model, exception-resolution, logging, and properties support for the Boot 4 line of Extended Problem Detail</description>
+    <artifactId>extended-problem-detail-boot3-common</artifactId>
+    <version>3.0.0</version>
+    <name>Extended Problem Detail Boot 3 Common</name>
+    <description>Shared response model, exception-resolution, logging, and properties support for the Boot 3 line of Extended Problem Detail</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>
     <licenses>
         <license>
@@ -63,6 +63,7 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
+            <version>1.3.6</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
