@@ -14,6 +14,7 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Duration;
 
@@ -131,13 +132,17 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
     void shouldConfigureWithCustomProperties() {
         this.contextRunner
                 .withPropertyValues(
+                        "extended.problem-detail.errors-property-name=violations",
                         "extended.problem-detail.logging.at-level=WARN",
                         "extended.problem-detail.logging.print-stack-trace=true"
                 )
                 .run(context -> {
                     FluxExtendedProblemDetailProperties properties = context.getBean(FluxExtendedProblemDetailProperties.class);
+                    FluxExtendedProblemDetailExceptionHandler handler = context.getBean(FluxExtendedProblemDetailExceptionHandler.class);
+                    assertThat(properties.getErrorsPropertyName()).isEqualTo("violations");
                     assertThat(properties.getLogging().getAtLevel().name()).isEqualTo("WARN");
                     assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
+                    assertThat(ReflectionTestUtils.getField(handler, "errorsPropertyName")).isEqualTo("violations");
                 });
     }
 
@@ -178,7 +183,7 @@ class FluxExtendedProblemDetailAutoConfigurationTests {
     static class FluxCustomFluxExtendedProblemDetailExceptionHandler extends FluxExtendedProblemDetailExceptionHandler {
 
         FluxCustomFluxExtendedProblemDetailExceptionHandler(ExtendedProblemDetailLog extendedProblemDetailLog) {
-            super(extendedProblemDetailLog);
+            super(extendedProblemDetailLog, ExtendedProblemDetailProperties.DEFAULT_ERRORS_PROPERTY_NAME);
         }
     }
 }

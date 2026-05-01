@@ -26,7 +26,7 @@
   - `webflux\autoconfigure\...\FluxExtendedProblemDetailAutoConfiguration`
   - `webflux\autoconfigure\...\FluxExtendedProblemDetailExceptionHandler`
 - Both auto-configuration modules register the same kinds of infrastructure: the stack-specific exception handler, shared logging support, and a startup logger that emits a one-time reminder when `extended.problem-detail.enabled` is left unset.
-- Both framework-specific handlers start from Spring's own `ProblemDetail` body, resolve structured `errors`, and add them as a `ProblemDetail` properties entry with key `errors`. Business exceptions in the example apps also use the shared message resolver so localized message codes can flow into the final payload.
+- Both framework-specific handlers start from Spring's own `ProblemDetail` body, resolve structured `errors`, and add them as a `ProblemDetail` properties entry with key `extended.problem-detail.errors-property-name` (default `errors`). Business exceptions in the example apps also use the shared message resolver so localized message codes can flow into the final payload.
 - Example modules are part of the reactor on purpose: they are the executable demos, the source of full-stack HTTP assertions, and the source of the generated offline OpenAPI documents under each module's `docs` directory. Some MVC OpenAPI operations are synthetic so documented framework fallback exceptions can still be contract-tested.
 - Boot auto-configuration registration is resource-based. If an auto-configuration class is renamed or moved, update:
   - `webmvc\autoconfigure\src\main\resources\META-INF\spring\org.springframework.boot.autoconfigure.AutoConfiguration.imports`
@@ -38,7 +38,7 @@
 - Put shared error-shaping changes in `common\...\ExtendedProblemDetailErrorResolver` first. MVC and WebFlux handlers are expected to stay thin adapters unless behavior is truly stack-specific.
 - The main customization seam is subclassing the stack-specific exception handler and overriding either a `handle...` method in the handler or a `resolveXxx(...)` method from `ExtendedProblemDetailErrorResolver`.
 - Default beans are registered with `@ConditionalOnMissingBean`. A custom handler bean is meant to replace the auto-configured one; avoid introducing parallel competing handlers unless that is intentional.
-- The configuration prefix is `extended.problem-detail`. Default behavior is enabled, logs at `INFO`, and omits stack traces. If `extended.problem-detail.enabled` is omitted entirely, the startup logger emits a one-time reminder; explicitly setting it to `true` or `false` suppresses that message.
+- The configuration prefix is `extended.problem-detail`. Default behavior is enabled, writes structured errors to the `errors` extension field, logs at `INFO`, and omits stack traces. If `extended.problem-detail.enabled` is omitted entirely, the startup logger emits a one-time reminder; explicitly setting it to `true` or `false` suppresses that message.
 - Message text can be locale-sensitive. Tests that assert concrete messages or compare against generated OpenAPI docs pin English explicitly with `Locale.ENGLISH` or `Accept-Language` headers so docs and runtime responses stay stable.
 - Tests are split by purpose:
   - autoconfigure modules use `WebApplicationContextRunner` / `ReactiveWebApplicationContextRunner`

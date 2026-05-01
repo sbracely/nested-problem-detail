@@ -18,14 +18,16 @@ public class PayFailedException extends ErrorResponseException {
     private static final String DEFAULT_DETAIL = "The payment request could not be processed.";
 
     private final List<String> errorMessageCodes;
+    private final String errorsPropertyName;
 
-    public PayFailedException(List<String> errorMessageCodes) {
+    public PayFailedException(List<String> errorMessageCodes, String errorsPropertyName) {
         super(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, DEFAULT_DETAIL),
                 null
         );
         this.errorMessageCodes = List.copyOf(errorMessageCodes);
+        this.errorsPropertyName = errorsPropertyName;
         setTitle(DEFAULT_TITLE);
     }
 
@@ -41,7 +43,7 @@ public class PayFailedException extends ErrorResponseException {
                 ))
                 .toList();
 
-        body.setProperty("errors", localizedErrors);
+        body.setProperty(errorsPropertyName, localizedErrors);
         return body;
     }
 }

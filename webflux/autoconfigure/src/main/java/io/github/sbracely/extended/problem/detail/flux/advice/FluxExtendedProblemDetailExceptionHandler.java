@@ -61,12 +61,20 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     protected final @Nullable ExtendedProblemDetailLog extendedProblemDetailLog;
 
     /**
+     * ProblemDetail properties entry name used for structured errors.
+     */
+    protected final String errorsPropertyName;
+
+    /**
      * Constructs a new handler with the specified dependencies.
      *
      * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance, or {@code null} when logging is disabled
+     * @param errorsPropertyName       the ProblemDetail properties entry name used for structured errors
      */
-    public FluxExtendedProblemDetailExceptionHandler(@Nullable ExtendedProblemDetailLog extendedProblemDetailLog) {
+    public FluxExtendedProblemDetailExceptionHandler(
+            @Nullable ExtendedProblemDetailLog extendedProblemDetailLog, String errorsPropertyName) {
         this.extendedProblemDetailLog = extendedProblemDetailLog;
+        this.errorsPropertyName = errorsPropertyName;
     }
 
     @Override
@@ -127,7 +135,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
         log(ex, "handleWebExchangeBindException");
         List<Error> errors = resolveWebExchangeBindException(ex);
         ProblemDetail problemDetail = ex.getBody();
-        problemDetail.setProperty("errors", errors);
+        setErrorsProperty(problemDetail, errors);
         return handleExceptionInternal(ex, problemDetail, headers, status, exchange);
     }
 
@@ -160,7 +168,7 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
                 + "] handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ProblemDetail problemDetail = ex.getBody();
-        problemDetail.setProperty("errors", errorList);
+        setErrorsProperty(problemDetail, errorList);
         return handleExceptionInternal(ex, problemDetail, headers, status, exchange);
     }
 
@@ -206,5 +214,15 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
                 + "] handleMethodValidationException");
         resolveMethodValidationException(ex);
         return super.handleMethodValidationException(ex, status, exchange);
+    }
+
+    /**
+     * Writes resolved errors to the configured ProblemDetail properties entry.
+     *
+     * @param problemDetail the ProblemDetail body to update
+     * @param errors        the resolved structured errors
+     */
+    protected void setErrorsProperty(ProblemDetail problemDetail, List<Error> errors) {
+        problemDetail.setProperty(errorsPropertyName, errors);
     }
 }

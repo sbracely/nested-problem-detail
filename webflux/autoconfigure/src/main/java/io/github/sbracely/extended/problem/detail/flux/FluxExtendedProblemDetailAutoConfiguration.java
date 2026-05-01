@@ -84,13 +84,16 @@ public class FluxExtendedProblemDetailAutoConfiguration {
      * Creates and registers the {@link FluxExtendedProblemDetailExceptionHandler} bean.
      *
      * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance
+     * @param properties               the WebFlux Extended Problem Detail configuration properties
      * @return WebFlux Extended Problem Detail Exception Handler instance
      */
     @Bean
     @ConditionalOnMissingBean
     public FluxExtendedProblemDetailExceptionHandler requestExceptionHandler(
-            ObjectProvider<ExtendedProblemDetailLog> extendedProblemDetailLog) {
-        return new FluxExtendedProblemDetailExceptionHandler(extendedProblemDetailLog.getIfAvailable());
+            ObjectProvider<ExtendedProblemDetailLog> extendedProblemDetailLog,
+            FluxExtendedProblemDetailProperties properties) {
+        return new FluxExtendedProblemDetailExceptionHandler(
+                extendedProblemDetailLog.getIfAvailable(), properties.getErrorsPropertyName());
     }
 
 }

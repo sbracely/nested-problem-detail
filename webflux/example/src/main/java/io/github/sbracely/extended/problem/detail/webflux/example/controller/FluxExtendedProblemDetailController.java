@@ -1,6 +1,7 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.controller;
 
 import io.github.sbracely.extended.problem.detail.common.response.Error;
+import io.github.sbracely.extended.problem.detail.flux.FluxExtendedProblemDetailProperties;
 import io.github.sbracely.extended.problem.detail.webflux.example.config.FluxMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webflux.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webflux.example.request.FluxProblemDetailRequest;
@@ -49,9 +50,12 @@ public class FluxExtendedProblemDetailController {
     private static final Logger logger = LoggerFactory.getLogger(FluxExtendedProblemDetailController.class);
 
     private final FluxProblemDetailService problemDetailService;
+    private final String errorsPropertyName;
 
-    public FluxExtendedProblemDetailController(FluxProblemDetailService problemDetailService) {
+    public FluxExtendedProblemDetailController(FluxProblemDetailService problemDetailService,
+                                               FluxExtendedProblemDetailProperties properties) {
         this.problemDetailService = problemDetailService;
+        this.errorsPropertyName = properties.getErrorsPropertyName();
     }
 
     /**
@@ -722,7 +726,7 @@ public class FluxExtendedProblemDetailController {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail("Error details");
         problemDetail.setTitle("Error title");
-        problemDetail.setProperty("errors", Arrays.asList(
+        problemDetail.setProperty(errorsPropertyName, Arrays.asList(
                 new Error(Error.Type.BUSINESS, null, "Error message 1"),
                 new Error(Error.Type.BUSINESS, null, "Error message 2")));
         throw new ErrorResponseException(HttpStatus.BAD_REQUEST, problemDetail, new RuntimeException("business exception"));
@@ -762,7 +766,7 @@ public class FluxExtendedProblemDetailController {
                 "{flux.example.payment.error.insufficient-balance}",
                 "{flux.example.payment.error.too-frequent}"
         );
-        throw new PayFailedException(errorCodes);
+        throw new PayFailedException(errorCodes, errorsPropertyName);
     }
 
     /**

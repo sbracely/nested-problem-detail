@@ -7,6 +7,7 @@ import org.springframework.boot.logging.LogLevel;
 import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 /**
  * Unit tests for {@link ExtendedProblemDetailProperties} class.
@@ -35,6 +36,14 @@ class ExtendedProblemDetailPropertiesTest {
     }
 
     @Test
+    void shouldHaveDefaultErrorsPropertyNameValue() {
+        ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
+
+        assertThat(properties.getErrorsPropertyName())
+                .isEqualTo(ExtendedProblemDetailProperties.DEFAULT_ERRORS_PROPERTY_NAME);
+    }
+
+    @Test
     void shouldSetEnabledValue() {
         ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
 
@@ -59,6 +68,15 @@ class ExtendedProblemDetailPropertiesTest {
         properties.getLogging().setPrintStackTrace(true);
 
         assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
+    }
+
+    @Test
+    void shouldSetErrorsPropertyNameValue() {
+        ExtendedProblemDetailProperties properties = new ExtendedProblemDetailProperties();
+
+        properties.setErrorsPropertyName("violations");
+
+        assertThat(properties.getErrorsPropertyName()).isEqualTo("violations");
     }
 
     @Test

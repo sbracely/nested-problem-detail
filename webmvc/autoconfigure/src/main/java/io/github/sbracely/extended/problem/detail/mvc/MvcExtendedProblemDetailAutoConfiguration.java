@@ -84,13 +84,16 @@ public class MvcExtendedProblemDetailAutoConfiguration {
      * Creates and registers the {@link MvcExtendedProblemDetailExceptionHandler} bean.
      *
      * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance
+     * @param properties               the MVC Extended Problem Detail configuration properties
      * @return MVC Extended Problem Detail Exception Handler instance
      */
     @Bean
     @ConditionalOnMissingBean
     public MvcExtendedProblemDetailExceptionHandler requestExceptionHandler(
-            ObjectProvider<ExtendedProblemDetailLog> extendedProblemDetailLog) {
-        return new MvcExtendedProblemDetailExceptionHandler(extendedProblemDetailLog.getIfAvailable());
+            ObjectProvider<ExtendedProblemDetailLog> extendedProblemDetailLog,
+            MvcExtendedProblemDetailProperties properties) {
+        return new MvcExtendedProblemDetailExceptionHandler(
+                extendedProblemDetailLog.getIfAvailable(), properties.getErrorsPropertyName());
     }
 
 }

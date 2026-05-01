@@ -14,6 +14,7 @@ import org.springframework.boot.logging.LogLevel;
  * </p>
  * <ul>
  *     <li>{@code enabled} - Whether to enable the extended problem detail feature, defaults to {@code true}</li>
+ *     <li>{@code errors-property-name} - ProblemDetail properties entry name for structured errors, defaults to {@code errors}</li>
  *     <li>{@code logging.at-level} - Log level at which exceptions are recorded, defaults to {@code INFO}</li>
  *     <li>{@code logging.print-stack-trace} - Whether to print exception stack trace in logs, defaults to {@code false}</li>
  * </ul>
@@ -25,6 +26,7 @@ import org.springframework.boot.logging.LogLevel;
  * extended:
  *   problem-detail:
  *     enabled: true
+ *     errors-property-name: errors
  *     logging:
  *       at-level: DEBUG  # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
  *       print-stack-trace: false
@@ -32,6 +34,7 @@ import org.springframework.boot.logging.LogLevel;
  * <pre>{@code
  * # application.properties
  * extended.problem-detail.enabled=true
+ * extended.problem-detail.errors-property-name=errors
  * extended.problem-detail.logging.at-level=INFO
  * extended.problem-detail.logging.print-stack-trace=false
  * }</pre>
@@ -42,6 +45,11 @@ import org.springframework.boot.logging.LogLevel;
 public class ExtendedProblemDetailProperties {
 
     /**
+     * Default ProblemDetail properties entry name used for structured errors.
+     */
+    public static final String DEFAULT_ERRORS_PROPERTY_NAME = "errors";
+
+    /**
      * Extended problem detail feature enabled status.
      * <p>
      * When set to {@code true}, enables extended problem detail exception handling functionality;
@@ -49,6 +57,11 @@ public class ExtendedProblemDetailProperties {
      * </p>
      */
     private boolean enabled = true;
+
+    /**
+     * Name of the {@link org.springframework.http.ProblemDetail} properties entry that contains structured errors.
+     */
+    private String errorsPropertyName = DEFAULT_ERRORS_PROPERTY_NAME;
 
     /**
      * CommonLogging configuration for extended problem detail exception handling.
@@ -78,6 +91,24 @@ public class ExtendedProblemDetailProperties {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * Gets the ProblemDetail properties entry name used for structured errors.
+     *
+     * @return the properties entry name
+     */
+    public String getErrorsPropertyName() {
+        return errorsPropertyName;
+    }
+
+    /**
+     * Sets the ProblemDetail properties entry name used for structured errors.
+     *
+     * @param errorsPropertyName the properties entry name to set
+     */
+    public void setErrorsPropertyName(String errorsPropertyName) {
+        this.errorsPropertyName = errorsPropertyName;
     }
 
     /**

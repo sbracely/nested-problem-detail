@@ -1,5 +1,6 @@
 package io.github.sbracely.extended.problem.detail.webmvc.example.controller;
 
+import io.github.sbracely.extended.problem.detail.mvc.MvcExtendedProblemDetailProperties;
 import io.github.sbracely.extended.problem.detail.webmvc.example.config.MvcMethodValidationConfiguration;
 import io.github.sbracely.extended.problem.detail.webmvc.example.exception.PayFailedException;
 import io.github.sbracely.extended.problem.detail.webmvc.example.request.MvcProblemDetailRequest;
@@ -77,10 +78,14 @@ public class MvcProblemDetailController {
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     private final MvcProblemDetailService problemDetailService;
+    private final String errorsPropertyName;
 
-    public MvcProblemDetailController(RequestMappingHandlerMapping requestMappingHandlerMapping, MvcProblemDetailService problemDetailService) {
+    public MvcProblemDetailController(RequestMappingHandlerMapping requestMappingHandlerMapping,
+                                      MvcProblemDetailService problemDetailService,
+                                      MvcExtendedProblemDetailProperties properties) {
         this.requestMappingHandlerMapping = requestMappingHandlerMapping;
         this.problemDetailService = problemDetailService;
+        this.errorsPropertyName = properties.getErrorsPropertyName();
     }
 
     /**
@@ -831,7 +836,7 @@ public class MvcProblemDetailController {
                 "{mvc.example.payment.error.insufficient-balance}",
                 "{mvc.example.payment.error.too-frequent}"
         );
-        throw new PayFailedException(errorCodes);
+        throw new PayFailedException(errorCodes, errorsPropertyName);
     }
 
     /**

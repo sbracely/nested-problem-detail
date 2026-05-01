@@ -8,11 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.method.MethodValidationException;
@@ -78,12 +74,20 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
     protected final @Nullable ExtendedProblemDetailLog extendedProblemDetailLog;
 
     /**
+     * ProblemDetail properties entry name used for structured errors.
+     */
+    protected final String errorsPropertyName;
+
+    /**
      * Constructs a new handler with the specified dependencies.
      *
      * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance, or {@code null} when logging is disabled
+     * @param errorsPropertyName       the ProblemDetail properties entry name used for structured errors
      */
-    public MvcExtendedProblemDetailExceptionHandler(@Nullable ExtendedProblemDetailLog extendedProblemDetailLog) {
+    public MvcExtendedProblemDetailExceptionHandler(
+            @Nullable ExtendedProblemDetailLog extendedProblemDetailLog, String errorsPropertyName) {
         this.extendedProblemDetailLog = extendedProblemDetailLog;
+        this.errorsPropertyName = errorsPropertyName;
     }
 
     @Override
@@ -156,7 +160,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
         log(ex, "handleMethodArgumentNotValid");
         List<Error> errors = resolveMethodArgumentNotValidException(ex);
         ProblemDetail problemDetail = ex.getBody();
-        problemDetail.setProperty("errors", errors);
+        setErrorsProperty(problemDetail, errors);
         return handleExceptionInternal(ex, problemDetail, headers, status, request);
     }
 
@@ -193,7 +197,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
                 + "] handleHandlerMethodValidationException");
         List<Error> errorList = resolveHandlerMethodValidationException(ex);
         ProblemDetail problemDetail = ex.getBody();
-        problemDetail.setProperty("errors", errorList);
+        setErrorsProperty(problemDetail, errorList);
         return handleExceptionInternal(ex, problemDetail, headers, status, request);
     }
 
@@ -236,7 +240,7 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
             List<Error> errors = resolveWebExchangeBindException(exchangeBindException);
             exchangeBindException.updateAndGetBody(getMessageSource(), request.getLocale());
             ProblemDetail problemDetail = ex.getBody();
-            problemDetail.setProperty("errors", errors);
+            setErrorsProperty(problemDetail, errors);
             return handleExceptionInternal(ex, problemDetail, headers, status, request);
         }
         return handleExceptionInternal(ex, null, headers, status, request);
@@ -321,5 +325,15 @@ public class MvcExtendedProblemDetailExceptionHandler extends ResponseEntityExce
             AsyncRequestNotUsableException ex, WebRequest request) {
         log(ex, "handleAsyncRequestNotUsableException");
         return super.handleAsyncRequestNotUsableException(ex, request);
+    }
+
+    /**
+     * Writes resolved errors to the configured ProblemDetail properties entry.
+     *
+     * @param problemDetail the ProblemDetail body to update
+     * @param errors        the resolved structured errors
+     */
+    protected void setErrorsProperty(ProblemDetail problemDetail, List<Error> errors) {
+        problemDetail.setProperty(errorsPropertyName, errors);
     }
 }
