@@ -13,7 +13,7 @@
 
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4-webmvc-autoconfigure</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
     <name>Extended Problem Detail Boot 4 WebMVC AutoConfiguration</name>
     <description>Spring Boot 4 auto-configuration that registers the Extended Problem Detail exception handler for Spring WebMVC</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>
@@ -32,7 +32,7 @@
     <scm>
         <connection>scm:git:https://github.com/sbracely/extended-problem-detail.git</connection>
         <developerConnection>scm:git:git@github.com:sbracely/extended-problem-detail.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v${project.version}</tag>
         <url>https://github.com/sbracely/extended-problem-detail</url>
     </scm>
 

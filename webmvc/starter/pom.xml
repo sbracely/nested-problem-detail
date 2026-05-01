@@ -13,7 +13,7 @@
 
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4-webmvc-spring-boot-starter</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
     <name>Extended Problem Detail Boot 4 WebMVC Starter</name>
     <description>Spring Boot 4 starter for Extended Problem Detail on Spring WebMVC</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>
@@ -32,7 +32,7 @@
     <scm>
         <connection>scm:git:https://github.com/sbracely/extended-problem-detail.git</connection>
         <developerConnection>scm:git:git@github.com:sbracely/extended-problem-detail.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v${project.version}</tag>
         <url>https://github.com/sbracely/extended-problem-detail</url>
     </scm>
 
