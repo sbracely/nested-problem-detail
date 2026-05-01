@@ -96,7 +96,7 @@ paths:
                 example:
                   description: example
                   value:
-                    title: Payload Too Large
+                    title: Content Too Large
                     status: 413
                     instance: /flux-extended-problem-detail/payload-too-large-exception
   /flux-extended-problem-detail/handler-method-validation-exception-request-part:
@@ -216,7 +216,7 @@ paths:
                 example:
                   description: example
                   value:
-                    title: Payload Too Large
+                    title: Content Too Large
                     status: 413
                     instance: /flux-extended-problem-detail/content-too-large-exception
   /flux-extended-problem-detail/unsatisfied-request-parameter-exception:
@@ -712,7 +712,7 @@ paths:
                     type: about:blank
                     title: Not Found
                     status: 404
-                    detail: No static resource flux-extended-problem-detail/no-resource-found.
+                    detail: "No static resource {0}."
                     instance: /flux-extended-problem-detail/no-resource-found
 components:
   schemas:

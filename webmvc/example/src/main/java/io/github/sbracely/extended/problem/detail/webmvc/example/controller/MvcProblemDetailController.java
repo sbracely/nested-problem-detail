@@ -1101,7 +1101,7 @@ public class MvcProblemDetailController {
                     schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
                     examples = @ExampleObject(name = "example", value = """
                             {
-                              "title": "Payload Too Large",
+                              "title": "Content Too Large",
                               "status": 413,
                               "detail": "payload too large",
                               "instance": "/mvc-extended-problem-detail/payload-too-large-exception"
@@ -1126,7 +1126,7 @@ public class MvcProblemDetailController {
                     schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
                     examples = @ExampleObject(name = "example", value = """
                             {
-                              "title": "Payload Too Large",
+                              "title": "Content Too Large",
                               "status": 413,
                               "detail": "Maximum upload size exceeded",
                               "instance": "/mvc-extended-problem-detail/max-upload-size-exceeded-exception"

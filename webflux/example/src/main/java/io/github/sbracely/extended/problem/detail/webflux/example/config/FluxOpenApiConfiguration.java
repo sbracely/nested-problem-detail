@@ -66,7 +66,7 @@ public class FluxOpenApiConfiguration {
         ExtendedProblemDetail noResourceFoundExample = new ExtendedProblemDetail();
         noResourceFoundExample.setTitle("Not Found");
         noResourceFoundExample.setStatus(404);
-        noResourceFoundExample.setDetail("No static resource flux-extended-problem-detail/no-resource-found.");
+        noResourceFoundExample.setDetail("No static resource {0}.");
         noResourceFoundExample.setInstance(URI.create("/flux-extended-problem-detail/no-resource-found"));
         addSupplementalGetOperation(openApi,
                 "/flux-extended-problem-detail/no-resource-found",

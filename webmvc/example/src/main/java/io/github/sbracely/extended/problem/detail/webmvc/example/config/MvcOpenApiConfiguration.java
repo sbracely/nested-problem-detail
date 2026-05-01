@@ -151,7 +151,7 @@ public class MvcOpenApiConfiguration {
         ExtendedProblemDetail noResourceFoundExample = new ExtendedProblemDetail();
         noResourceFoundExample.setTitle("Not Found");
         noResourceFoundExample.setStatus(404);
-        noResourceFoundExample.setDetail("No static resource mvc-extended-problem-detail/no-resource-found-exception.");
+        noResourceFoundExample.setDetail("No static resource {0}.");
         noResourceFoundExample.setInstance(URI.create("/mvc-extended-problem-detail/no-resource-found-exception"));
         addSupplementalGetOperation(openApi,
                 "/mvc-extended-problem-detail/no-resource-found-exception",

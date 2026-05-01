@@ -607,7 +607,7 @@ public class FluxExtendedProblemDetailController {
                     schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
                     examples = @ExampleObject(name = "example", value = """
                             {
-                              "title": "Payload Too Large",
+                              "title": "Content Too Large",
                               "status": 413,
                               "instance": "/flux-extended-problem-detail/content-too-large-exception"
                             }
@@ -629,7 +629,7 @@ public class FluxExtendedProblemDetailController {
                     schema = @Schema(ref = "#/components/schemas/ExtendedProblemDetail"),
                     examples = @ExampleObject(name = "example", value = """
                             {
-                              "title": "Payload Too Large",
+                              "title": "Content Too Large",
                               "status": 413,
                               "instance": "/flux-extended-problem-detail/payload-too-large-exception"
                             }

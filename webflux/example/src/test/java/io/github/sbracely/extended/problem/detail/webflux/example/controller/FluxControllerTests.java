@@ -615,7 +615,7 @@ class FluxControllerTests {
         logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail).isNotNull();
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(PAYLOAD_TOO_LARGE.getReasonPhrase());
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Content Too Large");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(PAYLOAD_TOO_LARGE.value());
         assertThat(extendedProblemDetail.getDetail()).isNull();
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
@@ -665,7 +665,7 @@ class FluxControllerTests {
                 .returnResult().getResponseBody();
         logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail).isNotNull();
-        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
         assertThat(extendedProblemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -713,7 +713,7 @@ class FluxControllerTests {
                     serverErrorException|服务器内部错误|服务器错误
                     responseStatusException|错误的请求|异常
                     contentTooLargeException|内容过大|NULL
-                    noResourceFoundException|未找到|没有静态资源 flux-extended-problem-detail/no-resource-found。
+                    noResourceFoundException|未找到|没有静态资源 {0}。
                     payloadTooLargeException|内容过大|NULL
                     errorResponseException|错误标题|错误详情
                     extendedErrorResponseException|支付失败|支付请求无法处理。

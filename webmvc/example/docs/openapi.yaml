@@ -219,7 +219,7 @@ paths:
                 example:
                   description: example
                   value:
-                    title: Payload Too Large
+                    title: Content Too Large
                     status: 413
                     detail: payload too large
                     instance: /mvc-extended-problem-detail/payload-too-large-exception
@@ -296,7 +296,7 @@ paths:
                 example:
                   description: example
                   value:
-                    title: Payload Too Large
+                    title: Content Too Large
                     status: 413
                     detail: Maximum upload size exceeded
                     instance: /mvc-extended-problem-detail/max-upload-size-exceeded-exception
@@ -1322,7 +1322,7 @@ paths:
                     type: about:blank
                     title: Not Found
                     status: 404
-                    detail: No static resource mvc-extended-problem-detail/no-resource-found-exception.
+                    detail: "No static resource {0}."
                     instance: /mvc-extended-problem-detail/no-resource-found-exception
   /mvc-extended-problem-detail/no-handler-found-exception:
     get:

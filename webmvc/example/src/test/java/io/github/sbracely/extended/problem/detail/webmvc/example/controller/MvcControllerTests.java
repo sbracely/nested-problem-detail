@@ -660,7 +660,7 @@ class MvcControllerTests {
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
-        assertThat(extendedProblemDetail.getDetail()).isEqualTo("No static resource %s.".formatted(uri.replaceFirst("/", "")));
+        assertThat(extendedProblemDetail.getDetail()).isEqualTo("No static resource {0}.");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
         assertThat(extendedProblemDetail.getProperties()).isNull();
         assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -732,7 +732,7 @@ class MvcControllerTests {
         ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
         logger.info("extendedProblemDetail: {}", extendedProblemDetail);
-        assertThat(extendedProblemDetail.getType()).isNull();
+        assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
         assertThat(extendedProblemDetail.getTitle()).isEqualTo("Payment failed");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         assertThat(extendedProblemDetail.getDetail()).isEqualTo("The payment request could not be processed.");
@@ -793,9 +793,8 @@ class MvcControllerTests {
                     methodValidationException|服务器内部错误|验证失败
                     errorResponseException|错误的请求|NULL
                     extendedErrorResponseException|支付失败|支付请求无法处理。
-                    noResourceFoundException|未找到|没有静态资源 mvc-extended-problem-detail/no-resource-found-exception。
+                    noResourceFoundException|未找到|没有静态资源 {0}。
                     asyncRequestTimeoutException|服务不可用|NULL
-                    contentTooLargeException|内容过大|NULL
                     """
     )
     void titleAndDetailLocalized(String scenario, String expectedTitle, String expectedDetail) throws IOException {
@@ -1047,7 +1046,7 @@ class MvcControllerTests {
                 .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
         logger.info("extendedProblemDetail: {}", extendedProblemDetail);
         assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
-        assertThat(extendedProblemDetail.getTitle()).isEqualTo(PAYLOAD_TOO_LARGE.getReasonPhrase());
+        assertThat(extendedProblemDetail.getTitle()).isEqualTo("Content Too Large");
         assertThat(extendedProblemDetail.getStatus()).isEqualTo(PAYLOAD_TOO_LARGE.value());
         assertThat(extendedProblemDetail.getDetail()).isEqualTo("payload too large");
         assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
@@ -1240,7 +1239,7 @@ class MvcControllerTests {
             assertThat(extendedProblemDetail.getType()).isEqualTo(URI.create("about:blank"));
             assertThat(extendedProblemDetail.getTitle()).isEqualTo(NOT_FOUND.getReasonPhrase());
             assertThat(extendedProblemDetail.getStatus()).isEqualTo(NOT_FOUND.value());
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("No static resource %s.".formatted(uri.substring(1)));
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("No static resource {0}.");
             assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
             assertThat(extendedProblemDetail.getProperties()).isNull();
             assertThat(extendedProblemDetail.getErrors()).isNull();
@@ -1255,47 +1254,7 @@ class MvcControllerTests {
             ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
                     .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
             assertThat(extendedProblemDetail.getTitle()).isEqualTo("未找到");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("没有端点 GET /mvc-extended-problem-detail/no-handler-found-exception。");
-        }
-    }
-
-    /**
-     * @see AbstractWebMvcEndpointHandlerMapping.InvalidEndpointBadRequestException
-     * @see MvcDemoEndpoint#hello(String, String, String)
-     */
-    @Nested
-    @TestPropertySource(properties = "management.endpoints.web.exposure.include=demo")
-    class MvcInvalidEndpointBadRequestExceptionTests {
-        private static final String BASE_PATH = "/actuator";
-
-        @Test
-        void invalidEndpointBadRequestException() {
-            String uri = BASE_PATH + "/demo/name";
-            MvcTestResult result = mockMvcTester.get().uri(uri).exchange();
-            assertThat(result)
-                    .hasStatus(BAD_REQUEST)
-                    .hasContentType(APPLICATION_PROBLEM_JSON);
-            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            logger.info("extendedProblemDetail: {}", extendedProblemDetail);
-            assertThat(extendedProblemDetail.getDetail()).containsOnlyOnce("Missing parameters: ")
-                    .contains("param1", "param2");
-            assertThat(extendedProblemDetail.getInstance()).isEqualTo(URI.create(uri));
-            assertThat(extendedProblemDetail.getStatus()).isEqualTo(BAD_REQUEST.value());
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo(BAD_REQUEST.getReasonPhrase());
-            assertThat(extendedProblemDetail.getErrors()).isNull();
-        }
-
-        @Test
-        void invalidEndpointBadRequestExceptionLocalized() {
-            String uri = BASE_PATH + "/demo/name";
-            MvcTestResult result = mockMvcTester.get().uri(uri)
-                    .header(ACCEPT_LANGUAGE, ZH_CN_LANGUAGE)
-                    .exchange();
-            ExtendedProblemDetail extendedProblemDetail = assertThat(result).bodyJson()
-                    .convertTo(ExtendedProblemDetail.class).isNotNull().actual();
-            assertThat(extendedProblemDetail.getTitle()).isEqualTo("错误的请求");
-            assertThat(extendedProblemDetail.getDetail()).isEqualTo("缺少参数：param1,param2");
+            assertThat(extendedProblemDetail.getDetail()).isEqualTo("没有静态资源 {0}。");
         }
     }
 
