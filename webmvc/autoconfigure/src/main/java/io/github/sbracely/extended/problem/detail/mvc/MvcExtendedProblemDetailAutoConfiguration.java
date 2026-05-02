@@ -93,7 +93,9 @@ public class MvcExtendedProblemDetailAutoConfiguration {
             ObjectProvider<ExtendedProblemDetailLog> extendedProblemDetailLog,
             MvcExtendedProblemDetailProperties properties) {
         return new MvcExtendedProblemDetailExceptionHandler(
-                extendedProblemDetailLog.getIfAvailable(), properties.getErrorsPropertyName());
+                extendedProblemDetailLog.getIfAvailable(),
+                properties.getErrorsPropertyName(),
+                properties.getHandlerOrder());
     }
 
 }
