@@ -6,6 +6,7 @@ import io.github.sbracely.extended.problem.detail.common.response.Error;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -48,7 +49,7 @@ import java.util.List;
  */
 @ControllerAdvice
 public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExceptionHandler
-        implements ExtendedProblemDetailErrorResolver {
+        implements Ordered, ExtendedProblemDetailErrorResolver {
 
     /**
      * Logger for this exception handler.
@@ -66,6 +67,11 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     protected final String errorsPropertyName;
 
     /**
+     * {@code @ControllerAdvice} order used by this handler.
+     */
+    protected final int order;
+
+    /**
      * Constructs a new handler with the specified dependencies.
      *
      * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance, or {@code null} when logging is disabled
@@ -73,8 +79,21 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
      */
     public FluxExtendedProblemDetailExceptionHandler(
             @Nullable ExtendedProblemDetailLog extendedProblemDetailLog, String errorsPropertyName) {
+        this(extendedProblemDetailLog, errorsPropertyName, 0);
+    }
+
+    /**
+     * Constructs a new handler with the specified dependencies and order.
+     *
+     * @param extendedProblemDetailLog the ExtendedProblemDetailLog instance, or {@code null} when logging is disabled
+     * @param errorsPropertyName       the ProblemDetail properties entry name used for structured errors
+     * @param order                    {@code @ControllerAdvice} order used by this handler
+     */
+    public FluxExtendedProblemDetailExceptionHandler(
+            @Nullable ExtendedProblemDetailLog extendedProblemDetailLog, String errorsPropertyName, int order) {
         this.extendedProblemDetailLog = extendedProblemDetailLog;
         this.errorsPropertyName = errorsPropertyName;
+        this.order = order;
     }
 
     @Override
@@ -85,6 +104,11 @@ public class FluxExtendedProblemDetailExceptionHandler extends ResponseEntityExc
     @Override
     public @Nullable ExtendedProblemDetailLog getExtendedProblemDetailLog() {
         return extendedProblemDetailLog;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
     }
 
     @Override

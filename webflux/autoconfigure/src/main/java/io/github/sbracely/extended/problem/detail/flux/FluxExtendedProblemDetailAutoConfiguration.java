@@ -93,7 +93,9 @@ public class FluxExtendedProblemDetailAutoConfiguration {
             ObjectProvider<ExtendedProblemDetailLog> extendedProblemDetailLog,
             FluxExtendedProblemDetailProperties properties) {
         return new FluxExtendedProblemDetailExceptionHandler(
-                extendedProblemDetailLog.getIfAvailable(), properties.getErrorsPropertyName());
+                extendedProblemDetailLog.getIfAvailable(),
+                properties.getErrorsPropertyName(),
+                properties.getHandlerOrder());
     }
 
 }
