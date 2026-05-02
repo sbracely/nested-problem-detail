@@ -15,7 +15,7 @@ import org.springframework.boot.logging.LogLevel;
  * <ul>
  *     <li>{@code enabled} - Whether to enable the extended problem detail feature, defaults to {@code true}</li>
  *     <li>{@code errors-property-name} - ProblemDetail properties entry name for structured errors, defaults to {@code errors}</li>
- *     <li>{@code handler-order} - {@code @ControllerAdvice} order used by built-in exception handlers, defaults to {@code 0}</li>
+ *     <li>{@code controller-advice-order} - {@code @ControllerAdvice} order used by built-in exception handlers, defaults to {@code 0}</li>
  *     <li>{@code logging.at-level} - Log level at which exceptions are recorded, defaults to {@code INFO}</li>
  *     <li>{@code logging.print-stack-trace} - Whether to print exception stack trace in logs, defaults to {@code false}</li>
  * </ul>
@@ -28,7 +28,7 @@ import org.springframework.boot.logging.LogLevel;
  *   problem-detail:
  *     enabled: true
  *     errors-property-name: errors
- *     handler-order: 0
+ *     controller-advice-order: 0
  *     logging:
  *       at-level: DEBUG  # TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
  *       print-stack-trace: false
@@ -37,7 +37,7 @@ import org.springframework.boot.logging.LogLevel;
  * # application.properties
  * extended.problem-detail.enabled=true
  * extended.problem-detail.errors-property-name=errors
- * extended.problem-detail.handler-order=0
+ * extended.problem-detail.controller-advice-order=0
  * extended.problem-detail.logging.at-level=INFO
  * extended.problem-detail.logging.print-stack-trace=false
  * }</pre>
@@ -55,7 +55,7 @@ public class ExtendedProblemDetailProperties {
     /**
      * Default {@code @ControllerAdvice} order for built-in exception handlers.
      */
-    public static final int DEFAULT_HANDLER_ORDER = 0;
+    public static final int DEFAULT_CONTROLLER_ADVICE_ORDER = 0;
 
     /**
      * Extended problem detail feature enabled status.
@@ -74,7 +74,7 @@ public class ExtendedProblemDetailProperties {
     /**
      * {@code @ControllerAdvice} order used by built-in exception handlers.
      */
-    private int handlerOrder = DEFAULT_HANDLER_ORDER;
+    private int controllerAdviceOrder = DEFAULT_CONTROLLER_ADVICE_ORDER;
 
     /**
      * CommonLogging configuration for extended problem detail exception handling.
@@ -129,17 +129,17 @@ public class ExtendedProblemDetailProperties {
      *
      * @return the handler order
      */
-    public int getHandlerOrder() {
-        return handlerOrder;
+    public int getControllerAdviceOrder() {
+        return controllerAdviceOrder;
     }
 
     /**
      * Sets the {@code @ControllerAdvice} order used by built-in exception handlers.
      *
-     * @param handlerOrder the handler order to set
+     * @param controllerAdviceOrder the handler order to set
      */
-    public void setHandlerOrder(int handlerOrder) {
-        this.handlerOrder = handlerOrder;
+    public void setControllerAdviceOrder(int controllerAdviceOrder) {
+        this.controllerAdviceOrder = controllerAdviceOrder;
     }
 
     /**
