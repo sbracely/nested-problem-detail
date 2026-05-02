@@ -148,7 +148,7 @@ extended:
   problem-detail:
     enabled: true        # Set to false to disable the auto-configured handler (default: true)
     errors-property-name: errors  # ProblemDetail properties entry name for structured errors (default: errors)
-    handler-order: 0     # @ControllerAdvice order for built-in handlers (default: 0)
+    controller-advice-order: 0     # @ControllerAdvice order for built-in handlers (default: 0)
     logging:
       at-level: INFO     # Level used to log caught exceptions: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF (default: INFO)
       print-stack-trace: false  # Include full stack trace in the log entry (default: false)
@@ -159,7 +159,7 @@ Equivalent `application.properties`:
 ```properties
 extended.problem-detail.enabled=true
 extended.problem-detail.errors-property-name=errors
-extended.problem-detail.handler-order=0
+extended.problem-detail.controller-advice-order=0
 extended.problem-detail.logging.at-level=INFO
 extended.problem-detail.logging.print-stack-trace=false
 ```

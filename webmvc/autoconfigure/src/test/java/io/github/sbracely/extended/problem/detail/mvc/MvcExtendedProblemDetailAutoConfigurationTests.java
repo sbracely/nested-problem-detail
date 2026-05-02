@@ -135,7 +135,7 @@ class MvcExtendedProblemDetailAutoConfigurationTests {
         this.contextRunner
                 .withPropertyValues(
                         "extended.problem-detail.errors-property-name=violations",
-                        "extended.problem-detail.handler-order=5",
+                        "extended.problem-detail.controller-advice-order=5",
                         "extended.problem-detail.logging.at-level=WARN",
                         "extended.problem-detail.logging.print-stack-trace=true"
                 )
@@ -143,7 +143,7 @@ class MvcExtendedProblemDetailAutoConfigurationTests {
                     MvcExtendedProblemDetailProperties properties = context.getBean(MvcExtendedProblemDetailProperties.class);
                     MvcExtendedProblemDetailExceptionHandler handler = context.getBean(MvcExtendedProblemDetailExceptionHandler.class);
                     assertThat(properties.getErrorsPropertyName()).isEqualTo("violations");
-                    assertThat(properties.getHandlerOrder()).isEqualTo(5);
+                    assertThat(properties.getControllerAdviceOrder()).isEqualTo(5);
                     assertThat(properties.getLogging().getAtLevel().name()).isEqualTo("WARN");
                     assertThat(properties.getLogging().isPrintStackTrace()).isTrue();
                     assertThat(ReflectionTestUtils.getField(handler, "errorsPropertyName")).isEqualTo("violations");
