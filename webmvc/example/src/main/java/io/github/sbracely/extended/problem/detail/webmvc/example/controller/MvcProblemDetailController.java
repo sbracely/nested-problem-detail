@@ -391,7 +391,12 @@ public class MvcProblemDetailController {
                       "name": "abc",
                       "password": "123",
                       "address": {
-                        "street": ""
+                        "street": "",
+                        "geo": {
+                          "location": {
+                            "code": "LOC-100"
+                          }
+                        }
                       }
                     }
                     """)))
@@ -958,7 +963,12 @@ public class MvcProblemDetailController {
                               "name": "abc",
                               "password": "123",
                               "address": {
-                                "street": ""
+                                "street": "",
+                                "geo": {
+                                  "location": {
+                                    "code": "LOC-100"
+                                  }
+                                }
                               }
                             }
                             """)))

@@ -145,6 +145,9 @@ paths:
                   password: "123"
                   address:
                     street: ""
+                    geo:
+                      location:
+                        code: LOC-100
         required: true
       responses:
         "400":
@@ -246,6 +249,9 @@ paths:
                   password: "123"
                   address:
                     street: ""
+                    geo:
+                      location:
+                        code: LOC-100
         required: true
       responses:
         "400":
@@ -1542,8 +1548,32 @@ components:
           description: Street name used by nested validation examples.
           example: Main St
           minLength: 1
+        geo:
+          $ref: "#/components/schemas/MvcProblemDetailAddressGeo"
+          description: Geo payload used by deeper nested validation examples.
       required:
+      - geo
       - street
+    MvcProblemDetailAddressGeo:
+      type: object
+      description: Geo payload used by deeper nested validation examples.
+      properties:
+        location:
+          $ref: "#/components/schemas/MvcProblemDetailAddressLocation"
+          description: Location payload used by deeper nested validation examples.
+      required:
+      - location
+    MvcProblemDetailAddressLocation:
+      type: object
+      description: Location payload used by deeper nested validation examples.
+      properties:
+        code:
+          type: string
+          description: Location code used by deeper nested validation examples.
+          example: LOC-100
+          minLength: 1
+      required:
+      - code
     MvcProblemDetailRequest:
       type: object
       description: Sample request payload used by the example endpoints.
@@ -1573,6 +1603,12 @@ components:
         address:
           $ref: "#/components/schemas/MvcProblemDetailAddress"
           description: Nested payload used by validation examples.
+        addresses:
+          type: array
+          description: Nested collection payload used by validation examples.
+          items:
+            $ref: "#/components/schemas/MvcProblemDetailAddress"
       required:
+      - address
       - age
       - name
