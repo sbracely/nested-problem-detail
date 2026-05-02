@@ -13,7 +13,7 @@
 
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4-webflux-autoconfigure</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <name>Extended Problem Detail Boot 4 WebFlux AutoConfiguration</name>
     <description>Spring Boot 4 auto-configuration that registers the Extended Problem Detail exception handler for Spring WebFlux</description>
     <url>https://github.com/sbracely/extended-problem-detail</url>

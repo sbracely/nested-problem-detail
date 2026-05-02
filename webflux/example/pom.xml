@@ -13,7 +13,7 @@
 
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4-webflux-example</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <name>Extended Problem Detail Boot 4 WebFlux Example</name>
     <description>Example Spring Boot 4 WebFlux application demonstrating Extended Problem Detail</description>
 

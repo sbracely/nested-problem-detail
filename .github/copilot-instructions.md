@@ -5,15 +5,19 @@
 - CI build: `.\mvnw.cmd -B verify` on Windows, or `./mvnw -B verify` in GitHub Actions.
 - Full clean build: `.\mvnw.cmd clean verify`
 - Full test suite: `.\mvnw.cmd test`
+- There is no standalone lint module/goal; `test` and `verify` are the quality gates.
 - Single common response test class: `.\mvnw.cmd -pl common -Dtest=ErrorTest test`
 - Single MVC auto-config test class: `.\mvnw.cmd -pl webmvc\autoconfigure -Dtest=MvcExtendedProblemDetailAutoConfigurationTests test`
 - Single WebFlux auto-config test class: `.\mvnw.cmd -pl webflux\autoconfigure -Dtest=FluxExtendedProblemDetailAutoConfigurationTests test`
 - Single MVC example controller test class: `.\mvnw.cmd -pl webmvc\example -Dtest=MvcControllerTests test`
 - Single WebFlux example contract test class: `.\mvnw.cmd -pl webflux\example -Dtest=FluxOpenApiDefaultContractTests test`
+- Single test method example: `.\mvnw.cmd -pl webmvc\autoconfigure -Dtest=MvcExtendedProblemDetailAutoConfigurationTests#shouldCreateExceptionHandlerWhenEnabled test`
+- If a targeted module test relies on upstream module changes, add `-am` (for example: `.\mvnw.cmd -pl webflux\autoconfigure -am -Dtest=FluxExtendedProblemDetailAutoConfigurationTests test`).
 - Generate offline OpenAPI docs: `.\mvnw.cmd -pl webmvc\example -Poffline-openapi-docs verify` and `.\mvnw.cmd -pl webflux\example -Poffline-openapi-docs verify`
 
 ## High-level architecture
 
+- This repository carries both release lines: Boot 4 on `main`/`4.x`, and Boot 3 on `3.x`. Check your branch before changing versions, docs, or release metadata.
 - This is a Maven reactor with three top-level modules: `common`, `webmvc`, and `webflux`.
 - `common` is the shared support layer for both web stacks. It contains the shared error entry model (`Error`), shared validation-to-error mapping (`ExtendedProblemDetailErrorResolver`), message-code resolution (`ExtendedProblemDetailMessageResolver`), shared property model (`ExtendedProblemDetailProperties`), and logging/startup-notice support (`ExtendedProblemDetailLog`, `ExtendedProblemDetailStartupLogger`).
 - `webmvc` and `webflux` each split into three submodules:
@@ -49,3 +53,4 @@
 - In API-version contract scenarios, fetch `/v3/api-docs` with the `API-Version` header so the generated docs match the versioned behavior under test.
 - When changing public error behavior, update both stacks unless the difference is intentionally framework-specific. The example modules and handler tests are the best place to confirm parity.
 - Release/version bumps are explicit: the published modules inherit `spring-boot-starter-parent`, not the root aggregator, so version updates must touch each module POM directly plus the `webmvc` / `webflux` aggregator parent references. Keep published POM `scm.tag` aligned with `v${project.version}`.
+- Keep branch-specific README/module artifact naming aligned with the active release line (`boot3` artifacts on `3.x`, `boot4` artifacts on `main`/`4.x`).

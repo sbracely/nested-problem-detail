@@ -23,7 +23,7 @@ Choose the starter that matches your web stack and Spring Boot line.
 <dependency>
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4-webmvc-spring-boot-starter</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ Choose the starter that matches your web stack and Spring Boot line.
 <dependency>
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4-webflux-spring-boot-starter</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
 </dependency>
 ```
 

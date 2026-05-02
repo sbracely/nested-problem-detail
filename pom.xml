@@ -6,7 +6,7 @@
 
     <groupId>io.github.sbracely</groupId>
     <artifactId>extended-problem-detail-boot4</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <packaging>pom</packaging>
 
     <name>Extended Problem Detail Boot 4</name>
