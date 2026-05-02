@@ -357,7 +357,12 @@ class MvcControllerTests {
                                     "name": "abc",
                                     "password": "123",
                                     "address": {
-                                        "street": ""
+                                        "street": "",
+                                        "geo": {
+                                            "location": {
+                                                "code": "LOC-100"
+                                            }
+                                        }
                                     }
                                 }
                 """).exchange();
@@ -379,6 +384,126 @@ class MvcControllerTests {
                 new Error(Error.Type.REQUEST_BODY, "confirmPassword", "Password and confirm password do not match"),
                 new Error(Error.Type.REQUEST_BODY, "address.street", "Street cannot be blank")
         );
+    }
+
+    @Test
+    void methodArgumentNotValidExceptionAddressMissing() {
+        String uri = BASE_PATH + "/method-argument-not-valid-exception";
+        MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
+                                {
+                                    "name": "springdoc",
+                                    "age": 28,
+                                    "password": "password123",
+                                    "confirmPassword": "password123"
+                                }
+                """).exchange();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.REQUEST_BODY, "address", "Address cannot be null"));
+    }
+
+    @Test
+    void methodArgumentNotValidExceptionAddressNull() {
+        String uri = BASE_PATH + "/method-argument-not-valid-exception";
+        MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
+                                {
+                                    "name": "springdoc",
+                                    "age": 28,
+                                    "password": "password123",
+                                    "confirmPassword": "password123",
+                                    "address": null
+                                }
+                """).exchange();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.REQUEST_BODY, "address", "Address cannot be null"));
+    }
+
+    @Test
+    void methodArgumentNotValidExceptionCollectionNestedField() {
+        String uri = BASE_PATH + "/method-argument-not-valid-exception";
+        MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
+                                {
+                                    "name": "springdoc",
+                                    "age": 28,
+                                    "password": "password123",
+                                    "confirmPassword": "password123",
+                                    "address": {
+                                        "street": "Main St",
+                                        "geo": {
+                                            "location": {
+                                                "code": "LOC-100"
+                                            }
+                                        }
+                                    },
+                                    "addresses": [
+                                        {
+                                            "street": "",
+                                            "geo": {
+                                                "location": {
+                                                    "code": "LOC-200"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                """).exchange();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.REQUEST_BODY, "addresses[0].street", "Street cannot be blank"));
+    }
+
+    @Test
+    void methodArgumentNotValidExceptionDeeperNestedPath() {
+        String uri = BASE_PATH + "/method-argument-not-valid-exception";
+        MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
+                                {
+                                    "name": "springdoc",
+                                    "age": 28,
+                                    "password": "password123",
+                                    "confirmPassword": "password123",
+                                    "address": {
+                                        "street": "Main St",
+                                        "geo": {
+                                            "location": {
+                                                "code": ""
+                                            }
+                                        }
+                                    }
+                                }
+                """).exchange();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.REQUEST_BODY, "address.geo.location.code", "Location code cannot be blank"));
+    }
+
+    @Test
+    void methodArgumentNotValidExceptionObjectLevelNestedConstraint() {
+        String uri = BASE_PATH + "/method-argument-not-valid-exception";
+        MvcTestResult result = mockMvcTester.post().uri(uri).contentType(APPLICATION_JSON).content("""
+                                {
+                                    "name": "springdoc",
+                                    "age": 28,
+                                    "password": "password123",
+                                    "confirmPassword": "password123",
+                                    "address": {
+                                        "street": "SAME",
+                                        "geo": {
+                                            "location": {
+                                                "code": "SAME"
+                                            }
+                                        }
+                                    }
+                                }
+                """).exchange();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.REQUEST_BODY, "address", "Street and location code cannot be the same"));
     }
 
     /**
@@ -792,6 +917,40 @@ class MvcControllerTests {
         }
     }
 
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            en,Location code cannot be blank
+            zh-CN,位置编码不能为空
+            fr,Le code de localisation ne peut pas être vide
+            """)
+    void nestedFieldErrorLocalized(String language, String expectedMessage) {
+        String uri = BASE_PATH + "/method-argument-not-valid-exception";
+        MvcTestResult result = mockMvcTester.post().uri(uri)
+                .header(ACCEPT_LANGUAGE, language)
+                .contentType(APPLICATION_JSON)
+                .content("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123",
+                            "address": {
+                                "street": "Main St",
+                                "geo": {
+                                    "location": {
+                                        "code": ""
+                                    }
+                                }
+                            }
+                        }
+                        """)
+                .exchange();
+        ProblemDetail problemDetail = assertThat(result).bodyJson()
+                .convertTo(ProblemDetail.class).isNotNull().actual();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.REQUEST_BODY, "address.geo.location.code", expectedMessage));
+    }
+
     /**
      * @see ResponseStatusException
      * @see MvcProblemDetailController#responseStatusException()
@@ -890,7 +1049,12 @@ class MvcControllerTests {
                                     "name": "abc",
                                     "password": "123",
                                     "address": {
-                                        "street": ""
+                                        "street": "",
+                                        "geo": {
+                                            "location": {
+                                                "code": "LOC-100"
+                                            }
+                                        }
                                     }
                                 }
                 """).exchange();
@@ -1259,7 +1423,12 @@ class MvcControllerTests {
                                         "name": "abc",
                                         "password": "123",
                                         "address": {
-                                            "street": ""
+                                            "street": "",
+                                            "geo": {
+                                                "location": {
+                                                    "code": "LOC-100"
+                                                }
+                                            }
                                         }
                                     }
                                     """)
@@ -1285,7 +1454,12 @@ class MvcControllerTests {
                                 "name": "abc",
                                 "password": "123",
                                 "address": {
-                                    "street": ""
+                                    "street": "",
+                                    "geo": {
+                                        "location": {
+                                            "code": "LOC-100"
+                                        }
+                                    }
                                 }
                             }
                             """)

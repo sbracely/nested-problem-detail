@@ -777,8 +777,32 @@ components:
           description: Street name used by nested validation examples.
           example: Main St
           minLength: 1
+        geo:
+          $ref: "#/components/schemas/FluxProblemDetailAddressGeo"
+          description: Geo payload used by deeper nested validation examples.
       required:
+      - geo
       - street
+    FluxProblemDetailAddressGeo:
+      type: object
+      description: Geo payload used by deeper nested validation examples.
+      properties:
+        location:
+          $ref: "#/components/schemas/FluxProblemDetailAddressLocation"
+          description: Location payload used by deeper nested validation examples.
+      required:
+      - location
+    FluxProblemDetailAddressLocation:
+      type: object
+      description: Location payload used by deeper nested validation examples.
+      properties:
+        code:
+          type: string
+          description: Location code used by deeper nested validation examples.
+          example: LOC-100
+          minLength: 1
+      required:
+      - code
     FluxProblemDetailRequest:
       type: object
       description: Sample request payload used by the example endpoints.
@@ -808,6 +832,12 @@ components:
         address:
           $ref: "#/components/schemas/FluxProblemDetailAddress"
           description: Nested payload used by validation examples.
+        addresses:
+          type: array
+          description: Nested collection payload used by validation examples.
+          items:
+            $ref: "#/components/schemas/FluxProblemDetailAddress"
       required:
+      - address
       - age
       - name

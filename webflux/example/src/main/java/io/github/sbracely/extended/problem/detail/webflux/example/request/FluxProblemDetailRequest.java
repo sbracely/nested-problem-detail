@@ -1,12 +1,15 @@
 package io.github.sbracely.extended.problem.detail.webflux.example.request;
 
 import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.FluxConfirmPassword;
+import io.github.sbracely.extended.problem.detail.webflux.example.valid.annotation.FluxValidAddress;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
+
+import java.util.List;
 
 @FluxConfirmPassword(message = "{flux.example.request.password.confirmation-mismatch}", fields = {"password", "confirmPassword"})
 @Schema(name = "FluxProblemDetailRequest", description = "Sample request payload used by the example endpoints.")
@@ -29,8 +32,13 @@ public class FluxProblemDetailRequest {
     private String confirmPassword;
 
     @Valid
+    @NotNull(message = "{flux.example.request.address.missing}")
     @Schema(description = "Nested payload used by validation examples.")
     private Address address;
+
+    @Valid
+    @Schema(description = "Nested collection payload used by validation examples.")
+    private List<@Valid Address> addresses;
 
     public String getName() {
         return name;
@@ -72,6 +80,14 @@ public class FluxProblemDetailRequest {
         this.address = address;
     }
 
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
     @Override
     public String toString() {
         return "FluxProblemDetailRequest{" +
@@ -80,15 +96,22 @@ public class FluxProblemDetailRequest {
                 ", password='" + password + '\'' +
                 ", confirmPassword='" + confirmPassword + '\'' +
                 ", address=" + address +
+                ", addresses=" + addresses +
                 '}';
     }
 
+    @FluxValidAddress(message = "{flux.example.request.address.invalid}")
     @Schema(name = "FluxProblemDetailAddress", description = "Nested request payload used by validation examples.")
     public static class Address {
 
         @NotBlank(message = "{flux.example.request.address.street.blank}")
         @Schema(description = "Street name used by nested validation examples.", example = "Main St")
         private String street;
+
+        @Valid
+        @NotNull(message = "{flux.example.request.address.geo.missing}")
+        @Schema(description = "Geo payload used by deeper nested validation examples.")
+        private Geo geo;
 
         public String getStreet() {
             return street;
@@ -98,10 +121,66 @@ public class FluxProblemDetailRequest {
             this.street = street;
         }
 
+        public Geo getGeo() {
+            return geo;
+        }
+
+        public void setGeo(Geo geo) {
+            this.geo = geo;
+        }
+
         @Override
         public String toString() {
             return "Address{" +
                     "street='" + street + '\'' +
+                    ", geo=" + geo +
+                    '}';
+        }
+    }
+
+    @Schema(name = "FluxProblemDetailAddressGeo", description = "Geo payload used by deeper nested validation examples.")
+    public static class Geo {
+
+        @Valid
+        @NotNull(message = "{flux.example.request.address.geo.location.missing}")
+        @Schema(description = "Location payload used by deeper nested validation examples.")
+        private Location location;
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
+        }
+
+        @Override
+        public String toString() {
+            return "Geo{" +
+                    "location=" + location +
+                    '}';
+        }
+    }
+
+    @Schema(name = "FluxProblemDetailAddressLocation", description = "Location payload used by deeper nested validation examples.")
+    public static class Location {
+
+        @NotBlank(message = "{flux.example.request.address.geo.location.code.blank}")
+        @Schema(description = "Location code used by deeper nested validation examples.", example = "LOC-100")
+        private String code;
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        @Override
+        public String toString() {
+            return "Location{" +
+                    "code='" + code + '\'' +
                     '}';
         }
     }

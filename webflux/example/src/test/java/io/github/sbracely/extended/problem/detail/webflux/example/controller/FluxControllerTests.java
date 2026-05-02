@@ -193,7 +193,12 @@ class FluxControllerTests {
                             "name": "abc",
                             "password": "123",
                             "address": {
-                                "street": ""
+                                "street": "",
+                                "geo": {
+                                    "location": {
+                                        "code": "LOC-100"
+                                    }
+                                }
                             }
                         }
                         """)
@@ -216,6 +221,146 @@ class FluxControllerTests {
                 new Error(Error.Type.MODEL_ATTRIBUTE, "confirmPassword", "Password and confirm password do not match"),
                 new Error(Error.Type.MODEL_ATTRIBUTE, "address.street", "Street cannot be blank")
         );
+    }
+
+    @Test
+    void webExchangeBindExceptionAddressMissing() {
+        String uri = BASE_PATH + "/web-exchange-bind-exception";
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123"
+                        }
+                        """)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectBody(ProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.MODEL_ATTRIBUTE, "address", "Address cannot be null"));
+    }
+
+    @Test
+    void webExchangeBindExceptionAddressNull() {
+        String uri = BASE_PATH + "/web-exchange-bind-exception";
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123",
+                            "address": null
+                        }
+                        """)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectBody(ProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.MODEL_ATTRIBUTE, "address", "Address cannot be null"));
+    }
+
+    @Test
+    void webExchangeBindExceptionCollectionNestedField() {
+        String uri = BASE_PATH + "/web-exchange-bind-exception";
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123",
+                            "address": {
+                                "street": "Main St",
+                                "geo": {
+                                    "location": {
+                                        "code": "LOC-100"
+                                    }
+                                }
+                            },
+                            "addresses": [
+                                {
+                                    "street": "",
+                                    "geo": {
+                                        "location": {
+                                            "code": "LOC-200"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                        """)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectBody(ProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.MODEL_ATTRIBUTE, "addresses[0].street", "Street cannot be blank"));
+    }
+
+    @Test
+    void webExchangeBindExceptionDeeperNestedPath() {
+        String uri = BASE_PATH + "/web-exchange-bind-exception";
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123",
+                            "address": {
+                                "street": "Main St",
+                                "geo": {
+                                    "location": {
+                                        "code": ""
+                                    }
+                                }
+                            }
+                        }
+                        """)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectBody(ProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.MODEL_ATTRIBUTE, "address.geo.location.code", "Location code cannot be blank"));
+    }
+
+    @Test
+    void webExchangeBindExceptionObjectLevelNestedConstraint() {
+        String uri = BASE_PATH + "/web-exchange-bind-exception";
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123",
+                            "address": {
+                                "street": "SAME",
+                                "geo": {
+                                    "location": {
+                                        "code": "SAME"
+                                    }
+                                }
+                            }
+                        }
+                        """)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectBody(ProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.MODEL_ATTRIBUTE, "address", "Street and location code cannot be the same"));
     }
 
     /**
@@ -709,6 +854,41 @@ class FluxControllerTests {
         }
     }
 
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            en,Location code cannot be blank
+            zh-CN,位置编码不能为空
+            fr,Le code de localisation ne peut pas être vide
+            """)
+    void nestedFieldErrorLocalized(String language, String expectedMessage) {
+        String uri = BASE_PATH + "/web-exchange-bind-exception";
+        ProblemDetail problemDetail = webTestClient.post().uri(uri)
+                .header("Accept-Language", language)
+                .contentType(APPLICATION_JSON)
+                .bodyValue("""
+                        {
+                            "name": "springdoc",
+                            "age": 28,
+                            "password": "password123",
+                            "confirmPassword": "password123",
+                            "address": {
+                                "street": "Main St",
+                                "geo": {
+                                    "location": {
+                                        "code": ""
+                                    }
+                                }
+                            }
+                        }
+                        """)
+                .exchange()
+                .expectStatus().isEqualTo(BAD_REQUEST)
+                .expectBody(ProblemDetail.class)
+                .returnResult().getResponseBody();
+        assertThat(errorsOf(problemDetail)).singleElement()
+                .isEqualTo(new Error(Error.Type.MODEL_ATTRIBUTE, "address.geo.location.code", expectedMessage));
+    }
+
     /**
      * @see MethodValidationException
      * @see FluxExtendedProblemDetailController#methodValidationException()
@@ -763,7 +943,12 @@ class FluxControllerTests {
                                 "name": "abc",
                                 "password": "123",
                                 "address": {
-                                    "street": ""
+                                    "street": "",
+                                    "geo": {
+                                        "location": {
+                                            "code": "LOC-100"
+                                        }
+                                    }
                                 }
                             }
                             """)
