@@ -2,6 +2,7 @@ package io.github.sbracely.extended.problem.detail.webmvc.example.request;
 
 import io.github.sbracely.extended.problem.detail.webmvc.example.valid.annotation.MvcConfirmPassword;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
@@ -26,6 +27,10 @@ public class MvcProblemDetailRequest {
     private String password;
     @Schema(description = "Repeated password used by custom validation examples.", example = "password123", format = "password")
     private String confirmPassword;
+
+    @Valid
+    @Schema(description = "Nested payload used by validation examples.")
+    private Address address;
 
     public String getName() {
         return name;
@@ -59,6 +64,14 @@ public class MvcProblemDetailRequest {
         this.confirmPassword = confirmPassword;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "MvcProblemDetailRequest{" +
@@ -66,6 +79,30 @@ public class MvcProblemDetailRequest {
                 ", age=" + age +
                 ", password='" + password + '\'' +
                 ", confirmPassword='" + confirmPassword + '\'' +
+                ", address=" + address +
                 '}';
+    }
+
+    @Schema(name = "MvcProblemDetailAddress", description = "Nested request payload used by validation examples.")
+    public static class Address {
+
+        @NotBlank(message = "{mvc.example.request.address.street.blank}")
+        @Schema(description = "Street name used by nested validation examples.", example = "Main St")
+        private String street;
+
+        public String getStreet() {
+            return street;
+        }
+
+        public void setStreet(String street) {
+            this.street = street;
+        }
+
+        @Override
+        public String toString() {
+            return "Address{" +
+                    "street='" + street + '\'' +
+                    '}';
+        }
     }
 }

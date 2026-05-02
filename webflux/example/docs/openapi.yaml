@@ -54,6 +54,9 @@ paths:
                     - type: MODEL_ATTRIBUTE
                       target: confirmPassword
                       message: Password and confirm password do not match
+                    - type: MODEL_ATTRIBUTE
+                      target: address.street
+                      message: Street cannot be blank
   /flux-extended-problem-detail/unsupported-media-type-status-exception:
     post:
       tags:
@@ -829,6 +832,17 @@ components:
               message:
                 type: string
                 description: Human-readable explanation of the error.
+    FluxProblemDetailAddress:
+      type: object
+      description: Nested request payload used by validation examples.
+      properties:
+        street:
+          type: string
+          description: Street name used by nested validation examples.
+          example: Main St
+          minLength: 1
+      required:
+      - street
     FluxProblemDetailRequest:
       type: object
       description: Sample request payload used by the example endpoints.
@@ -855,6 +869,9 @@ components:
           format: password
           description: Repeated password used by custom validation examples.
           example: password123
+        address:
+          $ref: "#/components/schemas/FluxProblemDetailAddress"
+          description: Nested payload used by validation examples.
       required:
       - age
       - name

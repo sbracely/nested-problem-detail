@@ -115,7 +115,7 @@ public final class FluxOperationFixtures {
                         BASE + "/web-exchange-bind-exception", "post",
                         client -> client.post().uri(BASE + "/web-exchange-bind-exception")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue("{\"name\":\"abc\",\"password\":\"123\"}").exchange(),
+                                .bodyValue("{\"name\":\"abc\",\"password\":\"123\",\"address\":{\"street\":\"\"}}").exchange(),
                         400));
 
         map.put("handlerMethodValidationExceptionCookieValue",

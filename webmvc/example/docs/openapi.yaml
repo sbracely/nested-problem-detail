@@ -143,6 +143,8 @@ paths:
                 value:
                   name: abc
                   password: "123"
+                  address:
+                    street: ""
         required: true
       responses:
         "400":
@@ -172,6 +174,9 @@ paths:
                     - type: MODEL_ATTRIBUTE
                       target: confirmPassword
                       message: Password and confirm password do not match
+                    - type: MODEL_ATTRIBUTE
+                      target: address.street
+                      message: Street cannot be blank
   /mvc-extended-problem-detail/unsupported-media-type-status-exception:
     post:
       tags:
@@ -239,6 +244,8 @@ paths:
                 value:
                   name: abc
                   password: "123"
+                  address:
+                    street: ""
         required: true
       responses:
         "400":
@@ -269,6 +276,9 @@ paths:
                     - type: REQUEST_BODY
                       target: confirmPassword
                       message: Password and confirm password do not match
+                    - type: REQUEST_BODY
+                      target: address.street
+                      message: Street cannot be blank
   /mvc-extended-problem-detail/max-upload-size-exceeded-exception:
     post:
       tags:
@@ -1523,6 +1533,17 @@ components:
               message:
                 type: string
                 description: Human-readable explanation of the error.
+    MvcProblemDetailAddress:
+      type: object
+      description: Nested request payload used by validation examples.
+      properties:
+        street:
+          type: string
+          description: Street name used by nested validation examples.
+          example: Main St
+          minLength: 1
+      required:
+      - street
     MvcProblemDetailRequest:
       type: object
       description: Sample request payload used by the example endpoints.
@@ -1549,6 +1570,9 @@ components:
           format: password
           description: Repeated password used by custom validation examples.
           example: password123
+        address:
+          $ref: "#/components/schemas/MvcProblemDetailAddress"
+          description: Nested payload used by validation examples.
       required:
       - age
       - name

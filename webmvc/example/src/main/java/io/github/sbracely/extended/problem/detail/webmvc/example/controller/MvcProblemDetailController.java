@@ -389,7 +389,10 @@ public class MvcProblemDetailController {
             examples = @ExampleObject(name = "example", value = """
                     {
                       "name": "abc",
-                      "password": "123"
+                      "password": "123",
+                      "address": {
+                        "street": ""
+                      }
                     }
                     """)))
     @ApiResponse(
@@ -424,6 +427,11 @@ public class MvcProblemDetailController {
                                   "type": "REQUEST_BODY",
                                   "target": "confirmPassword",
                                   "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "REQUEST_BODY",
+                                  "target": "address.street",
+                                  "message": "Street cannot be blank"
                                 }
                               ]
                             }
@@ -945,12 +953,15 @@ public class MvcProblemDetailController {
      */
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
-            examples = @ExampleObject(name = "example", value = """
-                    {
-                      "name": "abc",
-                      "password": "123"
-                    }
-                    """)))
+                    examples = @ExampleObject(name = "example", value = """
+                            {
+                              "name": "abc",
+                              "password": "123",
+                              "address": {
+                                "street": ""
+                              }
+                            }
+                            """)))
     @ApiResponse(
             responseCode = "400",
             description = "WebExchangeBindException",
@@ -983,6 +994,11 @@ public class MvcProblemDetailController {
                                   "type": "MODEL_ATTRIBUTE",
                                   "target": "confirmPassword",
                                   "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "MODEL_ATTRIBUTE",
+                                  "target": "address.street",
+                                  "message": "Street cannot be blank"
                                 }
                               ]
                             }

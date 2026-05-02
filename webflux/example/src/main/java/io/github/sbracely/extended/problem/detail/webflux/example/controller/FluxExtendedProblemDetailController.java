@@ -210,6 +210,11 @@ public class FluxExtendedProblemDetailController {
                                   "type": "MODEL_ATTRIBUTE",
                                   "target": "confirmPassword",
                                   "message": "Password and confirm password do not match"
+                                },
+                                {
+                                  "type": "MODEL_ATTRIBUTE",
+                                  "target": "address.street",
+                                  "message": "Street cannot be blank"
                                 }
                               ]
                             }

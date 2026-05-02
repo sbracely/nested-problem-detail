@@ -121,7 +121,7 @@ public final class MvcOperationFixtures {
                         BASE + "/method-argument-not-valid-exception", "post",
                         mock -> mock.post().uri(BASE + "/method-argument-not-valid-exception")
                                 .contentType(APPLICATION_JSON)
-                                .content("{\"name\":\"abc\",\"password\":\"123\"}").exchange(),
+                                .content("{\"name\":\"abc\",\"password\":\"123\",\"address\":{\"street\":\"\"}}").exchange(),
                         400));
 
         map.put("handlerMethodValidationExceptionCookieValue",
@@ -242,7 +242,7 @@ public final class MvcOperationFixtures {
                         BASE + "/web-exchange-bind-exception", "post",
                         mock -> mock.post().uri(BASE + "/web-exchange-bind-exception")
                                 .contentType(APPLICATION_JSON)
-                                .content("{\"name\":\"abc\",\"password\":\"123\"}").exchange(),
+                                .content("{\"name\":\"abc\",\"password\":\"123\",\"address\":{\"street\":\"\"}}").exchange(),
                         400));
 
         map.put("methodNotAllowedException",
